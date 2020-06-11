@@ -1,0 +1,285 @@
+body {
+    background-color: #171a24;
+    margin: 0;
+}
+
+* {box-sizing: border-box}
+
+/*Top panel*/
+.top-panel {
+    display: flex;
+    align-items: center;
+    color: #F1C944;
+    background-color: rgb(33, 38, 54);
+    height: 5rem;
+}
+
+.logo  {
+	font-family: Lemonada;
+	font-size: 1.25rem;
+    display: flex;
+}
+
+#logoImg {
+	height: 70px;
+	width: 70px;
+	margin-left: 1rem;
+}
+
+.search {
+    margin: 1rem;
+    display: flex;
+    flex-grow: 1;
+    background-color: #171a24;
+    border: 1px solid #171a24;
+	border-radius: 3px;
+}
+
+#searchimg {
+	height: 30px;
+    width: 30px;
+    padding: 3px;
+}
+
+#searchinput {
+    font-family: Monda, Arial;
+	background-color: #171a24;
+	color: white;
+	border: none;
+	outline: none;
+}
+
+#searchinput::placeholder {
+    color: #e2dce3;
+}
+
+#semesterdate {
+    font-family: Monda, Arial;
+	font-size: 1rem;
+	margin-right: 1rem;
+}
+/*Navigation tabs*/
+.tab {
+    float: left;
+    background-color: rgb(33, 38, 54);
+    min-width: 11rem;
+    width: 20%;
+  }
+
+.tablinks {
+    display: block;
+    background-color: inherit;
+    color: #e2dce3;
+    padding: 1.25rem 1rem;
+    cursor: pointer;
+    transition: 0.3s;
+    font-family: Monda, Arial;
+    text-decoration: none;
+  }
+
+.tablinks div {
+    display: flex;
+}
+
+.tablinks p {
+    margin: auto 1rem;
+}
+
+.tablinks img {
+	height: 30px;
+	width: 30px;
+}
+
+.tablinks:hover {
+    background-color: rgb(61, 71, 102);
+}
+
+.tablinks:focus {
+    background-color: #171a24;
+    color: #F1C944;
+}
+
+/*Making top panel and navigation tab responsive*/
+@media (max-width: 600px) {
+    .logo p, #semesterdate, .tablinks p {
+        display: none;
+    }
+
+    .tab {
+        width: auto;
+        min-width: 2rem;
+    }
+}
+
+#myConsults-a {
+    background-color: #171a24;
+    color: #F1C944;
+}
+
+#myConsults-a:hover {
+    background-color:  #171a24;
+}
+
+.consultsList h2 {
+    font-family: Monda, Arial;
+    color: #e2dce3;
+    padding-left: 1rem;
+    display: flex;
+}
+
+.consultsList {
+    overflow: scroll;
+    padding-left: 1rem;
+    margin-right: 1rem;
+    font-family: Monda, Arial;
+}
+
+th, td {
+    color: #e2dce3;
+    padding: 0.5rem;
+    text-align: left;
+}
+
+table {
+    width: 100%;
+}
+
+th {
+    border-bottom: 1px solid #aaa2ab;
+}
+
+.evenRow {
+    background-color: rgb(33, 38, 54);
+}
+
+.consultsList a:link {
+    color: #e2dce3;
+    text-decoration: none;
+}
+
+.consultsList a:visited {
+    color: #e2dce3;
+    text-decoration: none;
+}
+
+.consultsList a:hover {
+    color: #F1C944;
+    text-decoration: none;
+}
+
+::-webkit-scrollbar {
+    display: none;
+ }
+
+ .status {
+   color: #F1C944;
+ }
+
+ .cancel, .pending {
+     float: right;
+     margin: 1rem;
+     color: white;
+     font-family: Monda, Arial;
+     background-color:rgb(33, 38, 54);
+     outline: none;
+     border: 0.5px solid #aaa2ab;
+     border-radius: 3px;
+     padding: 0.5rem 1.5rem;
+     justify-content: center;
+     font-size: 0.7rem;
+ }
+
+ .cancel:hover, .pending:hover, .nobtn:hover, .yesbtn:hover {
+   background-color: #F1C944;
+   color: #171a24;
+ }
+
+ .pendingbox, .cancelbox {
+   display: flex;
+   float: left;
+ }
+
+ .nobtn, .yesbtn {
+   color:#e2dce3;
+   padding: 1rem;
+   margin: 0.5rem;
+   cursor: pointer;
+   width: 50%;
+   font-size: 1rem;
+   font-family: Monda, Arial;
+   border: 2px solid#F1C944;
+   border-radius: 10px;
+   background-color: #171a24;
+   text-align: center;
+   text-decoration: none;
+ }
+
+ /* Add padding and center-align text to the container */
+ .container {
+   padding: 16px;
+   text-align: center;
+ }
+
+ /* The Modal (background) */
+ .modal {
+   display: none; /* Hidden by default */
+   position: fixed; /* Stay in place */
+   z-index: 1; /* Sit on top */
+   width: 500px;
+   height: 300px;
+   left: 50%;
+   top: 50%;
+   margin-left: -150px;
+   margin-top: -150px;
+   overflow: auto; /* Enable scroll if needed */
+   background-color: rgb(33, 38, 54);
+   padding-top: 10px;
+   border: 1px solid #e2dce3;
+   border-radius: 10px;
+ }
+
+ /* Modal Content/Box */
+ .modal-content {
+   background-color: rgb(33, 38, 54);
+   margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+   width: 80%; /* Could be more or less, depending on screen size */
+   vertical-align: middle;
+   color: #F1C944;
+   font-family: Monda, Arial;
+ }
+
+ /* The Modal Close Button (x) */
+ .close {
+   position: absolute;
+   right: 35px;
+   top: 15px;
+   font-size: 40px;
+   font-weight: bold;
+   color: black;
+ }
+
+ .close:hover,
+ .close:focus {
+   color: #F1C944;
+   cursor: pointer;
+ }
+
+ .clearfix {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+ }
+
+ /* Clear floats */
+ .clearfix::after {
+   content: "";
+   clear: both;
+   display: table;
+ }
+
+ /* Change styles for cancel button and delete button on extra small screens */
+ @media screen and (max-width: 300px) {
+   .nobtn, .yesbtn {
+     width: 100%;
+   }
+ }

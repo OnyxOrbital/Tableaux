@@ -1,0 +1,26 @@
+.search {
+    margin: 1rem;
+    display: flex;
+    flex-grow: 1;
+    background-color: #171a24;
+    border: 1px solid #171a24;
+	border-radius: 3px;
+}
+
+#searchimg {
+	height: 30px;
+    width: 30px;
+    padding: 3px;
+}
+
+#searchinput {
+    font-family: Monda, Arial;
+	background-color: #171a24;
+	color: white;
+	border: none;
+	outline: none;
+}
+
+#searchinput::placeholder {
+    color: #e2dce3;
+}

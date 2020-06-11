@@ -1,0 +1,32 @@
+.top-panel {
+    display: flex;
+    align-items: center;
+    color: #F1C944;
+    background-color: rgb(33, 38, 54);
+    height: 5rem;
+}
+
+.logo  {
+	font-family: Lemonada;
+	font-size: 1.25rem;
+    display: flex;
+}
+
+#logoImg {
+	height: 70px;
+	width: 70px;
+	margin-left: 1rem;
+}
+
+#semesterdate {
+    font-family: Monda, Arial;
+	font-size: 1rem;
+	margin-right: 1rem;
+}
+
+/*Making top panel responsive*/
+@media (max-width: 600px) {
+    .logo p, #semesterdate {
+        display: none;
+    }
+}

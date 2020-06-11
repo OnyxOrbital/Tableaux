@@ -1,0 +1,50 @@
+.tabList {
+  float: left;
+  background-color: rgb(33, 38, 54);
+  min-width: 11rem;
+  width: 20%;
+}
+
+.tab {
+  display: block;
+  background-color: inherit;
+  color: #e2dce3;
+  padding: 1.25rem 1rem;
+  cursor: pointer;
+  transition: 0.3s;
+  font-family: Monda, Arial;
+  text-decoration: none;
+  margin: auto 1rem;
+  display: flex;
+}
+
+.tab img {
+	height: 30px;
+	width: 30px;
+}
+
+.tab:hover {
+    background-color: rgb(61, 71, 102);
+}
+
+.tab:focus {
+    background-color: #171a24;
+    color: #F1C944;
+}
+
+/*Making top panel and navigation tab responsive*/
+@media (max-width: 600px) {
+    .logo p, #semesterdate, .tablinks p, .notificationButton p {
+        display: none;
+    }
+
+    .tab {
+        width: auto;
+        min-width: 2rem;
+    }
+
+    .notificationButton {
+        border: none;
+        background-color: rgb(33, 38, 54);
+    }
+}

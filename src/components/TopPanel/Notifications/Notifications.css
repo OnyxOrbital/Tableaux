@@ -1,0 +1,65 @@
+.notifications {
+    margin: 1rem;
+    position: relative;
+    /* display: inline-block; */
+}
+
+.notificationButton {
+  background-color: rgb(33, 38, 54);
+  color: #F1C944;
+  font-family: Monda, Arial;
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  border: none;
+  border-radius: 10px;
+}
+
+.notificationButton img {
+    height: 30px;
+    width: 30px;
+}
+
+.dropdownContent {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: rgb(33, 38, 54);
+    min-width: 15rem;
+    z-index: 1;
+}
+
+.notifications:hover .dropdownContent {
+    display: block;
+}
+
+.notificationButton:hover {
+    background-color: rgb(61, 71, 102);
+    color: #F1C944;
+}
+
+.notification {
+    color: #e2dce3;
+    padding: 1rem;
+    text-decoration: none;
+    display: block;
+    font-family: Monda, Arial;
+    font-size: 1rem;
+}
+
+.notification:hover {
+    background-color: rgb(61, 71, 102);
+    color: #F1C944;
+}
+
+/*Making notification button responsive*/
+@media (max-width: 600px) {
+    .notificationButton p {
+        display: none;
+    }
+
+    .notificationButton {
+        border: none;
+        background-color: rgb(33, 38, 54);
+    }
+}

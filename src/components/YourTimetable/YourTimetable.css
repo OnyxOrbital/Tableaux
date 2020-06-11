@@ -1,0 +1,236 @@
+body {
+    background-color: #171a24;
+    margin: 0;
+}
+
+* {box-sizing: border-box}
+
+/*Top panel*/
+.top-panel {
+    display: flex;
+    align-items: center;
+    color: #F1C944;
+    background-color: rgb(33, 38, 54);
+    height: 5rem;
+}
+
+.logo  {
+	font-family: Lemonada;
+	font-size: 1.25rem;
+    display: flex;
+}
+
+#logoImg {
+	height: 70px;
+	width: 70px;
+    margin-left: 1rem;
+}
+
+.search {
+    margin: 1rem;
+    display: flex;
+    flex-grow: 1;
+    background-color: #171a24;
+    border: 1px solid #171a24;
+	border-radius: 3px;
+}
+
+#searchimg {
+	height: 30px;
+    width: 30px;
+    padding: 3px;
+}
+
+#searchinput {
+    font-family: Monda, Arial;
+	background-color: #171a24;
+	color: white;
+	border: none;
+	outline: none;
+}
+
+#searchinput::placeholder {
+    color: #e2dce3;
+}
+
+#semesterdate {
+    font-family: Monda, Arial;
+	font-size: 1rem;
+	margin-right: 1rem;
+}
+
+/*Navigation tabs*/
+.tab {
+    float: left;
+    background-color: rgb(33, 38, 54);
+    min-width: 11rem;
+    width: 20%;
+  }
+
+.tablinks {
+    display: block;
+    background-color: inherit;
+    color: #e2dce3;
+    padding: 1.25rem 1rem;
+    cursor: pointer;
+    transition: 0.3s;
+    font-family: Monda, Arial;
+    text-decoration: none;
+  }
+
+.tablinks div {
+    display: flex;
+}
+
+.tablinks p {
+    margin: auto 1rem;
+}
+
+.tablinks img {
+	height: 30px;
+	width: 30px;
+}
+
+.tablinks:hover {
+    background-color: rgb(61, 71, 102);
+}
+
+.tablinks:focus {
+    background-color: #171a24;
+    color: #F1C944;
+}
+
+/*Making top panel and navigation tab responsive*/
+@media (max-width: 600px) {
+    .logo p, #semesterdate, .tablinks p {
+        display: none;
+    }
+
+    .tab {
+        width: auto;
+        min-width: 2rem;
+    }
+}
+
+/*Your timetable tab*/
+#yourTimetable-a {
+    background-color: #171a24;
+    color: #F1C944;
+}
+
+#yourTimetable-a:hover {
+    background-color:  #171a24;
+}
+
+.date-panel {
+    display: flex;
+    justify-content: center;
+}
+
+#forward-arrow, #back-arrow {
+    margin: 1.4rem;
+    height: 30px;
+    width: 30px;
+}
+
+/*Your timetable page*/
+.yourTimetable h3 {
+    font-family: Monda, Arial;
+    color: #e2dce3;
+    margin: 0.1rem;
+    display: flex;
+    justify-content: center;
+    margin-top: 1.3rem;
+}
+
+.timetable {
+    overflow: scroll;
+    padding-left: 1rem;
+    margin-right: 1rem;
+    font-family: Monda, Arial;
+}
+
+tbody {
+    border-right: 1px solid #aaa2ab;
+    border-bottom: 1px solid #aaa2ab;
+}
+
+table, th, td {
+    color: #e2dce3;
+    border-collapse: collapse;
+    padding: 1rem 2rem;
+    text-align: center;
+}
+
+th {
+    /* background-color: #171a24; */
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px solid #aaa2ab;
+}
+
+.oddcol-1 {
+    border: 1px solid #aaa2ab;
+    overflow: hidden;
+}
+
+.evencol {
+    background-color: rgb(33, 38, 54);
+}
+
+::-webkit-scrollbar {
+   display: none;
+}
+
+#share, #createEventbtn {
+    float: right;
+    margin: 1rem;
+    color: white;
+    font-family: Monda, Arial;
+    background-color:rgb(33, 38, 54);
+    outline: none;
+    border: 0.5px solid #aaa2ab;
+    border-radius: 3px;
+    text-decoration: none;
+    padding: 0 1rem;
+}
+
+#share:hover, #createEventbtn:hover {
+    background-color: #F1C944;
+    color: #171a24;
+}
+
+#addModule {
+    padding: 1rem;
+    width: 100%;
+    height: 2rem;
+    background-color:rgb(33, 38, 54);
+    outline: none;
+    border: none;
+    color: white;
+    font-family: Monda, Arial;
+}
+
+#addModule::placeholder {
+    color: #e2dce3
+}
+
+.yourTimetable hr {
+    margin-top: 1rem;
+}
+
+#yourModules {
+    color: #e2dce3;
+    text-align: left;
+    font-size: 1.5rem;
+}
+
+.yourTimetable p {
+    color: #e2dce3;
+    text-align: center;
+}
+
+#totalMCs {
+    font-size: 0.75rem;
+    text-align: left;
+}
