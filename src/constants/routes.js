@@ -1,3 +1,4 @@
 export const SIGN_UP = '/SignUp';
 export const SIGN_IN = '/SignIn';
 export const TAB = '/Tab';
+export const HOME = '/App';
