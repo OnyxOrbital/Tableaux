@@ -3,6 +3,7 @@ import './TopPanel.css';
 import logo from '../../images/tableaux-logo.gif';
 import { Notifications } from './Notifications/Notifications';
 import { SearchBar } from './SearchBar/SearchBar';
+import Profile from './Profile/Profile';
 
 
 export default class TopPanel extends React.Component {
@@ -14,6 +15,7 @@ export default class TopPanel extends React.Component {
               <p>Tableaux</p>
             </div>
             <SearchBar />
+            <Profile authUser={this.props.authUser}/>
             <Notifications />
             <p id="semesterdate">AY2019/20, Special Term 1</p>
           </div>

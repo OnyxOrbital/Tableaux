@@ -1,7 +1,7 @@
 import React from 'react';
 import './MyConsults.css';
 
-export class MyConsults extends React.Component {
+export default class MyConsults extends React.Component {
   render(){
     return (
       <div>

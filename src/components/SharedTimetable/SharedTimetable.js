@@ -1,7 +1,7 @@
 import React from 'react';
 import './SharedTimetable.css';
 
-export class SharedTimetable extends React.Component {
+export default class SharedTimetable extends React.Component {
     render() {
         return (
             <div className="sharedTimetables">

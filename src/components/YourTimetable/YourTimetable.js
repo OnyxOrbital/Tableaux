@@ -3,7 +3,7 @@ import './YourTimetable.css';
 import BackArrow from '../../images/backwardarrow.png';
 import FrontArrow from '../../images/forwardarrow.png';
 
-export class YourTimetable extends React.Component {
+export default class YourTimetable extends React.Component {
     render(){
     return (
         <div className="yourTimetable">
