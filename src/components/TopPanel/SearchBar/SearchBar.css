@@ -24,3 +24,8 @@
 #searchinput::placeholder {
     color: #e2dce3;
 }
+
+#dropdown {
+    width: 400px;
+    padding: 1rem;
+}

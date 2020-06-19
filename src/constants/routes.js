@@ -8,3 +8,4 @@ export const SHARED_TIMETABLE = '/SharedTimetable';
 export const MODULES = '/Modules';
 export const MY_CONSULTS = '/MyConsults';
 export const SETTINGS = '/Settings';
+export const MODULE_INFO ='/ModuleInfo';

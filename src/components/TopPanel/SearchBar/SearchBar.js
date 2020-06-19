@@ -4,10 +4,11 @@ import './SearchBar.css';
 // import SearchResults from '../SearchResults/SearchResults';
 // import nusmods from '../../../nusmods';
 // import moduleCodes from './moduleCodes.json';
-import Select from 'react-virtualized-select';
-import createFilterOptions from 'react-select-fast-filter-options';
+// import Select from 'react-virtualized-select';
+// import createFilterOptions from 'react-select-fast-filter-options';
+import Select from 'react-select';
 
-export class SearchBar extends React.Component {
+export default class SearchBar extends React.Component {
     // constructor(props) {
     //   super(props);
     //   // this.state = {
@@ -37,9 +38,17 @@ export class SearchBar extends React.Component {
     //     this.setState({searchResults: searchResults})
     //   });
     // }
+
     componentDidMount() {
       fetch(`https://api.nusmods.com/v2/2019-2020/moduleList.json`)
         .then(response => response.json())
+        // .then(jsonResponse => {
+        //   jsonResponse.map(module => {
+        //     return {
+        //       value: module.moduleCode, 
+        //       label: module.title
+        //   };
+        //   })})
         .then(searchResults => this.setState({ searchResults: searchResults }));
     }
 
@@ -75,12 +84,14 @@ export class SearchBar extends React.Component {
         //       }}/>
         //   <SearchResults searchResults={this.props.searchResults} />
         // </div>);
-            <div className="search">
-              {/* <input select="options" type="text" id="myInput" onkeyup={this.update} placeholder="Enter module code" /> */}
-              <select form="form" id="options">
-                {this.state.searchResults.map(module => <option value={module.moduleCode}>{module.moduleCode}</option>)}
-              </select>
-            </div>
+
+        //The good one
+            // <div className="search">
+            //   {/* <input select="options" type="text" id="myInput" onkeyup={this.update} placeholder="Enter module code" /> */}
+            //   <select form="form" id="options">
+            //     {this.state.searchResults.map(module => <option value={module.moduleCode}>{module.moduleCode}</option>)}
+            //   </select>
+            // </div>
             
             // <div className="search">
             //   <input type="text" id="myInput" onkeyup={this.update} placeholder="Enter module code" />
@@ -95,6 +106,11 @@ export class SearchBar extends React.Component {
             //   filterOptions={createFilterOptions(this.state.searchResults)}
             //   onChange={val => console.log(val)}
             // />
+            
+            // search bar a bit laggy
+            <Select id="dropdown" placeholder='Enter module code' 
+            options={this.state.searchResults.map(module => { return {value: module.moduleCode, label: module.moduleCode}})} 
+            onChange={this.props.action} />
         );
     }
 }

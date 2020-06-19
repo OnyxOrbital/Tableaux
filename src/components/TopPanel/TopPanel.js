@@ -2,7 +2,7 @@ import React from 'react';
 import './TopPanel.css';
 import logo from '../../images/tableaux-logo.gif';
 import { Notifications } from './Notifications/Notifications';
-import { SearchBar } from './SearchBar/SearchBar';
+import SearchBar from './SearchBar/SearchBar';
 import Profile from './Profile/Profile';
 import nusmods from '../../nusmods';
 
@@ -17,7 +17,7 @@ export default class TopPanel extends React.Component {
               <img src={logo} height="100px" width="100px" id="logoImg"/>
               <p>Tableaux</p>
             </div>
-            <SearchBar />
+            <SearchBar action={}/>
             {/* onSearch={this.search} searchResults={this.state.searchResults}  */}
             <Profile authUser={this.props.authUser}/>
             <Notifications />
