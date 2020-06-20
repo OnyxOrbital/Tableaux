@@ -120,3 +120,7 @@ body {
 #modules-a:hover {
     background-color:  #171a24;
 }
+
+.container {
+    display: flex;
+}

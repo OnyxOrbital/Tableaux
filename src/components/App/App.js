@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, } from 'react-router-dom';
 import './App.css';
-// import { MainTab } from '../Tab/Tab';
 import TopPanel from '../TopPanel/TopPanel';
 import Navigation from '../Navigation/Navigation';
 import SignUpPage from '../SignUp/SignUp';
@@ -45,7 +44,6 @@ class App extends React.Component {
             <div>
               <Navigation authUser={this.state.authUser}/>
         
-              {/* <Route exact path={ROUTES.LANDING} component={LandingPage} /> */}
               <Route exact path={ROUTES.SIGN_UP} component={SignUpPage} />
               <Route path={ROUTES.SIGN_IN} component={SignInPage} />
               <Route path={ROUTES.SIGN_OUT} component={SignOutPage} />
@@ -54,7 +52,6 @@ class App extends React.Component {
               <Route path={ROUTES.MODULES} component={Modules} />
               <Route path={ROUTES.MY_CONSULTS} component={MyConsults} />
               <Route path={ROUTES.SETTINGS} component={Settings} />
-              {/* <Route path={ROUTES.TAB} component={MainTab} /> */}
             </div>
         </Router>
       </div>

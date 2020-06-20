@@ -8,34 +8,6 @@ import sharedTimetablesIcon from '../../images/shared-timetables-grey.gif';
 import myConsultationIcon from '../../images/my-consultations-grey.gif';
 import settingsIcon from '../../images/settings-grey.gif';
 
-// const Navigation = () => (
-//   <div>
-//     <ul>
-//       <li>
-//         <Link to={ROUTES.YOUR_TIMETABLE}><img src={yourTimetableIcon}/>Your Timetable</Link>
-//       </li>
-//       <li>
-//         <Link to={ROUTES.MODULES}><img src={modulesIcon}/>Modules</Link>
-//       </li>
-//       <li>
-//         <Link to={ROUTES.SHARED_TIMETABLE}><img src={sharedTimetablesIcon}/>Shared Timetables</Link>
-//       </li>
-//       <li>
-//         <Link to={ROUTES.MY_CONSULTS}><img src={myConsultationIcon}/>My Consults</Link>
-//       </li>
-//       <li>
-//         <Link to={ROUTES.SETTINGS}><img src={settingsIcon}/>Settings</Link>
-//       </li>
-//       <li>
-//         <Link to={ROUTES.SIGN_IN}>Sign In</Link>
-//       </li>
-//       <li>
-//         <Link to={ROUTES.SIGN_OUT}>Sign Out</Link>
-//       </li>
-//     </ul>
-//   </div>
-// );
-
 // const Navigation = ({ authUser }) => (
 //   <div>{authUser ? <NavigationAuth /> : <NavigationNonAuth />}</div>
 // );
@@ -69,31 +41,3 @@ export default class Navigation extends React.Component {
     );
   }
 }
- 
-// const NavigationNonAuth = () => (
-//   <ul>
-//     <li>
-//       <Link to={ROUTES.YOUR_TIMETABLE}><img src={yourTimetableIcon}/>Your Timetable</Link>
-//     </li>
-//     <li>
-//       <Link to={ROUTES.MODULES}><img src={modulesIcon}/>Modules</Link>
-//     </li>
-//     <li>
-//       <Link to={ROUTES.SHARED_TIMETABLE}><img src={sharedTimetablesIcon}/>Shared Timetables</Link>
-//     </li>
-//     <li>
-//       <Link to={ROUTES.MY_CONSULTS}><img src={myConsultationIcon}/>My Consults</Link>
-//     </li>
-//     <li>
-//       <Link to={ROUTES.SETTINGS}><img src={settingsIcon}/>Settings</Link>
-//     </li>
-//     <li>
-//       <Link to={ROUTES.SIGN_IN}>Sign In</Link>
-//     </li>
-//     <li>
-//       <Link to={ROUTES.SIGN_OUT}>Sign Out</Link>
-//     </li>
-//   </ul>
-// );
- 
-// export default Navigation;
