@@ -11,7 +11,7 @@ import settingsIcon from '../../images/settings-grey.gif';
 // const Navigation = ({ authUser }) => (
 //   <div>{authUser ? <NavigationAuth /> : <NavigationNonAuth />}</div>
 // );
- 
+
 export default class Navigation extends React.Component {
   render() {
     return (
