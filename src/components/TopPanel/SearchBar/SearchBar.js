@@ -1,8 +1,11 @@
 import React from 'react';
 import './SearchBar.css';
 import Select from 'react-select';
+import { BrowserRouter, Route, withRouter } from "react-router-dom";
+import { withFirebase } from '../../Firebase';
 
-export default class SearchBar extends React.Component {
+
+class SearchBar extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
@@ -11,11 +14,11 @@ export default class SearchBar extends React.Component {
     }
 
     componentDidMount() {
-      fetch(`https://api.nusmods.com/v2/2019-2020/moduleList.json`)
-        .then(response => response.json())
-        .then(searchResults => this.setState({ searchResults: searchResults }));
+      // fetch(`https://api.nusmods.com/v2/2019-2020/moduleList.json`)
+      //   .then(response => response.json())
+      //   .then(searchResults => this.setState({ searchResults: searchResults }))
+      this.setState({ searchResults: this.props.firebase.retrieveData()});
     }
-
 
     render() {
         return (
@@ -30,7 +33,11 @@ export default class SearchBar extends React.Component {
             // search bar a bit laggy
             <Select id="dropdown" placeholder='Enter module code' 
             options={this.state.searchResults.map(module => { return {value: module.moduleCode, label: module.moduleCode}})} 
-            onChange={this.props.action} />
+            // onChange={this.handleChange}
+             onChange={this.props.action} 
+            />
         );
     }
 }
+
+export default withFirebase(SearchBar);

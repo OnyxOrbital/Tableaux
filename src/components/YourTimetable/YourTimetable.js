@@ -34,7 +34,7 @@ export default class YourTimetable extends React.Component {
             <Timetable />
             <a id="share" href="../Login/login.html">Share</a>
             <a id="createEventbtn" href="createEventSlot.html">Add Event</a>
-            <SearchBar action={this.addModule}/>
+            <SearchBar handleChange={this.addModule}/>
             {/* <input type="text" placeholder="Add module to timetable" id="addModule" name="addModule"/> */}
             <hr></hr>
             <p id="yourModules">Your modules:</p>

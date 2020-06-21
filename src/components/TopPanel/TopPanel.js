@@ -7,30 +7,22 @@ import Profile from './Profile/Profile';
 import {
   BrowserRouter as Router,
   Route,
+  withRouter
 } from 'react-router-dom'
 import ModuleInfo from '../ModuleInfo/ModuleInfo';
 
-
-export default class TopPanel extends React.Component {
-    // constructor(props) {
-    //   super(props);
-    //   this.state = {
-    //     redirectTo: null
-    //   }
-    //   this.select = this.select.bind(this)
-    //   this.redirect = this.redirect.bind(this)
-    // }
-
-    // select(modCode) {
-    //   this.setState({ redirectTo: modCode });
-    // }
-
-    // redirect() {
-    //   if (this.state.redirectTo) {
-    //     return <Router><Route path={`/Modules/:moduleCode`} component={ModuleInfo}/></Router>
-    //   }
-    // }
-
+class TopPanel extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+        redirectTo: null
+      }
+      this.handleChange = this.handleChange.bind(this)
+    }
+    
+    handleChange = (e) => {
+      this.props.history.push(`/Modules/${e.value}`);
+    }
 
     render() {
         return (
@@ -39,8 +31,7 @@ export default class TopPanel extends React.Component {
               <img src={logo} height="100px" width="100px" id="logoImg"/>
               <p>Tableaux</p>
             </div>
-            <SearchBar />
-            {/* {this.redirect()} */}
+            <SearchBar action={this.handleChange}/>
             
             <Profile authUser={this.props.authUser}/>
             <Notifications />
@@ -49,3 +40,5 @@ export default class TopPanel extends React.Component {
         );
     }
 }
+
+export default withRouter(TopPanel);

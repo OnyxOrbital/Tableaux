@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import './App.css';
 import TopPanel from '../TopPanel/TopPanel';
 import Navigation from '../Navigation/Navigation';
@@ -11,6 +11,7 @@ import SharedTimetable from '../SharedTimetable/SharedTimetable';
 import Modules from '../Modules/Modules';
 import MyConsults from '../MyConsults/MyConsults';
 import Settings from '../Settings/Settings';
+import ModuleInfo from '../ModuleInfo/ModuleInfo';
 import * as ROUTES from '../../constants/routes';
 import { withFirebase } from '../Firebase';
 
@@ -29,6 +30,7 @@ class App extends React.Component {
         ? this.setState({ authUser })
         : this.setState({ authUser: null });
     });
+    this.props.firebase.getDatabase();
   }
 
   componentWillUnmount() {
@@ -38,9 +40,10 @@ class App extends React.Component {
   render() {
     return (
       <div>
+        <Router>
         <TopPanel authUser={this.state.authUser}/>
 
-        <Router>
+        
             <div>
               <Navigation authUser={this.state.authUser}/>
 

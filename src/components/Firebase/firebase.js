@@ -1,5 +1,6 @@
 import firebase from 'firebase/app';
 import 'firebase/auth';
+import 'firebase/database';
 import { Redirect } from 'react-router-dom';
 
 export const config = {
@@ -17,6 +18,7 @@ class Firebase {
     constructor() {
       firebase.initializeApp(config);
       this.auth = firebase.auth();
+      this.database = firebase.database();
     }
 
     doSignIn = () => {
@@ -55,6 +57,24 @@ class Firebase {
     }).catch(function(error) {
       // An error happened.
     });
+  }
+
+  getDatabase = () => {
+    fetch(`https://api.nusmods.com/v2/2019-2020/moduleList.json`)
+    .then(response => response.json())
+    // .then(searchResults => this.setState({ searchResults: searchResults }))
+    .then(results => {
+      results.map(module => {
+        this.database.ref('/modules/' + module.moduleCode).set({
+          module_code: module.moduleCode,
+          title: module.title
+        });
+      })
+    })
+  }
+
+  retrieveData = () => {
+    return this.database.ref('modules');
   }
 }
 

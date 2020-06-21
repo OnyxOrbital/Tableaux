@@ -2,8 +2,7 @@ import React from 'react';
 import {
     BrowserRouter as Router,
     Link,
-    Route,
-    useRouteMatch
+    Route
   } from 'react-router-dom'
 import './Modules.css';
 import ModuleInfo from '../ModuleInfo/ModuleInfo';
@@ -43,7 +42,7 @@ export default class Modules extends React.Component {
                         //     <h3><strong>Preclusions</strong></h3>
                         //     <h3>{module.preclusion}</h3>
                         // </div> */}
-                // <Route exact path={`/Modules/:moduleCode`} component={ModuleInfo}/>
+                {/* // <Route exact path={`/Modules/:moduleCode`} component={ModuleInfo}/> */}
             </div>
         );
     }
