@@ -31,15 +31,15 @@ export default class YourTimetable extends React.Component {
             <img src={FrontArrow} id="forward-arrow"/>
             </div>
             <div className="timetable">
-            <Timetable />
+            <Timetable modules={this.state.modules}/>
             <a id="share" href="../Login/login.html">Share</a>
             <a id="createEventbtn" href="createEventSlot.html">Add Event</a>
             <SearchBar handleChange={this.addModule}/>
             {/* <input type="text" placeholder="Add module to timetable" id="addModule" name="addModule"/> */}
             <hr></hr>
             <p id="yourModules">Your modules:</p>
-            
-            <MyModules 
+
+            <MyModules
                 modules={this.state.modules} />
             <p id="totalMCs">Total MCs: 0 MCs</p>
             </div>
