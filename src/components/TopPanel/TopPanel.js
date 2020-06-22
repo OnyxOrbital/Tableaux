@@ -14,9 +14,6 @@ import ModuleInfo from '../ModuleInfo/ModuleInfo';
 class TopPanel extends React.Component {
     constructor(props) {
       super(props);
-      this.state = {
-        redirectTo: null
-      }
       this.handleChange = this.handleChange.bind(this)
     }
     
