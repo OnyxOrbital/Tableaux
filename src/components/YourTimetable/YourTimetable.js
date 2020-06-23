@@ -5,6 +5,7 @@ import FrontArrow from '../../images/forwardarrow.png';
 import Timetable from '../Timetable/Timetable';
 import SearchBar from '../TopPanel/SearchBar/SearchBar';
 import MyModules from '../YourTimetable/MyModules/MyModules';
+import Table from '../Scheduler/Scheduler';
 
 export default class YourTimetable extends React.Component {
     constructor(props) {
@@ -19,8 +20,9 @@ export default class YourTimetable extends React.Component {
         let modules = this.state.modules;
         modules.push(module);
         this.setState({ modules: modules });
-        console.log(modules)
     }
+
+    
 
     render(){
     return (
@@ -32,9 +34,10 @@ export default class YourTimetable extends React.Component {
             </div>
             <div className="timetable">
             <Timetable modules={this.state.modules}/>
+            
             <a id="share" href="../Login/login.html">Share</a>
             <a id="createEventbtn" href="createEventSlot.html">Add Event</a>
-            <SearchBar handleChange={this.addModule}/>
+            <SearchBar action={this.addModule}/>
             {/* <input type="text" placeholder="Add module to timetable" id="addModule" name="addModule"/> */}
             <hr></hr>
             <p id="yourModules">Your modules:</p>
@@ -42,6 +45,7 @@ export default class YourTimetable extends React.Component {
             <MyModules
                 modules={this.state.modules} />
             <p id="totalMCs">Total MCs: 0 MCs</p>
+            <Table modules={this.state.modules} />
             </div>
       </div>
     );
