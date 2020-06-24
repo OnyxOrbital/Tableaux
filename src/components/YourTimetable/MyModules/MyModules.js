@@ -8,7 +8,7 @@ export default class MyModules extends React.Component {
         return (
             <div className="MyModules">
                {this.props.modules.map(module => {
-                   return <Module module={module} 
+                   return <Module key={module.moduleCode} module={module} 
                 //    onRemove={this.removeTrack}
                    />
                })}

@@ -7,7 +7,7 @@ import {
   Appointments,
 } from '@devexpress/dx-react-scheduler-material-ui';
 
-const currentDate = '2018-11-01';
+const currentDate = '2020-06-22';
 const schedulerData = [
   { startDate: '2018-11-01T09:45', endDate: '2018-11-01T11:00', title: 'Meeting' },
   { startDate: '2018-11-01T12:00', endDate: '2018-11-01T13:30', title: 'Go to a gym' },
@@ -17,11 +17,11 @@ export default class Table extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      searchResults: [],
-      lessons: []
+      // searchResults: [],
+      // lessons: []
     }
-    this.fetchData = this.fetchData.bind(this);
-    this.processData = this.processData.bind(this);
+    // this.fetchData = this.fetchData.bind(this);
+    // this.processData = this.processData.bind(this);
   }
 
   // componentDidMount() {
@@ -30,60 +30,72 @@ export default class Table extends React.Component {
   //     .then(searchResults => this.setState({ searchResults: searchResults }));
   // }
 
-  fetchData() {
-    let modules = this.props.modules;
-    let newSearchResults = this.state.searchResults;
+  // setNewState(oldState, newState) {
+  //   this.setState({ oldState: newState });
+  // }
 
-    modules.map(module => {
-      fetch(`https://api.nusmods.com/v2/2019-2020/${module.label}.json`)
-      .then(response => response.json())
-      .then(searchResults => {
-        newSearchResults.push(searchResults);
-      });
-    });
+  // componentDidMount() {
+  //   let modules = this.props.modules;
+  //   let newSearchResults = this.state.searchResults;
 
-    // this sets the state of searchResults to contain all the module info
-    this.setState({ searchResults: newSearchResults });
-    this.processData();
-  }
+  //   console.log('modules', this.props.modules )
+  //   modules.forEach(module => {
+  //     console.log('module', module)
+      // fetch(`https://api.nusmods.com/v2/2019-2020/${module.label}.json`)
+      // .then(response => response.json())
+      // .then(searchResults => {
+      //   console.log('search results 0', searchResults)
+      //   newSearchResults.push(searchResults);
+      // });
+  //   });
+
+  //   // this sets the state of searchResults to contain all the module info
+  //   this.setState({ searchResults: newSearchResults });
+  //   console.log('new search results', newSearchResults)
+  //   console.log('search results 1', this.state.searchResults)
+  // //   setNewState(searchResults, newSearchResults);
+  //   this.processData();
+  // }
   
-  processData() {
-    let searchResults = this.state.searchResults;
-    let lessons = [];
-    searchResults.map(module => {
-      let timetable = module.semesterData.timetable;
-      timetable.map(slot => {
-        let lesson = {
-          startDate: slot.startTime,
-          endDate: slot.endTime,
-          title: module.moduleCode
-        }
-        lessons.push(lesson);
-      });
-    });
+  // processData() {
+  //   console.log('called process Data');
+  //   let searchResults = this.state.searchResults;
+  //   let lessons = [];
+  //   console.log('search results', searchResults)
+  //   searchResults.map(module => {
+  //     console.log('reached here')
+  //     let timetable = module.semesterData.timetable;
+  //     timetable.map(slot => {
+  //       let lesson = {
+  //         startDate: slot.startTime,
+  //         endDate: slot.endTime,
+  //         title: module.moduleCode
+  //       }
+  //       console.log('test');
+  //       lessons.push(lesson);
+  //     });
+  //   });
     
-    this.setState({ lessons: lessons });
-  }
+  //   this.setState({ lessons: lessons });
+  // }
 
     render() {
-        this.fetchData();
-
-        return (
-          
+        // this.fetchData();
+        console.log(this.props.lessons)
+        return (          
             <Paper>
               <Scheduler
-                data={this.state.lessons}
+                data={this.props.lessons}
               >
                 <ViewState
                   currentDate={currentDate}
                 />
                 <WeekView
                   startDayHour={8}
-                  endDayHour={15}
+                  endDayHour={20}
                 />
                 <Appointments />
               </Scheduler>
-            </Paper>
-          );
+            </Paper>);
     }
 } 
