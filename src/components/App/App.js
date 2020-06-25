@@ -14,6 +14,7 @@ import Settings from '../Settings/Settings';
 import ModuleInfo from '../ModuleInfo/ModuleInfo';
 import * as ROUTES from '../../constants/routes';
 import { withFirebase } from '../Firebase';
+import Table from '../Scheduler/Scheduler';
 
 class App extends React.Component {
   constructor(props) {
@@ -41,24 +42,25 @@ class App extends React.Component {
     return (
       <div>
         <Router>
-        <TopPanel authUser={this.state.authUser}/>
+          <div>
+            <TopPanel authUser={this.state.authUser}/>
+            <Navigation authUser={this.state.authUser}/>
 
-        
-            <div>
-              <Navigation authUser={this.state.authUser}/>
-
-              <Route exact path={ROUTES.SIGN_UP} component={SignUpPage} />
-              <Route path={ROUTES.SIGN_IN} component={SignInPage} />
-              <Route path={ROUTES.SIGN_OUT} component={SignOutPage} />
-              <Route path={ROUTES.YOUR_TIMETABLE} component={YourTimetable} />
-              <Route path={ROUTES.SHARED_TIMETABLE} component={SharedTimetable} />
-              <Switch>
-                <Route exact path={ROUTES.MODULES} component={Modules} />
-                <Route path={`/Modules/:moduleCode`} component={ModuleInfo}/>
-              </Switch>
-              <Route path={ROUTES.MY_CONSULTS} component={MyConsults} />
-              <Route path={ROUTES.SETTINGS} component={Settings} />
-            </div>
+            <Route exact path={ROUTES.SIGN_UP} component={SignUpPage} />
+            <Route path={ROUTES.SIGN_IN} component={SignInPage} />
+            <Route path={ROUTES.SIGN_OUT} component={SignOutPage} />
+            <Route path={ROUTES.YOUR_TIMETABLE} component={YourTimetable} />
+            <Switch>
+              <Route exact path={ROUTES.SHARED_TIMETABLE} component={SharedTimetable} />
+              <Route path={`/SharedTimetables/:name`} component={Table} />
+            </Switch>
+            <Switch>
+              <Route exact path={ROUTES.MODULES} component={Modules} />
+              <Route path={`/Modules/:moduleCode`} component={ModuleInfo}/>
+            </Switch>
+            <Route path={ROUTES.MY_CONSULTS} component={MyConsults} />
+            <Route path={ROUTES.SETTINGS} component={Settings} />
+          </div>
         </Router>
       </div>
     );

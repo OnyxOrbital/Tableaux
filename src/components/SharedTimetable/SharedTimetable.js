@@ -1,5 +1,6 @@
 import React from 'react';
 import './SharedTimetable.css';
+import { Link } from 'react-router-dom';
 
 export default class SharedTimetable extends React.Component {
     render() {
@@ -17,7 +18,7 @@ export default class SharedTimetable extends React.Component {
                 </thead>
                 <tbody>
                     <tr className="evenRow">
-                        <td><a href="lianchiuTT.html">Lian Chiu</a></td>
+                        <td><Link to="/SharedTimetables/LianChiu">Lian Chiu</Link></td>
                         <td>TA</td>
                     </tr>
                     <tr className="oddRow">

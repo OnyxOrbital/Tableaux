@@ -1,91 +1,63 @@
 import * as React from 'react';
 import Paper from '@material-ui/core/Paper';
 import { ViewState } from '@devexpress/dx-react-scheduler';
+import './Scheduler.css';
 import {
   Scheduler,
   WeekView,
   Appointments,
 } from '@devexpress/dx-react-scheduler-material-ui';
+import Confirmation from '../Confirmation/Confirmation';
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css';
+import { Redirect } from 'react-router-dom';
+import MyConsults from '../MyConsults/MyConsults';
 
 const currentDate = '2020-06-22';
 const schedulerData = [
-  { startDate: '2018-11-01T09:45', endDate: '2018-11-01T11:00', title: 'Meeting' },
-  { startDate: '2018-11-01T12:00', endDate: '2018-11-01T13:30', title: 'Go to a gym' },
+  { startDate: '2020-06-22T10:30', endDate: '2020-06-22T11:00', title: 'Consult' },
+  { startDate: '2020-06-24T15:30', endDate: '2020-06-24T16:00', title: 'Consult' },
+  { startDate: '2020-06-24T16:00', endDate: '2020-06-24T16:30', title: 'Consult' }
 ];
 
 export default class Table extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      // searchResults: [],
-      // lessons: []
+      showComponent: false,
+      redirectTo: null
     }
-    // this.fetchData = this.fetchData.bind(this);
-    // this.processData = this.processData.bind(this);
+    this.myAppointment = this.myAppointment.bind(this);
+    this._onButtonClick = this._onButtonClick.bind(this);
   }
 
-  // componentDidMount() {
-  //   fetch(`https://api.nusmods.com/v2/2019-2020/{moduleList}.json`)
-  //     .then(response => response.json())
-  //     .then(searchResults => this.setState({ searchResults: searchResults }));
-  // }
+  _onButtonClick() {
+    this.setState({
+      showComponent: true,
+    });
+  }
 
-  // setNewState(oldState, newState) {
-  //   this.setState({ oldState: newState });
-  // }
-
-  // componentDidMount() {
-  //   let modules = this.props.modules;
-  //   let newSearchResults = this.state.searchResults;
-
-  //   console.log('modules', this.props.modules )
-  //   modules.forEach(module => {
-  //     console.log('module', module)
-      // fetch(`https://api.nusmods.com/v2/2019-2020/${module.label}.json`)
-      // .then(response => response.json())
-      // .then(searchResults => {
-      //   console.log('search results 0', searchResults)
-      //   newSearchResults.push(searchResults);
-      // });
-  //   });
-
-  //   // this sets the state of searchResults to contain all the module info
-  //   this.setState({ searchResults: newSearchResults });
-  //   console.log('new search results', newSearchResults)
-  //   console.log('search results 1', this.state.searchResults)
-  // //   setNewState(searchResults, newSearchResults);
-  //   this.processData();
-  // }
-  
-  // processData() {
-  //   console.log('called process Data');
-  //   let searchResults = this.state.searchResults;
-  //   let lessons = [];
-  //   console.log('search results', searchResults)
-  //   searchResults.map(module => {
-  //     console.log('reached here')
-  //     let timetable = module.semesterData.timetable;
-  //     timetable.map(slot => {
-  //       let lesson = {
-  //         startDate: slot.startTime,
-  //         endDate: slot.endTime,
-  //         title: module.moduleCode
-  //       }
-  //       console.log('test');
-  //       lessons.push(lesson);
-  //     });
-  //   });
-    
-  //   this.setState({ lessons: lessons });
-  // }
+  myAppointment(props) {
+    return <Appointments.Appointment {...props} onClick={() => {
+      let result = window.confirm("Confirm booking?");
+      console.log(result);
+      if (result) {
+       this.setState({ redirectTo: true });
+      } 
+    }}/>
+  }
 
     render() {
-        // this.fetchData();
-        console.log(this.props.lessons)
-        return (          
+      
+        if (this.state.redirectTo) {
+          return <Redirect to='/MyConsults' />;
+        }
+
+        return (    
+          <div>      
             <Paper>
               <Scheduler
-                data={this.props.lessons}
+                data={schedulerData}
               >
                 <ViewState
                   currentDate={currentDate}
@@ -94,8 +66,14 @@ export default class Table extends React.Component {
                   startDayHour={8}
                   endDayHour={20}
                 />
-                <Appointments />
+                <Appointments appointmentComponent={this.myAppointment} />
               </Scheduler>
-            </Paper>);
+            </Paper>
+            {this.state.showComponent ?
+              <Confirmation path="/MyConsults" message="Do you want to confirm booking?" /> 
+              :
+              null
+            }
+          </div>);
     }
 } 
