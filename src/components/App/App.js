@@ -11,10 +11,10 @@ import SharedTimetable from '../SharedTimetable/SharedTimetable';
 import Modules from '../Modules/Modules';
 import MyConsults from '../MyConsults/MyConsults';
 import Settings from '../Settings/Settings';
-import ModuleInfo from '../ModuleInfo/ModuleInfo';
+import ModuleInfo from '../Modules/ModuleInfo/ModuleInfo';
 import * as ROUTES from '../../constants/routes';
 import { withFirebase } from '../Firebase';
-import Table from '../Scheduler/Scheduler';
+import Timetable from '../Timetable/Timetable';
 
 class App extends React.Component {
   constructor(props) {
@@ -52,7 +52,7 @@ class App extends React.Component {
             <Route path={ROUTES.YOUR_TIMETABLE} component={YourTimetable} />
             <Switch>
               <Route exact path={ROUTES.SHARED_TIMETABLE} component={SharedTimetable} />
-              <Route path={`/SharedTimetables/:name`} component={Table} />
+              <Route path={`/SharedTimetables/:name`} component={Timetable} />
             </Switch>
             <Switch>
               <Route exact path={ROUTES.MODULES} component={Modules} />

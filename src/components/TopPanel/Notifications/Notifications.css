@@ -5,14 +5,14 @@
 }
 
 .notificationButton {
-  background-color: rgb(33, 38, 54);
-  color: #F1C944;
-  font-family: Monda, Arial;
-  display: flex;
-  align-items: center;
-  padding: 0 1rem;
-  border: none;
-  border-radius: 10px;
+    background-color: rgb(33, 38, 54);
+    color: #F1C944;
+    font-family: Monda, Arial;
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+    border: none;
+    border-radius: 10px;
 }
 
 .notificationButton img {
@@ -53,7 +53,7 @@
 }
 
 /*Making notification button responsive*/
-@media (max-width: 600px) {
+@media (max-width: 1000px) {
     .notificationButton p {
         display: none;
     }

@@ -1,122 +1,169 @@
-import React from 'react';
+import * as React from 'react';
+import Paper from '@material-ui/core/Paper';
+import { ViewState } from '@devexpress/dx-react-scheduler';
 import './Timetable.css';
+import {
+  Scheduler,
+  WeekView,
+  Appointments,
+} from '@devexpress/dx-react-scheduler-material-ui';
+import Confirmation from '../Confirmation/Confirmation';
+import { Redirect } from 'react-router-dom';
+import { withStyles } from '@material-ui/core/styles';
+import { fade } from '@material-ui/core/styles/colorManipulator';
+import { createMuiTheme } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/styles';
 
-export default class Timetable extends React.Component {
-    render(){
-        return (
-            <table>
-                <thead>
-                    <tr>
-                        <th> </th>
-                        <th colspan="2">0800</th>
-                        <th colspan="2">0900</th>
-                        <th colspan="2">1000</th>
-                        <th colspan="2">1100</th>
-                        <th colspan="2">1200</th>
-                        <th colspan="2">1300</th>
-                        <th colspan="2">1400</th>
-                        <th colspan="2">1500</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr className="Mon">
-                        <td className="oddcol-1" colspan="2">MON</td>
-                        <td className="evencol" id='0800'>mon1</td>
-                        <td className="oddcol" id='0830'>mon2</td>
-                        <td className="evencol" id='0900'>mon3</td>
-                        <td className="oddcol" id='0930'>mon4</td>
-                        <td className="evencol" id='1000'>mon5</td>
-                        <td className="oddcol" id='1030'>mon6</td>
-                        <td className="evencol" id='1100'>mon7</td>
-                        <td className="oddcol" id='1130'>mon8</td>
-                        <td className="evencol" id='1200'>mon9</td>
-                        <td className="oddcol" id='1230'>mon10</td>
-                        <td className="evencol" id='1300'>mon11</td>
-                        <td className="oddcol" id='1330'>mon12</td>
-                        <td className="evencol" id='1400'>mon13</td>
-                        <td className="oddcol" id='1430'>mon14</td>
-                        <td className="evencol" id='1500'>mon15</td>
-                        <td className="oddcol" id='1530'>mon16</td>
-                    </tr>
-                    <tr className="Tues">
-                        <td className="oddcol-1" colspan="2">TUE</td>
-                        <td className="evencol">tues1</td>
-                        <td className="oddcol">tues2</td>
-                        <td className="evencol">tues3</td>
-                        <td className="oddcol">tues4</td>
-                        <td className="evencol">tues5</td>
-                        <td className="oddcol">tues6</td>
-                        <td className="evencol">tues7</td>
-                        <td className="oddcol">tues8</td>
-                        <td className="evencol">tues9</td>
-                        <td className="oddcol">tues10</td>
-                        <td className="evencol">tues11</td>
-                        <td className="oddcol">tues12</td>
-                        <td className="evencol">tues13</td>
-                        <td className="oddcol">tues14</td>
-                        <td className="evencol">tues15</td>
-                        <td className="oddcol">tues16</td>
-                    </tr>
-                    <tr className="Wed">
-                        <td className="oddcol-1" colspan="2">WED</td>
-                        <td className="evencol">wed1</td>
-                        <td className="oddcol">wed2</td>
-                        <td className="evencol">wed3</td>
-                        <td className="oddcol">wed4</td>
-                        <td className="evencol">wed5</td>
-                        <td className="oddcol">wed6</td>
-                        <td className="evencol">wed7</td>
-                        <td className="oddcol">wed8</td>
-                        <td className="evencol">wed9</td>
-                        <td className="oddcol">wed10</td>
-                        <td className="evencol">wed11</td>
-                        <td className="oddcol">wed12</td>
-                        <td className="evencol">wed13</td>
-                        <td className="oddcol">wed14</td>
-                        <td className="evencol">wed15</td>
-                        <td className="oddcol">wed16</td>
-                    </tr>
-                    <tr className="Thurs">
-                        <td className="oddcol-1" colspan="2">THU</td>
-                        <td className="evencol">thurs1</td>
-                        <td className="oddcol">thurs2</td>
-                        <td className="evencol">thurs3</td>
-                        <td className="oddcol">thurs4</td>
-                        <td className="evencol">thurs5</td>
-                        <td className="oddcol">thurs6</td>
-                        <td className="evencol">thurs7</td>
-                        <td className="oddcol">thurs8</td>
-                        <td className="evencol">thurs9</td>
-                        <td className="oddcol">thurs10</td>
-                        <td className="evencol">thurs11</td>
-                        <td className="oddcol">thurs12</td>
-                        <td className="evencol">thurs13</td>
-                        <td className="oddcol">thurs14</td>
-                        <td className="evencol">thurs15</td>
-                        <td className="oddcol">thurs16</td>
-                    </tr>
-                    <tr className="Fri">
-                        <td className="oddcol-1" colspan="2">FRI</td>
-                        <td className="evencol">fri1</td>
-                        <td className="oddcol">fri2</td>
-                        <td className="evencol">fri3</td>
-                        <td className="oddcol">fri4</td>
-                        <td className="evencol">fri5</td>
-                        <td className="oddcol">fri6</td>
-                        <td className="evencol">fri7</td>
-                        <td className="oddcol">fri8</td>
-                        <td className="evencol">fri9</td>
-                        <td className="oddcol">fri10</td>
-                        <td className="evencol">fri11</td>
-                        <td className="oddcol">fri12</td>
-                        <td className="evencol">fri13</td>
-                        <td className="oddcol">fri14</td>
-                        <td className="evencol">fri15</td>
-                        <td className="oddcol">fri16</td>
-                    </tr>
-                </tbody>
-            </table>
-        );
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      // Purple and green play nicely together.
+      main: '#000000',
+    },
+    secondary: {
+      // This is green.A700 as hex.
+      main: '#ebff0d',
+    },
+    third: {
+      darker: '#171a24',
+      lighter: 'rgb(33, 38, 54)'
     }
-}
+  },
+});
+
+const style = theme => ({
+  normalCellDark: {
+    backgroundColor: fade(theme.palette.third.darker, 1),
+    '&:hover': {
+      backgroundColor: fade(theme.palette.primary.main, 0.14),
+    },
+    '&:focus': {
+      backgroundColor: fade(theme.palette.primary.main, 0.16),
+    },
+  },
+  normalCellLight: {
+    backgroundColor: fade(theme.palette.third.lighter, 1),
+    '&:hover': {
+      backgroundColor: fade(theme.palette.primary.main, 0.14),
+    },
+    '&:focus': {
+      backgroundColor: fade(theme.palette.primary.main, 0.16),
+    },
+  },
+  scaleDark: {
+    backgroundColor: fade(theme.palette.third.darker, 1),
+  },
+});
+
+const TimeTableCellBase = ({ classes, ...restProps }) => {
+  const { startDate } = restProps;
+  const date = new Date(startDate);
+  if (date.getDay() === 0 || date.getDay() === 2
+  || date.getDay() === 4) {
+    return <WeekView.TimeTableCell {...restProps} className={classes.normalCellDark} />;
+  } return <WeekView.TimeTableCell {...restProps} className={classes.normalCellLight}/>;
+};
+
+const TimeTableCell = withStyles(style, { name: 'TimeTableCell' })(TimeTableCellBase);
+
+const DayScaleCellBase = ({ classes, ...restProps }) => {
+  const { startDate, today } = restProps;
+  return <WeekView.DayScaleCell {...restProps} className={classes.scaleDark}/>;
+};
+
+const DayScaleCell = withStyles(style, { name: 'DayScaleCell' })(DayScaleCellBase);
+
+const TimeScaleLayoutBase = ({ classes, ...restProps }) => {
+  const { startDate, today } = restProps;
+  return <WeekView.TimeScaleLayout {...restProps} className={classes.scaleDark}/>;
+};
+
+const TimeScaleLayout = withStyles(style, { name: 'TimeScaleLayout' })(TimeScaleLayoutBase);
+
+
+const currentDate = '2020-06-22';
+const schedulerData = [
+  { startDate: '2020-06-22T10:30', endDate: '2020-06-22T11:00', title: 'Consult' },
+  { startDate: '2020-06-24T15:30', endDate: '2020-06-24T16:00', title: 'Consult' },
+  { startDate: '2020-06-24T16:00', endDate: '2020-06-24T16:30', title: 'Consult' }
+];
+
+export default class Table extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      showComponent: false,
+      redirectTo: null,
+      lessonData: null
+    }
+    this.myAppointment = this.myAppointment.bind(this);
+    this._onButtonClick = this._onButtonClick.bind(this);
+  }
+
+  _onButtonClick() {
+    this.setState({
+      showComponent: true,
+    });
+  }
+
+  myAppointment(props) {
+    return <Appointments.Appointment {...props} onClick={(event) => {
+      let result = window.confirm("Confirm booking?");
+      // console.log(result);
+      // console.log(event.data)
+      if (result) {
+       this.setState({ 
+         redirectTo: true,
+         lessonData: event.data });
+      } 
+      
+    }}/>
+  }
+
+    render() {
+      
+        if (this.state.redirectTo) {
+          // console.log(this.props.data)
+          return <Redirect to={{
+            pathname: '/MyConsults',
+            consult: { 
+              name: 'Lian Chiu',
+              title: this.state.lessonData.title,
+              startDate: this.state.lessonData.startDate,
+              endDate: this.state.lessonData.endDate,
+              status: 'Pending'
+            }
+          }}/>;
+        }
+
+        return (    
+          <div>
+            <ThemeProvider theme={theme}>
+            <Paper>
+              <Scheduler
+                data={schedulerData}
+                height={660}
+              >
+                <ViewState
+                  currentDate={currentDate}
+                />
+                <WeekView
+                  startDayHour={8}
+                  endDayHour={20}
+                  timeTableCellComponent={TimeTableCell}
+                  dayScaleCellComponent={DayScaleCell}
+                  timeScaleLayoutComponent={TimeScaleLayout}
+                  excludedDays={[0]}
+                />
+                <Appointments appointmentComponent={this.myAppointment} />
+              </Scheduler>
+            </Paper>
+            </ThemeProvider>
+            {this.state.showComponent ?
+              <Confirmation path="/MyConsults" message="Do you want to confirm booking?" /> 
+              :
+              null
+            }
+          </div>);
+    }
+} 

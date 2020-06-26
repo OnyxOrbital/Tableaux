@@ -1,0 +1,11 @@
+.module {
+  color: #e2dce3;
+  font-family: Monda, Arial;
+  margin: 1.5rem;
+}
+
+.details p{
+  display: inline-block;
+  width: 33%;
+  text-align: center;
+}

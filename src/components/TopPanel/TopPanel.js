@@ -8,8 +8,7 @@ import {
   BrowserRouter as Router,
   Route,
   withRouter
-} from 'react-router-dom'
-import ModuleInfo from '../ModuleInfo/ModuleInfo';
+} from 'react-router-dom';
 
 class TopPanel extends React.Component {
     constructor(props) {
@@ -29,7 +28,6 @@ class TopPanel extends React.Component {
               <p>Tableaux</p>
             </div>
             <SearchBar action={this.handleChange}/>
-            
             <Profile authUser={this.props.authUser}/>
             <Notifications />
             <p id="semesterdate">AY2019/20, Special Term 1</p>

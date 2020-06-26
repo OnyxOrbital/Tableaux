@@ -25,7 +25,7 @@
 }
 
 /*Making top panel responsive*/
-@media (max-width: 600px) {
+@media (max-width: 800px) {
     .logo p, #semesterdate {
         display: none;
     }

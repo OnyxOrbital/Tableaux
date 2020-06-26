@@ -1,82 +1,16 @@
-body {
-    background-color: #171a24;
-    margin: 0px;
-  }
+.signIn {
+  background-color: rgb(33, 38, 54);
+  color: #F1C944;
+  font-family: Monda, Arial;
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  border: none;
+  border-radius: 10px;
+  min-width: 5rem;
+}
   
-  .login {
-    color: #F1C944;
-    padding: 1rem;
-    font-family: Monda, Arial;
-  }
-  
-  .login h1 {
-    font-size: 3rem;
-    font-family: Monda, Arial;
-    line-height: 0.75rem;
-  }
-  
-  hr {
-    border: 1px solid #F1C944;
-    margin-bottom: 1.5rem;
-  }
-  
-  input[type=text], input[type=password]  {
-    width: 97%;
-    padding: 1rem;
-    margin: 0.5rem 0 0.5rem 0;
-    display: inline-block;
-    border: none;
-    background: rgb(33, 38, 54);
-    color: #e2dce3;
-    font-family: Monda, Arial;
-  }
-  
-  .emailbox {
-    width: 97%;
-    display: flex;
-  }
-  
-  .emailbox p {
-    margin-left: 1rem;
-  }
-  
-  .register {
-    font-size: 0.75rem;
-  }
-  
-  #registerLink {
-    color: #F1C944;
-  }
-  
-  #registerLink:hover {
-    color: #c23de0;
-  }
-  
-  #remember {
-    margin-bottom: 1.5rem;
-  }
-  
-  .submission {
-    display: flex;
-  }
-  
-  #cancelbtn, #loginbtn {
-    border: 2px solid#F1C944;
-    border-radius: 10px;
-    width: 100%;
-    float: right;
-    background-color: #171a24;
-    color:#F1C944;
-    padding: 1rem;
-    margin: 0.5rem;
-    cursor: pointer;
-    font-size: 1rem;
-    font-family: Monda, Arial;
-    text-align: center;
-    text-decoration: none;
-  }
-  
-  #cancelbtn:hover, #loginbtn:hover {
-    background-color: #F1C944;
-    color: #171a24;
-  }
+.signIn:hover {
+  background-color: rgb(61, 71, 102);
+  color: #F1C944;
+}
