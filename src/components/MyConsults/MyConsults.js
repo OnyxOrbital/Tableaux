@@ -1,6 +1,7 @@
 import React from 'react';
 import './MyConsults.css';
-import ConsultList from './ConsultList/ConsultList';
+// import ConsultList from './ConsultList/ConsultList';
+import Consult from './Consult/Consult';
 
 export default class MyConsults extends React.Component {
   constructor(props) {
@@ -25,20 +26,26 @@ export default class MyConsults extends React.Component {
       <div>
         <div className="consultsList">
         <h2>My Consults</h2>
-  
+
         <table>
-          <tr>
-            <th>Name</th>
-            <th>Identity</th>
-            <th>Start Time</th>
-            <th>End Time</th>
-            <th>Venue</th>
-            <th>Status</th>
-            <th>Remarks</th>
-            <th></th>
-          </tr>
-          </table>
-          <ConsultList consults={this.state.consults} />
+          <tbody>
+            <tr>
+              <th>Name</th>
+              <th>Identity</th>
+              <th>Start Time</th>
+              <th>End Time</th>
+              <th>Venue</th>
+              <th>Status</th>
+              <th>Remarks</th>
+              <th></th>
+            </tr>
+
+            {this.state.consults.map(consult => {
+                 return <Consult consult={consult} />
+             })}
+          </tbody>
+        </table>
+
 
           {/* <tr className="evenRow">
             <td><a href="lianchiuTT.html">{this.props.location.state.name}</a></td>
@@ -89,16 +96,16 @@ export default class MyConsults extends React.Component {
               <button className="pending">Decline</button>
             </td>
           </tr> */}
-      
+
       </div>
-  
+
       {/* <div id="acceptModal" className="modal">
         <span onclick="document.getElementById('acceptModal').style.display='none'" className="close" title="Close Modal">&times;</span>
         <form className="modal-content" action="">
           <div className="container">
             <h1>Accept Booking</h1>
             <p>Are you sure you want to accept the booking?</p>
-  
+
             <div className="clearfix">
               <button type="button" className="yesbtn" id="yesbtn-accept">Yes</button>
               <button type="button" className="nobtn" id="nobtn-accept">No</button>
@@ -106,14 +113,14 @@ export default class MyConsults extends React.Component {
           </div>
         </form>
       </div>
-  
+
       <div id="declineModal" className="modal">
         <span onclick="document.getElementById('declineModal').style.display='none'" className="close" title="Close Modal">&times;</span>
         <form className="modal-content" action="">
           <div className="container">
             <h1>Decline Booking</h1>
             <p>Are you sure you want to decline the booking?</p>
-  
+
             <div className="clearfix">
               <button type="button" className="yesbtn" id="yesbtn-decline">Yes</button>
               <button type="button" className="nobtn" id="nobtn-decline">No</button>
@@ -121,7 +128,7 @@ export default class MyConsults extends React.Component {
           </div>
         </form>
       </div>  */}
-      </div> 
+      </div>
     );
   }
 }

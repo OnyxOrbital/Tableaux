@@ -4,4 +4,23 @@
 
 .container h1 {
     color: #e2dce3;
+    text-align: left;
+}
+
+.container ul {
+  list-style: none;
+}
+
+.container li {
+  padding: 10px;
+
+}
+
+.container Link {
+  color: #e2dce3;
+}
+
+.container li:hover {
+    background-color: rgb(61, 71, 102);
+    color: #F1C944;
 }

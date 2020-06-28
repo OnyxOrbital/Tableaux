@@ -27,8 +27,8 @@ export default class Modules extends React.Component {
         <ul>
           {this.state.moduleListResults.map(module => {
             return (
-              <li key={module.moduleCode}>
-                <Link to={`/Modules/${module.moduleCode}`}>{module.moduleCode}</Link>
+              <li key={module.moduleCode} style={{textAlign: 'left', paddingLeft: 15}}>
+                <Link to={`/Modules/${module.moduleCode}`}  style={{textDecoration: 'none', color: '#e2dce3'}}>{module.moduleCode} {module.title}</Link>
               </li>)})}
         </ul>
       </div>);

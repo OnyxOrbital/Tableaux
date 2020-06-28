@@ -9,3 +9,11 @@
   width: 33%;
   text-align: center;
 }
+
+.module h1 {
+  color: #F1C944;
+}
+
+.details {
+  display: flex;
+}

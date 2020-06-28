@@ -36,7 +36,7 @@ export default class YourTimetable extends React.Component {
         newSearchResults.push(searchResults);
       });
     }));
-  
+
     console.log('new search results', newSearchResults)
     this.processData(newSearchResults);
   }
@@ -55,7 +55,7 @@ export default class YourTimetable extends React.Component {
         }
       }));
     });
-      
+
     timetables.forEach(timetable => {
       if (timetable.length > 0) {
         timetable[1].forEach(slot => {
@@ -82,7 +82,7 @@ export default class YourTimetable extends React.Component {
         return `2020-06-24T${time}`;
       case 'Thursday' :
         return `2020-06-25T${time}`;
-      case 'Friday' :  
+      case 'Friday' :
         return `2020-06-26T${time}`;
     }
   }
@@ -100,7 +100,9 @@ export default class YourTimetable extends React.Component {
             <h3>Special Term 1</h3>
             <img src={FrontArrow} id="forward-arrow"/>
           </div>
-          <Table lessons={this.state.lessons} />
+          <div className="table">
+            <Table lessons={this.state.lessons} />
+          </div>
           <button id="share">Share</button>
           <button id="createEventbtn">Add Event</button>
         </div>

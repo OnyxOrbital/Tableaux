@@ -21,9 +21,19 @@ class SearchBar extends React.Component {
   render() {
     return (
       // search bar a bit laggy
-      <Select id="searchBar" placeholder='Enter module code' 
-      options={this.state.searchResults.map(module => { return {value: module.moduleCode, label: module.moduleCode}})} 
-      onChange={this.props.action} 
+      <Select id="searchBar" placeholder='Enter module code'
+      options={this.state.searchResults.map(module => { return {value: module.moduleCode, label: module.moduleCode}})}
+      onChange={this.props.action}
+      theme={(theme) => ({
+      ...theme,
+      borderRadius: 5,
+      colors: {
+      // ...theme.colors,
+      text: '#F1C944',
+      primary25: '#e2dce3',
+      primary: '#e2dce3',
+      },
+    })}
       />
     );
   }

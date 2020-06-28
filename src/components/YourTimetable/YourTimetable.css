@@ -90,3 +90,8 @@
     font-size: 0.75rem;
     text-align: left;
 }
+
+.table {
+  position: top;
+  display: flex;
+}
