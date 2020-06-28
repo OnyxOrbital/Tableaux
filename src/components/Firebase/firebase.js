@@ -22,18 +22,18 @@ class Firebase {
     }
 
     doSignIn = () => {
-    
-      var provider = new firebase.auth.OAuthProvider('microsoft.com');
 
+      var provider = new firebase.auth.OAuthProvider('microsoft.com');
+     
       provider.setCustomParameters({
         // Force re-consent.
         prompt: 'consent',
         // Target specific email with login hint.
         login_hint: 'user@u.nus.edu'
       });
-
+      
       firebase.auth().signInWithRedirect(provider);
-
+      
       return firebase.auth().getRedirectResult()
       .then(function(result) {
         // User is signed in.
@@ -42,14 +42,13 @@ class Firebase {
         // result.credential.accessToken
         // OAuth ID token can also be retrieved:
         // result.credential.idToken
-        console.log(result.credential.idToken)
+        console.log(result.user)
       })
       .catch(function(error) {
         // Handle error.
         console.log('Sign in error')
       });
     }
-    
     
   doSignOut = () => {
     return firebase.auth().signOut().then(function() {

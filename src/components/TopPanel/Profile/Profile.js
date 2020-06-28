@@ -10,7 +10,7 @@ export default class Profile extends React.Component {
               {this.props.authUser 
               ? (
                 <div>
-                  <p>{this.props.authUser}</p>
+                  <p>{this.props.authUser.displayName}</p>
                   <div className="dropdownContent">
                     <SignOutButton />
                   </div>
