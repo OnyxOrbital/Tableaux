@@ -79,6 +79,7 @@
     color: #e2dce3;
     text-align: left;
     font-size: 1.5rem;
+    margin-left: 1rem;
 }
 
 .yourTimetable p {
@@ -92,6 +93,10 @@
 }
 
 .table {
-  position: top;
-  display: flex;
+    margin-left: 1rem;
+}
+
+#line {
+    margin-left: 1rem;
+    margin-right: 1rem;
 }

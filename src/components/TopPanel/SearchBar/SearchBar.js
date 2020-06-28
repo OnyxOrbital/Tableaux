@@ -29,9 +29,14 @@ class SearchBar extends React.Component {
       borderRadius: 5,
       colors: {
       // ...theme.colors,
+      // danger: '#171a24',
+      neutral0: '#171a24',
+      neutral20: '#e2dce3',
+      neutral40: '#F1C944',
+      neutral50: '#e2dce3',
       text: '#F1C944',
-      primary25: '#e2dce3',
-      primary: '#e2dce3',
+      primary25: 'rgb(61, 71, 102)',
+      primary: '#F1C944',
       },
     })}
       />

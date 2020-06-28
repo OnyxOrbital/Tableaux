@@ -94,14 +94,14 @@ export default class YourTimetable extends React.Component {
           <SearchBar action={this.addModule}/>
           <p id="yourModules">Your modules:</p>
             <MyModules modules={this.state.modules} />
-          <hr></hr>
+          <hr id="line"></hr>
           <div className="date-panel">
             <img src={BackArrow} id="back-arrow"/>
             <h3>Special Term 1</h3>
             <img src={FrontArrow} id="forward-arrow"/>
           </div>
           <div className="table">
-            <Table lessons={this.state.lessons} />
+            <Table className="table" lessons={this.state.lessons} />
           </div>
           <button id="share">Share</button>
           <button id="createEventbtn">Add Event</button>

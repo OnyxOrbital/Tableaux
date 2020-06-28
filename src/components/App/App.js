@@ -44,22 +44,24 @@ class App extends React.Component {
         <Router>
           <div>
             <TopPanel authUser={this.state.authUser}/>
-            <Navigation authUser={this.state.authUser}/>
+            <div className="app">
+              <Navigation className="nav" authUser={this.state.authUser}/>
 
-            <Route exact path={ROUTES.SIGN_UP} component={SignUpPage} />
-            <Route path={ROUTES.SIGN_IN} component={SignInPage} />
-            <Route path={ROUTES.SIGN_OUT} component={SignOutPage} />
-            <Route path={ROUTES.YOUR_TIMETABLE} component={YourTimetable} />
-            <Switch>
-              <Route exact path={ROUTES.SHARED_TIMETABLE} component={SharedTimetable} />
-              <Route path={`/SharedTimetables/:name`} component={Timetable} />
-            </Switch>
-            <Switch>
-              <Route exact path={ROUTES.MODULES} component={Modules} />
-              <Route path={`/Modules/:moduleCode`} component={ModuleInfo}/>
-            </Switch>
-            <Route path={ROUTES.MY_CONSULTS} component={MyConsults} />
-            <Route path={ROUTES.SETTINGS} component={Settings} />
+              <Route exact path={ROUTES.SIGN_UP} component={SignUpPage} />
+              <Route path={ROUTES.SIGN_IN} component={SignInPage} />
+              <Route path={ROUTES.SIGN_OUT} component={SignOutPage} />
+              <Route className="page" path={ROUTES.YOUR_TIMETABLE} component={YourTimetable} />
+              <Switch>
+                <Route exact path={ROUTES.SHARED_TIMETABLE} component={SharedTimetable} />
+                <Route path={`/SharedTimetables/:name`} component={Timetable} />
+              </Switch>
+              <Switch>
+                <Route exact path={ROUTES.MODULES} component={Modules} />
+                <Route path={`/Modules/:moduleCode`} component={ModuleInfo}/>
+              </Switch>
+              <Route path={ROUTES.MY_CONSULTS} component={MyConsults} />
+              <Route path={ROUTES.SETTINGS} component={Settings} />
+            </div>
           </div>
         </Router>
       </div>
