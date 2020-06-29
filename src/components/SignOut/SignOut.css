@@ -1,0 +1,16 @@
+.Signout{
+    background-color: #171a24;
+    color: #F1C944;
+    border: 1px solid #F1C944;
+    border-radius: 5px;
+    padding: 1rem 3rem;
+    margin: 2rem;
+    white-space: nowrap;
+    font-family: Monda, Arial;
+    font-size: 1.25rem;
+}
+
+.Signout:hover {
+    background-color: #F1C944;
+    color: #171a24;
+}

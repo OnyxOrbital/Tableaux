@@ -37,8 +37,10 @@ class SearchBar extends React.Component {
       text: '#F1C944',
       primary25: 'rgb(61, 71, 102)',
       primary: '#F1C944',
+      // rgb(61, 71, 102)
       },
     })}
+    // maxMenuHeight={}
       />
     );
   }

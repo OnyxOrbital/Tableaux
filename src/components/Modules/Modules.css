@@ -6,6 +6,8 @@
     color: #F1C944;
     text-align: left;
     padding-left: 3rem;
+    font-family: Monda, Arial;
+    font-size: 2rem;
 }
 
 .container ul {
@@ -15,6 +17,7 @@
 .container li {
   padding: 10px;
   border-bottom: 2px solid #171a24;
+  font-family: Monda, Arial;
 }
 /*
 .container Link {
@@ -24,4 +27,5 @@
 .container li:hover {
     background-color: rgb(61, 71, 102);
     color: #F1C944;
+    font-family: Monda, Arial;
 }

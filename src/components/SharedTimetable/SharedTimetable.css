@@ -28,8 +28,10 @@
 .sharedTimetables h2 {
     font-family: Monda, Arial;
     color: #F1C944;
-    padding-left: 1rem;
     display: flex;
+    padding: 0rem 3.1rem;
+    padding-top: 1rem;
+    font-size: 2rem;
 }
 
 .sharedList {
@@ -37,7 +39,8 @@
     padding-left: 1rem;
     margin-right: 1rem;
     font-family: Monda, Arial;
-    width: 70rem;
+    width: 80rem;
+    padding: 0rem 3rem;
 }
 
 .sharedList td {

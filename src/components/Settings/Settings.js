@@ -1,10 +1,13 @@
 import React from 'react';
 import './Settings.css';
+import SignOutButton from '../SignOut/SignOut';
 
 export default class Settings extends React.Component {
     render() {
         return (
-        <h1>hi</h1>
+            <div className="button">
+                <SignOutButton />
+            </div>
         );
     }
 }

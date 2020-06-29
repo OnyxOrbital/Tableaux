@@ -1,5 +1,11 @@
 #searchBar {
     width: 100%;
     padding: 1rem;
-    
+    z-index: 20;
+    color: #F1C944;
+}
+
+.Select-input {
+    overflow: hidden;
+    max-width: 100%;
 }

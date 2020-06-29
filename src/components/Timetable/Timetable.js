@@ -42,7 +42,7 @@ const style = theme => ({
     }
   },
   scaleDark: {
-    backgroundColor: fade('#454a6e', 1),
+    backgroundColor: fade('#9eadd9', 1),
   },
 });
 
@@ -60,14 +60,14 @@ const TimeTableCell = withStyles(style, { name: 'TimeTableCell' })(TimeTableCell
 
 //Styling top header cells
 const DayScaleCellBase = ({ classes, ...restProps }) => {
-  return <WeekView.DayScaleCell {...restProps} style={{color: 'white',}} className={classes.scaleDark}/>;
+  return <WeekView.DayScaleCell {...restProps} className={classes.scaleDark}/>;
 };
 
 const DayScaleCell = withStyles(style, { name: 'DayScaleCell' })(DayScaleCellBase);
 
 //Styling top header cells
 const DayScaleEmptyCellBase = ({ classes, ...restProps }) => {
-  return <WeekView.DayScaleEmptyCell {...restProps} className={classes.scaleDark}/>;
+  return <WeekView.DayScaleEmptyCell {...restProps} className={classes.normalCellDark}/>;
 };
 
 const DayScaleEmptyCell = withStyles(style, { name: 'DayScaleEmptyCell' })(DayScaleEmptyCellBase);
@@ -81,7 +81,7 @@ const TimeScaleLayout = withStyles(style, { name: 'TimeScaleLayout' })(TimeScale
 
 //Styling left header labels
 const TimeScaleLabelBase  = ({ classes, ...restProps }) => {
-  return <WeekView.TimeScaleLabel {...restProps} className={classes.scaleDark}/>;
+  return <WeekView.TimeScaleLabel {...restProps}  className={classes.scaleDark}/>;
 };
 
 const TimeScaleLabel = withStyles(style, { name: 'TimeScaleLabel' })(TimeScaleLabelBase);
@@ -99,7 +99,7 @@ export default class Table extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: schedulerData,
+      data: this.props.lessons,
       addedAppointment: {},
       appointmentChanges: {},
       editingAppointmentId: undefined,
@@ -122,9 +122,10 @@ export default class Table extends React.Component {
   }
 
   myAppointment(props) {
-    return <Appointments.Appointment {...props} onClick={(event) => {
+    return <Appointments.Appointment {...props} style={{backgroundColor: '#ffd736'}} onClick={(event) => {
       let result = window.confirm("Confirm booking?");
       if (result) {
+        console.log(event.data)
        this.setState({ 
          redirectTo: true,
          lessonData: event.data });
@@ -178,11 +179,14 @@ export default class Table extends React.Component {
 
     return (    
       <div>
+        {console.log(this.props.lessons)}
         <ThemeProvider theme={theme}>
         <Paper>
           <Scheduler
-            data={this.state.data}
+            data={this.props.lessons}
             height={660}
+            
+            
           >
             <ViewState
               currentDate={currentDate}
