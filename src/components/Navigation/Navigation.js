@@ -25,7 +25,7 @@ export default class Navigation extends React.Component {
   }
 
   changeBackground = (e, image) => {
-    console.log('event', e);
+    // console.log('event', e);
     e.preventDefault();
     e.target.style.backgroundColor = '#171a24';
     e.target.style.color = '#F1C944';
@@ -34,7 +34,7 @@ export default class Navigation extends React.Component {
   }
 
   resetBackground = (e) => {
-    console.log('event blur', e);
+    // console.log('event blur', e);
     e.preventDefault();
     e.target.style.backgroundColor = 'rgb(33, 38, 54)';
     e.target.style.color = '#e2dce3';
@@ -44,13 +44,13 @@ export default class Navigation extends React.Component {
     return (
       <ul className="navBar">
         <li classname="navLink" onClick={(e) => this.changeBackground(e, yourTimetableYellowIcon)} onBlur={this.resetBackground}>
-          <Link to={ROUTES.YOUR_TIMETABLE} onClick={(e) => this.changeBackground(e, yourTimetableYellowIcon)} onBlur={this.resetBackground}><img className='icon' src={yourTimetableIcon} /><p>Your Timetable</p></Link>
+          <Link to={ROUTES.YOUR_TIMETABLE}><img className='icon' src={yourTimetableIcon} /><p>Your Timetable</p></Link>
         </li>
         <li classname="navLink" onClick={(e) => this.changeBackground(e, modulesYellowIcon)} onBlur={this.resetBackground}>
-          <Link to={ROUTES.MODULES} onClick={(e) => this.changeBackground(e, modulesYellowIcon)} onBlur={this.resetBackground}><img className='icon' src={modulesIcon}/><p>Modules</p></Link>
+          <Link to={ROUTES.MODULES}><img className='icon' src={modulesIcon}/><p>Modules</p></Link>
         </li>
         <li classname="navLink" onClick={(e) => this.changeBackground(e, sharedTimetablesYellowIcon)} onBlur={this.resetBackground}>
-          <Link to={ROUTES.SHARED_TIMETABLE} ><img className='icon' src={sharedTimetablesIcon}/><p>Shared Timetables</p></Link>
+          <Link to={ROUTES.SHARED_TIMETABLE}><img className='icon' src={sharedTimetablesIcon}/><p>Shared Timetables</p></Link>
         </li>
         <li classname="navLink" onClick={(e) => this.changeBackground(e, myConsultationYellowIcon)} onBlur={this.resetBackground}>
           <Link to={ROUTES.MY_CONSULTS}><img className='icon' src={myConsultationIcon}/><p>My Consults</p></Link>

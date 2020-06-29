@@ -19,8 +19,7 @@ class ModuleInfo extends React.Component {
     let module = this.state.module;
     return (
         <div className="module" key={module.moduleCode} className="module">
-            <h1>{module.moduleCode}</h1>
-            <h1>{module.title}</h1>
+            <h1>{module.moduleCode} {module.title}</h1>
             <div className="details">
                 <p>{module.department}</p>
                 <p>{module.faculty}</p>
@@ -28,7 +27,7 @@ class ModuleInfo extends React.Component {
             </div>
             <hr />
             <h3><p>{module.description}</p></h3>
-            <h3><strong>Preclusion</strong></h3>
+            <h3 id="preclusion"><strong>Preclusion</strong></h3>
             <h3>{module.preclusion}</h3>
         </div>
     );

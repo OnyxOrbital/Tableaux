@@ -1,0 +1,12 @@
+#status {
+  color: #F1C944;
+}
+
+#header {
+  color: #F1C944;
+}
+
+.tableRow td {
+  text-align: center;
+  background-color: rgb(33, 38, 54);
+}

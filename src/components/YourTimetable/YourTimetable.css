@@ -2,6 +2,7 @@
 .yourTimetable {
     display:flex;
 }
+
 #yourTimetable-a {
     background-color: #171a24;
     color: #F1C944;
@@ -26,13 +27,17 @@
 /*Your timetable page*/
 .yourTimetable h3 {
     font-family: Monda, Arial;
-    color: #e2dce3;
+    color: #F1C944;
     margin: 0.1rem;
     display: flex;
     justify-content: center;
     margin-top: 1.3rem;
 }
 
+
+.timetable hr {
+  color: #e8007c;
+}
 
 ::-webkit-scrollbar {
    display: none;
@@ -76,7 +81,7 @@
 }
 
 #yourModules {
-    color: #e2dce3;
+    color: #F1C944;
     text-align: left;
     font-size: 1.5rem;
     margin-left: 1rem;
@@ -99,4 +104,5 @@
 #line {
     margin-left: 1rem;
     margin-right: 1rem;
+    color: #e8007c;
 }

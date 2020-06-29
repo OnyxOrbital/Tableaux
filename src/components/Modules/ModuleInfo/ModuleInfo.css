@@ -17,3 +17,7 @@
 .details {
   display: flex;
 }
+
+#preclusion {
+  color: #F1C944;
+}
