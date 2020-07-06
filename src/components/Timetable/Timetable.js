@@ -20,29 +20,30 @@ import { ThemeProvider } from '@material-ui/styles';
 //For styling the timetable
 const theme = createMuiTheme({
   palette: {
-    third: {
-      darker: '#171a24',
-      lighter: 'rgb(33, 38, 54)',
-      light: '#e2dce3'
+    type: 'dark',
+    primary: {
+      dark: '#171a24',
+      main: 'rgb(33, 38, 54)',
+      light: '#e2dce3',
     }
-  },
+  }
 });
 
 const style = theme => ({
   normalCellDark: {
-    backgroundColor: fade(theme.palette.third.darker, 1),
+    backgroundColor: fade(theme.palette.primary.dark, 1),
     '&:hover': {
-      backgroundColor: fade(theme.palette.third.darker, 0.8),
+      backgroundColor: fade(theme.palette.primary.dark, 0.8),
     }
   },
   normalCellLight: {
-    backgroundColor: fade(theme.palette.third.lighter, 1),
+    backgroundColor: fade(theme.palette.primary.main, 1),
     '&:hover': {
-      backgroundColor: fade(theme.palette.third.lighter, 0.8),
+      backgroundColor: fade(theme.palette.primary.main, 0.8),
     }
   },
   scaleDark: {
-    backgroundColor: fade('#9eadd9', 1),
+    backgroundColor: fade(theme.palette.primary.dark, 1),
   },
 });
 
@@ -51,7 +52,7 @@ const TimeTableCellBase = ({ classes, ...restProps }) => {
   const { startDate } = restProps;
   const date = new Date(startDate);
   if (date.getDay() === 0 || date.getDay() === 2
-  || date.getDay() === 4) {
+  || date.getDay() === 4 || date.getDay() === 6) {
     return <WeekView.TimeTableCell {...restProps} className={classes.normalCellDark} />;
   } return <WeekView.TimeTableCell {...restProps} className={classes.normalCellLight}/>;
 };
@@ -60,7 +61,7 @@ const TimeTableCell = withStyles(style, { name: 'TimeTableCell' })(TimeTableCell
 
 //Styling top header cells
 const DayScaleCellBase = ({ classes, ...restProps }) => {
-  return <WeekView.DayScaleCell {...restProps} className={classes.scaleDark}/>;
+  return <WeekView.DayScaleCell {...restProps} className={classes.scaleDark} />;
 };
 
 const DayScaleCell = withStyles(style, { name: 'DayScaleCell' })(DayScaleCellBase);
@@ -74,25 +75,27 @@ const DayScaleEmptyCell = withStyles(style, { name: 'DayScaleEmptyCell' })(DaySc
 
 //Styling left header layout
 const TimeScaleLayoutBase = ({ classes, ...restProps }) => {
-  return <WeekView.TimeScaleLayout {...restProps} className={classes.scaleDark}/>;
+  return <WeekView.TimeScaleLayout {...restProps} style={{textColor: 'green'}} className={classes.scaleDark} />;
 };
 
 const TimeScaleLayout = withStyles(style, { name: 'TimeScaleLayout' })(TimeScaleLayoutBase);
 
 //Styling left header labels
 const TimeScaleLabelBase  = ({ classes, ...restProps }) => {
-  return <WeekView.TimeScaleLabel {...restProps}  className={classes.scaleDark}/>;
+  return <WeekView.TimeScaleLabel {...restProps}  style={{textColor: 'green'}} className={classes.scaleDark}/>;
 };
 
 const TimeScaleLabel = withStyles(style, { name: 'TimeScaleLabel' })(TimeScaleLabelBase);
 
+//Background color
+const LayoutBase = ({ classes, ...restProps }) => {
+  return <WeekView.Layout {...restProps} style={{backgroundColor: '#69616b'}} />
+};
+
+const Layout = withStyles(style, { name: 'Layout'})(LayoutBase);
+
 //Hard coded data
 const currentDate = '2020-06-22';
-// const schedulerData = [
-//   { startDate: '2020-06-22T10:30', endDate: '2020-06-22T11:00', title: 'Consult' },
-//   { startDate: '2020-06-24T15:30', endDate: '2020-06-24T16:00', title: 'Consult' },
-//   { startDate: '2020-06-24T16:00', endDate: '2020-06-24T16:30', title: 'Consult' }
-// ];
 
 //Table class
 export default class Table extends React.Component {
@@ -134,6 +137,7 @@ export default class Table extends React.Component {
   }
 
   commitChanges({ added, changed, deleted }) {
+    console.log('called commit changes');
     this.setState((state) => {
       let { data } = state;
       if (added) {
@@ -179,49 +183,43 @@ export default class Table extends React.Component {
 
     return (    
       <div>
-        {console.log(this.props.lessons)}
         <ThemeProvider theme={theme}>
-        <Paper>
-          <Scheduler
-            data={this.props.lessons}
-            height={660}
-            
-            
-          >
-            <ViewState
-              currentDate={currentDate}
-            />
-            <EditingState
-              onCommitChanges={this.commitChanges}
-              addedAppointment={this.state.addedAppointment}
-              onAddedAppointmentChange={this.changeAddedAppointment}
+          <Paper>
+            <Scheduler
+              data={this.props.lessons.concat(this.state.data)}
+              height={660}            
+            >
+              <ViewState
+                currentDate={currentDate}
+              />
+              <EditingState
+                onCommitChanges={this.commitChanges}
+                addedAppointment={this.state.addedAppointment}
+                onAddedAppointmentChange={this.changeAddedAppointment}
 
-              appointmentChanges={this.state.appointmentChanges}
-              onAppointmentChangesChange={this.changeAppointmentChanges}
+                appointmentChanges={this.state.appointmentChanges}
+                onAppointmentChangesChange={this.changeAppointmentChanges}
 
-              editingAppointmentId={this.state.editingAppointmentId}
-              onEditingAppointmentIdChange={this.changeEditingAppointmentId}
-            />
-            <IntegratedEditing />
-            <WeekView
-              startDayHour={8}
-              endDayHour={20}
-              timeTableCellComponent={TimeTableCell}
-              dayScaleCellComponent={DayScaleCell}
-              timeScaleLayoutComponent={TimeScaleLayout}
-              timeScaleLabelComponent={TimeScaleLabel}
-              dayScaleEmptyCellComponent={DayScaleEmptyCell}
-              excludedDays={[0]}
-            />
-            <ConfirmationDialog />
-            <Appointments appointmentComponent={this.myAppointment} />
-            <AppointmentTooltip
-              showOpenButton
-              showDeleteButton
-            />
-            <AppointmentForm />
-          </Scheduler>
-        </Paper>
+                editingAppointmentId={this.state.editingAppointmentId}
+                onEditingAppointmentIdChange={this.changeEditingAppointmentId}
+              />
+              <IntegratedEditing />
+              <WeekView
+                startDayHour={8}
+                endDayHour={20}
+                timeTableCellComponent={TimeTableCell}
+                dayScaleCellComponent={DayScaleCell}
+                timeScaleLayoutComponent={TimeScaleLayout}
+                timeScaleLabelComponent={TimeScaleLabel}
+                dayScaleEmptyCellComponent={DayScaleEmptyCell}
+                layoutComponent={LayoutBase}
+                excludedDays={[0]}
+              />
+              <ConfirmationDialog />
+              <Appointments appointmentComponent={this.myAppointment} />
+              <AppointmentForm />
+            </Scheduler>
+          </Paper>
         </ThemeProvider>
         {this.state.showComponent ?
           <Confirmation path="/MyConsults" message="Do you want to confirm booking?" /> 
