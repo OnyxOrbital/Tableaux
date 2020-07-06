@@ -2,15 +2,24 @@ import React from 'react';
 import './Profile.css';
 import SignInButton from '../../SignIn/SignIn';
 import SignOutButton from '../../SignOut/SignOut';
+import { AuthUserContext } from '../../Session';
+import { withFirebase } from '../../Firebase';
 
-export default class Profile extends React.Component {
+const Profile = () => (
+  <AuthUserContext.Consumer>
+    {authUser => {
+    return <ProfileBase user={authUser}/>}}
+  </AuthUserContext.Consumer>
+);
+
+class ProfileBase extends React.Component {
   render() {
       return (
           <div>
-              {this.props.authUser 
+              {this.props.user 
               ? (
                 <div>
-                  <p>{this.props.authUser.displayName}</p>
+                  <p>{this.props.user.displayName}</p>
                   <div className="dropdownContent">
                     <SignOutButton />
                   </div>
@@ -20,3 +29,5 @@ export default class Profile extends React.Component {
       );
   }
 }
+
+export default withFirebase(Profile);

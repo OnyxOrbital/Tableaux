@@ -18,7 +18,7 @@ class ModuleInfo extends React.Component {
 
     let module = this.state.module;
     return (
-        <div className="module" key={module.moduleCode} className="module">
+        <div className="module" key={module.moduleCode}>
             <h1>{module.moduleCode} {module.title}</h1>
             <div className="details">
                 <p>{module.department}</p>

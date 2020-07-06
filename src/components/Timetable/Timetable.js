@@ -88,11 +88,11 @@ const TimeScaleLabel = withStyles(style, { name: 'TimeScaleLabel' })(TimeScaleLa
 
 //Hard coded data
 const currentDate = '2020-06-22';
-const schedulerData = [
-  { startDate: '2020-06-22T10:30', endDate: '2020-06-22T11:00', title: 'Consult' },
-  { startDate: '2020-06-24T15:30', endDate: '2020-06-24T16:00', title: 'Consult' },
-  { startDate: '2020-06-24T16:00', endDate: '2020-06-24T16:30', title: 'Consult' }
-];
+// const schedulerData = [
+//   { startDate: '2020-06-22T10:30', endDate: '2020-06-22T11:00', title: 'Consult' },
+//   { startDate: '2020-06-24T15:30', endDate: '2020-06-24T16:00', title: 'Consult' },
+//   { startDate: '2020-06-24T16:00', endDate: '2020-06-24T16:30', title: 'Consult' }
+// ];
 
 //Table class
 export default class Table extends React.Component {

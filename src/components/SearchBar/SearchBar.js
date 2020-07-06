@@ -1,7 +1,7 @@
 import React from 'react';
 import './SearchBar.css';
 import Select from 'react-select';
-import { withFirebase } from '../../Firebase';
+import { withFirebase } from '../Firebase';
 
 
 class SearchBar extends React.Component {

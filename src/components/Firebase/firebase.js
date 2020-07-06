@@ -1,7 +1,6 @@
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/database';
-import { Redirect } from 'react-router-dom';
 
 export const config = {
     apiKey: "AIzaSyByRMldAI3zf___c_DwB42fuQuAprjT59c",
@@ -19,6 +18,7 @@ class Firebase {
       firebase.initializeApp(config);
       this.auth = firebase.auth();
       this.database = firebase.database();
+      this.user = this.user.bind(this);
     }
 
     doSignIn = () => {
@@ -32,22 +32,7 @@ class Firebase {
         login_hint: 'user@u.nus.edu'
       });
       
-      firebase.auth().signInWithRedirect(provider);
-      
-      return firebase.auth().getRedirectResult()
-      .then(function(result) {
-        // User is signed in.
-        // IdP data available in result.additionalUserInfo.profile.
-        // OAuth access token can also be retrieved:
-        // result.credential.accessToken
-        // OAuth ID token can also be retrieved:
-        // result.credential.idToken
-        console.log(result.user)
-      })
-      .catch(function(error) {
-        // Handle error.
-        console.log('Sign in error')
-      });
+      return firebase.auth().signInWithPopup(provider);
     }
     
   doSignOut = () => {
@@ -63,7 +48,7 @@ class Firebase {
     .then(response => response.json())
     // .then(searchResults => this.setState({ searchResults: searchResults }))
     .then(results => {
-      results.map(module => {
+      results.forEach(module => {
         this.database.ref('/modules/' + module.moduleCode).set({
           module_code: module.moduleCode,
           title: module.title
@@ -75,6 +60,10 @@ class Firebase {
   retrieveData = () => {
     return this.database.ref('modules');
   }
+
+  //User API
+  user = uid => this.database.ref(`users/${uid}`);
+  users = () => this.database.ref('users');
 }
 
 

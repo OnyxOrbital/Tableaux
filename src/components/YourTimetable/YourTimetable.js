@@ -2,8 +2,7 @@ import React from 'react';
 import './YourTimetable.css';
 import BackArrow from '../../images/backwardarrow.png';
 import FrontArrow from '../../images/forwardarrow.png';
-import Timetable from '../TimtableOld/Timetable';
-import SearchBar from '../TopPanel/SearchBar/SearchBar';
+import SearchBar from '../SearchBar/SearchBar';
 import MyModules from '../YourTimetable/MyModules/MyModules';
 import Table from '../Timetable/Timetable';
 
@@ -27,7 +26,7 @@ export default class YourTimetable extends React.Component {
 
     let newSearchResults = [];
     console.log('modules', modules)
-    let data = await Promise.all(modules.map(module => {
+    await Promise.all(modules.map(module => {
       console.log('module', module)
       return fetch(`https://api.nusmods.com/v2/2019-2020/modules/${module.label}.json`)
       .then(response => response.json())
@@ -48,7 +47,7 @@ export default class YourTimetable extends React.Component {
       let moduleCode = module.moduleCode;
       let semesterData = module.semesterData;
       timetables = timetables.concat(semesterData.map(data => {
-        if (data.semester == 1) {
+        if (data.semester === 1) {
           return [moduleCode].concat([data.timetable]);
         } else {
           return [];
@@ -84,6 +83,8 @@ export default class YourTimetable extends React.Component {
         return `2020-06-25T${time}`;
       case 'Friday' :
         return `2020-06-26T${time}`;
+      default:
+        return;
     }
   }
 
@@ -96,9 +97,9 @@ export default class YourTimetable extends React.Component {
             <MyModules modules={this.state.modules} />
           <hr id="line"></hr>
           <div className="date-panel">
-            <img src={BackArrow} id="back-arrow"/>
+            <img src={BackArrow} id="back-arrow" alt=''/>
             <h3>Special Term 1</h3>
-            <img src={FrontArrow} id="forward-arrow"/>
+            <img src={FrontArrow} id="forward-arrow" alt=''/>
           </div>
           <div className="table">
             <Table className="table" lessons={this.state.lessons} />

@@ -43,20 +43,20 @@ export default class Navigation extends React.Component {
   render() {
     return (
       <ul className="navBar">
-        <li classname="navLink" onClick={(e) => this.changeBackground(e, yourTimetableYellowIcon)} onBlur={this.resetBackground}>
-          <Link to={ROUTES.YOUR_TIMETABLE}><img className='icon' src={yourTimetableIcon} /><p>Your Timetable</p></Link>
+        <li className="navLink" onClick={(e) => this.changeBackground(e, yourTimetableYellowIcon)} onBlur={this.resetBackground}>
+          <Link to={ROUTES.YOUR_TIMETABLE}><img className='icon' src={yourTimetableIcon} alt=''/><p>Your Timetable</p></Link>
         </li>
-        <li classname="navLink" onClick={(e) => this.changeBackground(e, modulesYellowIcon)} onBlur={this.resetBackground}>
-          <Link to={ROUTES.MODULES}><img className='icon' src={modulesIcon}/><p>Modules</p></Link>
+        <li className="navLink" onClick={(e) => this.changeBackground(e, modulesYellowIcon)} onBlur={this.resetBackground}>
+          <Link to={ROUTES.MODULES}><img className='icon' src={modulesIcon} alt='' /><p>Modules</p></Link>
         </li>
-        <li classname="navLink" onClick={(e) => this.changeBackground(e, sharedTimetablesYellowIcon)} onBlur={this.resetBackground}>
-          <Link to={ROUTES.SHARED_TIMETABLE}><img className='icon' src={sharedTimetablesIcon}/><p>Shared Timetables</p></Link>
+        <li className="navLink" onClick={(e) => this.changeBackground(e, sharedTimetablesYellowIcon)} onBlur={this.resetBackground}>
+          <Link to={ROUTES.SHARED_TIMETABLE}><img className='icon' src={sharedTimetablesIcon} alt='' /><p>Shared Timetables</p></Link>
         </li>
-        <li classname="navLink" onClick={(e) => this.changeBackground(e, myConsultationYellowIcon)} onBlur={this.resetBackground}>
-          <Link to={ROUTES.MY_CONSULTS}><img className='icon' src={myConsultationIcon}/><p>My Consults</p></Link>
+        <li className="navLink" onClick={(e) => this.changeBackground(e, myConsultationYellowIcon)} onBlur={this.resetBackground}>
+          <Link to={ROUTES.MY_CONSULTS}><img className='icon' src={myConsultationIcon} alt='' /><p>My Consults</p></Link>
         </li>
-        <li classname="navLink" onClick={(e) => this.changeBackground(e, settingsYellowIcon)} onBlur={this.resetBackground}>
-          <Link to={ROUTES.SETTINGS}><img className='icon' src={settingsIcon}/><p>Settings</p></Link>
+        <li className="navLink" onClick={(e) => this.changeBackground(e, settingsYellowIcon)} onBlur={this.resetBackground}>
+          <Link to={ROUTES.SETTINGS}><img className='icon' src={settingsIcon} alt='' /><p>Settings</p></Link>
         </li>
         {/* <li>
           <Link to={ROUTES.SIGN_IN}>Sign In</Link>

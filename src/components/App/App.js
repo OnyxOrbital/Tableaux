@@ -1,5 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { withAuthentication } from '../Session';
+
 import './App.css';
 import TopPanel from '../TopPanel/TopPanel';
 import Navigation from '../Navigation/Navigation';
@@ -13,39 +15,17 @@ import MyConsults from '../MyConsults/MyConsults';
 import Settings from '../Settings/Settings';
 import ModuleInfo from '../Modules/ModuleInfo/ModuleInfo';
 import * as ROUTES from '../../constants/routes';
-import { withFirebase } from '../Firebase';
 import Timetable from '../Timetable/Timetable';
 
 class App extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      authUser: null,
-    };
-  }
-
-  componentDidMount() {
-    this.listener = this.props.firebase.auth.onAuthStateChanged(authUser => {
-      authUser
-        ? this.setState({ authUser })
-        : this.setState({ authUser: null });
-    });
-    this.props.firebase.getDatabase();
-  }
-
-  componentWillUnmount() {
-    this.listener();
-  }
-
-  render() {
+   render() {
     return (
       <div>
         <Router>
           <div>
-            <TopPanel authUser={this.state.authUser}/>
+            <TopPanel />
             <div className="app">
-              <Navigation className="nav" authUser={this.state.authUser}/>
+              <Navigation className="nav" />
 
               <Route exact path={ROUTES.SIGN_UP} component={SignUpPage} />
               <Route path={ROUTES.SIGN_IN} component={SignInPage} />
@@ -69,4 +49,4 @@ class App extends React.Component {
   }
 }
 
-export default withFirebase(App);
+export default withAuthentication(App);

@@ -38,8 +38,8 @@ const SignUp = () => (
       </div>
 
       <div class="submission">
-        <a type="submit" id="registerbtn">Register</a>
-        <a type="button" id="cancelbtn" href="../Homepage/yourTimetable.html">Cancel</a>
+        <button type="submit" id="registerbtn">Register</button>
+        <button type="button" id="cancelbtn">Cancel</button>
       </div>
 
     </div>

@@ -7,7 +7,7 @@ export class Notifications extends React.Component {
     return (
       <div className="notifications">
         <button className="notificationButton">
-          <img src={notificationIcon}/>
+          <img src={notificationIcon} alt=''></img>
           <p>Notifications</p>
         </button>
         <div className="dropdownContent">
