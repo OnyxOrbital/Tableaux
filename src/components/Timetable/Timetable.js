@@ -7,10 +7,8 @@ import {
   WeekView,
   Appointments,
   AppointmentForm,
-  AppointmentTooltip,
   ConfirmationDialog
 } from '@devexpress/dx-react-scheduler-material-ui';
-import Confirmation from '../Confirmation/Confirmation';
 import { Redirect } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import { fade } from '@material-ui/core/styles/colorManipulator';
@@ -92,8 +90,6 @@ const LayoutBase = ({ classes, ...restProps }) => {
   return <WeekView.Layout {...restProps} style={{backgroundColor: '#69616b'}} />
 };
 
-const Layout = withStyles(style, { name: 'Layout'})(LayoutBase);
-
 //Hard coded data
 const currentDate = '2020-06-22';
 
@@ -102,59 +98,118 @@ export default class Table extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: this.props.lessons,
+      data: [],
+      displayedData: [],
       addedAppointment: {},
       appointmentChanges: {},
       editingAppointmentId: undefined,
-      showComponent: false,
       redirectTo: null,
-      lessonData: null
+      consultData: null,
+      isEditing: false,
+      modsColor: ['#95AAE0', '#CB70DD', '#D17373', '#B17542', '#CC5688', '#6E59A7', '#63B586', '#891F1F', '#897F54'],
+      modTitles: []
     }
+    this.replaceSlot = this.replaceSlot.bind(this);
+    this.showAlternatives = this.showAlternatives.bind(this);
+    this.process = this.process.bind(this);
     this.myAppointment = this.myAppointment.bind(this);
-    this._onButtonClick = this._onButtonClick.bind(this);
     this.commitChanges = this.commitChanges.bind(this);
     this.changeAddedAppointment = this.changeAddedAppointment.bind(this);
     this.changeAppointmentChanges = this.changeAppointmentChanges.bind(this);
     this.changeEditingAppointmentId = this.changeEditingAppointmentId.bind(this);
   }
 
-  _onButtonClick() {
-    this.setState({
-      showComponent: true,
-    });
-  }
+
 
   myAppointment(props) {
-    return <Appointments.Appointment {...props} style={{backgroundColor: '#ffd736'}} onClick={(event) => {
-      let result = window.confirm("Confirm booking?");
-      if (result) {
-        console.log(event.data)
-       this.setState({ 
-         redirectTo: true,
-         lessonData: event.data });
-      } 
+    let background = '';
+    let titles = this.state.modTitles;
+    let colors = this.state.modsColor;
+    console.log(colors);
+    let current = props.data.title;
+    if (current === 'Consult') {
+      background = '#7D7684';
+    } else if (titles.includes(current) && titles.length < colors.length) { //if mod already in modlist
+     background = colors[titles.indexOf(current)];
+     console.log('title includes current')
+    } else if (titles.length < colors.length) {
+     background = colors[titles.length];
+     console.log('title length< colors length')
+    } else {
+      background = colors[titles.length % colors.length];
+      console.log('modulo block')
+    }
+    
+    return <Appointments.Appointment {...props} style={{backgroundColor: background}} 
+      onClick={(event) => {
+        if (this.state.isEditing) {
+          let displayedData = this.replaceSlot(event.data.title, event.data.lessonType, event.data);
+          this.setState({ 
+            displayedData: displayedData,
+            isEditing: false
+          });
+        } else {
+          if (event.data.title === "Consult") {
+            let result = window.confirm("Confirm booking?");
+            if (result) {
+              console.log('event.data', event.data)
+              this.setState({ 
+                redirectTo: true,
+                consultData: event.data 
+              }); 
+            }
+          } else {
+            let alternatives = this.showAlternatives(event.data.title, event.data.lessonType, event.data.classNo);
+            this.setState({ 
+              displayedData: this.state.displayedData.concat(alternatives),
+              isEditing: true 
+            })
+          }
+      }
     }}/>
   }
 
   commitChanges({ added, changed, deleted }) {
-    console.log('called commit changes');
     this.setState((state) => {
-      let { data } = state;
+      let { displayedData } = state;
       if (added) {
-        const startingAddedId = data.length > 0 ? data[data.length - 1].id + 1 : 0;
-        data = [...data, { id: startingAddedId, ...added }];
+        const startingAddedId = displayedData.length > 0 ? displayedData[displayedData.length - 1].id + 1 : 0;
+        displayedData = [...displayedData, { id: startingAddedId, ...added }];
       }
       if (changed) {
-        data = data.map(appointment => (
+        displayedData = displayedData.map(appointment => (
           changed[appointment.id] ? { ...appointment, ...changed[appointment.id] } : appointment));
       }
       if (deleted !== undefined) {
-        data = data.filter(appointment => appointment.id !== deleted);
+        displayedData = displayedData.filter(appointment => appointment.id !== deleted);
       }
-      return { data };
+      return { displayedData };
     });
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.lessons !== this.state.data) {
+      let displayedData = this.state.displayedData;
+      let newData = nextProps.lessons;
+      let modTitles = this.state.modTitles;
+      
+      let modKeys = Object.keys(newData);
+      modKeys.forEach(key => { //for each mod in new data
+        if (!displayedData.hasOwnProperty(key)) {
+          displayedData.push(newData[key]);
+          modTitles.push(key)
+        }
+      })
+
+      displayedData = this.process(displayedData);
+      this.setState({ 
+        data: nextProps.lessons,
+        displayedData: displayedData,
+        modTitles: modTitles
+      });
+    }
+  }
+  
   changeAddedAppointment(addedAppointment) {
     this.setState({ addedAppointment });
   }
@@ -167,15 +222,59 @@ export default class Table extends React.Component {
     this.setState({ editingAppointmentId });
   }
 
+  process(lessons) {
+    let result = []; // array of selected lesson slots to be shown
+    let modulekeys = Object.keys(lessons); //arr of mod keys
+    modulekeys.forEach(module => { //for each module array
+      let lessonTypekeys = Object.keys(lessons[module]);
+      lessonTypekeys.forEach(lessonType => { //for each lesson type
+        let classNokeys = Object.keys(lessons[module][lessonType]);
+          result = result.concat(lessons[module][lessonType][classNokeys[0]]); //concat first class no into result
+      })
+    })
+    return result;
+  }
+
+  showAlternatives(modCode, lessonType, classNo) {
+    let newdata = this.state.data[modCode][lessonType]; //arr with classNos
+    let keys = Object.keys(newdata); //arr of classNo keys
+    let result = [];
+    keys.forEach(key => { //get rid of keys
+      if (key !== classNo) { // prevent duplicate slot
+        result = result.concat(newdata[key]);
+      }
+    })
+
+    return result;
+  }
+
+  replaceSlot(modCode, lessonType, eventData) {
+    let lessons = this.state.displayedData;
+    let displayedData = [];
+    let changed = false;
+    for (let i = 0; i < lessons.length; i++) {
+      if (!changed && lessons[i].title === modCode && lessons[i].lessonType === lessonType) {
+        displayedData.push(eventData);
+        changed = true;
+      } else if (lessons[i].title === modCode && lessons[i].lessonType === lessonType){
+        
+      } else {
+        displayedData.push(lessons[i]);
+      }
+    }
+
+    return displayedData;
+  }
+  
   render() {
     if (this.state.redirectTo) {
       return <Redirect to={{
         pathname: '/MyConsults',
         consult: { 
           name: 'Lian Chiu',
-          title: this.state.lessonData.title,
-          startDate: this.state.lessonData.startDate,
-          endDate: this.state.lessonData.endDate,
+          title: this.state.consultData.title,
+          startDate: this.state.consultData.startDate,
+          endDate: this.state.consultData.endDate,
           status: 'Pending'
         }
       }}/>;
@@ -186,8 +285,8 @@ export default class Table extends React.Component {
         <ThemeProvider theme={theme}>
           <Paper>
             <Scheduler
-              data={this.props.lessons.concat(this.state.data)}
-              height={660}            
+              data={this.state.displayedData}
+              height={660}
             >
               <ViewState
                 currentDate={currentDate}
@@ -221,11 +320,6 @@ export default class Table extends React.Component {
             </Scheduler>
           </Paper>
         </ThemeProvider>
-        {this.state.showComponent ?
-          <Confirmation path="/MyConsults" message="Do you want to confirm booking?" /> 
-          :
-          null
-        }
       </div>);
   }
 } 

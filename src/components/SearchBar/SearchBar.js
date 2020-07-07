@@ -28,8 +28,6 @@ class SearchBar extends React.Component {
       ...theme,
       borderRadius: 5,
       colors: {
-      // ...theme.colors,
-      // danger: '#171a24',
       neutral0: '#171a24',
       neutral20: '#e2dce3',
       neutral40: '#F1C944',
@@ -37,10 +35,8 @@ class SearchBar extends React.Component {
       text: '#F1C944',
       primary25: 'rgb(61, 71, 102)',
       primary: '#F1C944',
-      // rgb(61, 71, 102)
       },
     })}
-    // maxMenuHeight={}
       />
     );
   }
