@@ -3,12 +3,22 @@ import './TopPanel.css';
 import logo from '../../images/tableaux-logo.gif';
 import { Notifications } from './Notifications/Notifications';
 import SearchBar from '../SearchBar/SearchBar';
-import Profile from './Profile/Profile';
+import SignInButton from '../SignIn/SignIn';
 import {
   withRouter
 } from 'react-router-dom';
+import { AuthUserContext } from '../Session';
+import { withFirebase } from '../Firebase';
+import { compose } from 'recompose';
 
-class TopPanel extends React.Component {
+const TopPanel = () => (
+  <AuthUserContext.Consumer>
+    {authUser => {
+    return <TopPanelBase user={authUser}/>}}
+  </AuthUserContext.Consumer>
+);
+
+class TopPanelBase extends React.Component {
     constructor(props) {
       super(props);
       this.handleChange = this.handleChange.bind(this)
@@ -26,7 +36,14 @@ class TopPanel extends React.Component {
               <p>Tableaux</p>
             </div>
             <SearchBar action={this.handleChange}/>
-            <Profile />
+            <div>
+              {this.props.user 
+              ? (
+                <div>
+                  <p>{this.props.user.displayName}</p>
+                </div>)
+              : <SignInButton />}
+            </div>
             <Notifications />
             <p id="semesterdate">AY2019/20, Special Term 1</p>
           </div>
@@ -34,4 +51,4 @@ class TopPanel extends React.Component {
     }
 }
 
-export default withRouter(TopPanel);
+export default compose(withRouter, withFirebase)(TopPanel);

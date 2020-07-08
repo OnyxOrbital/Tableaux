@@ -1,30 +1,26 @@
-.container {
+.AllModules {
     display: block;
 }
 
-.container h1 {
+.AllModules h1 {
     color: #F1C944;
     text-align: left;
-    padding-left: 3rem;
     font-family: Monda, Arial;
     font-size: 2rem;
 }
 
-.container ul {
+.AllModules ul {
   list-style: none;
+  padding-left: 0;
 }
 
-.container li {
+.AllModules li {
   padding: 10px;
   border-bottom: 2px solid #171a24;
   font-family: Monda, Arial;
 }
-/*
-.container Link {
-  color: #e2dce3;
-} */
 
-.container li:hover {
+.AllModules li:hover {
     background-color: rgb(61, 71, 102);
     color: #F1C944;
     font-family: Monda, Arial;

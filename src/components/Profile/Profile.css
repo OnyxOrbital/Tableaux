@@ -1,0 +1,11 @@
+.details {
+  display: flex;
+}
+
+.details p {
+  margin-left: 1rem;
+}
+
+h2 {
+  color: #F1C944;
+}

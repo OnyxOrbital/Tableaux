@@ -1,5 +1,17 @@
+/*Colors:*/
+/*yellow: #F1C944*/
+/*white-ish: #e2dce3*/
 .app {
   display: flex;
+  color: #e2dce3;
+  font-family: Monda, Arial;
+  
+}
+
+.content {
+  padding: 1rem;
+  width: 100%;
+  height: 100%;
 }
 
 @media (max-width: 800px) {

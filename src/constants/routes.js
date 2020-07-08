@@ -1,4 +1,3 @@
-export const SIGN_UP = '/SignUp';
 export const SIGN_IN = '/SignIn';
 export const SIGN_OUT = '/SignOut';
 export const TAB = '/Tab';
@@ -7,5 +6,5 @@ export const YOUR_TIMETABLE = '/YourTimetable';
 export const SHARED_TIMETABLE = '/SharedTimetable';
 export const MODULES = '/Modules';
 export const MY_CONSULTS = '/MyConsults';
-export const SETTINGS = '/Settings';
+export const PROFILE = '/Profile';
 export const MODULE_INFO ='/ModuleInfo';

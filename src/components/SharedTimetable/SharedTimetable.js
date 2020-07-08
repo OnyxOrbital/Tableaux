@@ -6,36 +6,35 @@ export default class SharedTimetable extends React.Component {
     render() {
         return (
             <div className="sharedTimetables">
-            <h2>Shared Timetables</h2>
-
-            <div className="sharedList">
-                <table>
-                <thead>
-                    <tr>
-                    <th>Name</th>
-                    <th>Identity</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr className="evenRow">
-                        <td><Link to="/SharedTimetables/LianChiu">Lian Chiu</Link></td>
+                <h2>Shared Timetables</h2>
+                <div className="sharedList">
+                    <table>
+                    <thead>
+                        <tr>
+                        <th>Name</th>
+                        <th>Identity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr className="evenRow">
+                            <td><Link className="link" to="/SharedTimetables/LianChiu">Lian Chiu</Link></td>
+                            <td>TA</td>
+                        </tr>
+                        <tr className="oddRow">
+                        <td><a className="link">Benson Lee</a></td>
                         <td>TA</td>
-                    </tr>
-                    <tr className="oddRow">
-                    <td><a href="lianchiuTT.html">Benson Lee</a></td>
-                    <td>TA</td>
-                    </tr>
-                    <tr className="evenRow">
-                    <td><a href="michellegohTT.html">Michelle Goh</a></td>
-                    <td>Student</td>
-                    </tr>
-                    <tr className="oddRow">
-                    <td><a href="michellegohTT.html">Jamie Ferguson</a></td>
-                    <td>Student</td>
-                    </tr>
-                </tbody>
-                </table>
-            </div>
+                        </tr>
+                        <tr className="evenRow">
+                        <td><a className="link">Michelle Goh</a></td>
+                        <td>Student</td>
+                        </tr>
+                        <tr className="oddRow">
+                        <td><a className="link">Jamie Ferguson</a></td>
+                        <td>Student</td>
+                        </tr>
+                    </tbody>
+                    </table>
+                </div>
             </div>
         );
     }

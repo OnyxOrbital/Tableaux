@@ -1,61 +1,15 @@
-/* h2 {
-  color: #e2dce3;
-}
-
-.sharedTimetables {
-  margin-left: 1rem;
-  margin-right: 1rem;
-}
-
-.table {
-  width: 100%;
-}
-
-.sharedList td {
-  width: 100%;
-} */
-
-#sharedTimetables-a {
-    background-color: #171a24;
-    color: #F1C944;
-}
-
-#sharedTimetables-a:hover {
-    background-color:  #171a24;
-}
-
-/* Shared timetables page */
 .sharedTimetables h2 {
-    font-family: Monda, Arial;
     color: #F1C944;
-    display: flex;
-    padding: 0rem 3.1rem;
-    padding-top: 1rem;
     font-size: 2rem;
 }
 
-.sharedList {
-    overflow: scroll;
-    padding-left: 1rem;
-    margin-right: 1rem;
-    font-family: Monda, Arial;
-    width: 80rem;
-    padding: 0rem 3rem;
-}
-
 .sharedList td {
-    color: #e2dce3;
-    padding: 1rem 2rem;
+    padding: 0;
     text-align: left;
 }
 
-/* .sharedList table {
-    width: 100%;
-} */
-
 .sharedList th {
     color: #e2dce3;
-    padding: 1rem 2rem;
     text-align: left;
     border-bottom: 1px solid #e8007c;
 }
@@ -64,24 +18,27 @@
     background-color: rgb(33, 38, 54);
 }
 
-.sharedList a:link {
-    color: #e2dce3;
-    text-decoration: none;
-}
-/*
-.sharedList a:visited {
-    color: #e2dce3;
-    text-decoration: none;
-} */
-
-.sharedList a:hover {
-    background-color: #171a24;
+.evenRow:hover, .oddRow:hover {
+    cursor: pointer;
     color: #F1C944;
+    background-color: rgb(61, 71, 102);
+}
+
+.link {
+    padding-right: ;
     text-decoration: none;
+    text-align: left;
+    float: left;
+}
+
+.oddRow a:hover {
+    color: #F1C944;
+    background-color: rgb(61, 71, 102);
 }
 
 .evenRow a:hover {
-  background-color: rgb(33, 38, 54);
+    color: #F1C944;
+    background-color: rgb(61, 71, 102);
 }
 
 ::-webkit-scrollbar {

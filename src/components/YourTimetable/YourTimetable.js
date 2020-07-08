@@ -119,11 +119,11 @@ export default class YourTimetable extends React.Component {
   render(){
     return (
       <div className="yourTimetable">
-        <div className="timetable">
+          <h2>Your Timetable</h2>
           <SearchBar action={this.addModule}/>
           <p id="yourModules">Your modules:</p>
             <MyModules modules={this.state.modules} />
-          <hr id="line"></hr>
+          <hr></hr>
           <div className="date-panel">
             <img src={BackArrow} id="back-arrow" alt=''/>
             <h3>Special Term 1</h3>
@@ -134,7 +134,6 @@ export default class YourTimetable extends React.Component {
           </div>
           <button id="share">Share</button>
           <button id="createEventbtn">Add Event</button>
-        </div>
       </div>
     );
   }
