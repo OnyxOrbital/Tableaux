@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import { withAuthentication } from '../Session';
 
 import './App.css';
@@ -27,6 +27,7 @@ class App extends React.Component {
               <Navigation className="nav" />
 
               <div className="content">
+                <Route exact path="/"><Redirect to={ROUTES.YOUR_TIMETABLE} /></Route>
                 <Route path={ROUTES.SIGN_IN} component={SignInPage} />
                 <Route path={ROUTES.SIGN_OUT} component={SignOutPage} />
                 <Route className="page" path={ROUTES.YOUR_TIMETABLE} component={YourTimetable} />

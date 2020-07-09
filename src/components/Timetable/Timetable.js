@@ -14,6 +14,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
+import { withFirebase } from '../Firebase';
 
 //For styling the timetable
 const theme = createMuiTheme({
@@ -94,7 +95,7 @@ const LayoutBase = ({ classes, ...restProps }) => {
 const currentDate = '2020-06-22';
 
 //Table class
-export default class Table extends React.Component {
+class Table extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -107,7 +108,8 @@ export default class Table extends React.Component {
       consultData: null,
       isEditing: false,
       modsColor: ['#95AAE0', '#CB70DD', '#D17373', '#B17542', '#CC5688', '#6E59A7', '#63B586', '#891F1F', '#897F54'],
-      modTitles: []
+      modTitles: [],
+      isDataLoaded: false,
     }
     this.containsModule = this.containsModule.bind(this);
     this.replaceSlot = this.replaceSlot.bind(this);
@@ -115,9 +117,9 @@ export default class Table extends React.Component {
     this.process = this.process.bind(this);
     this.myAppointment = this.myAppointment.bind(this);
     this.commitChanges = this.commitChanges.bind(this);
-    this.changeAddedAppointment = this.changeAddedAppointment.bind(this);
-    this.changeAppointmentChanges = this.changeAppointmentChanges.bind(this);
-    this.changeEditingAppointmentId = this.changeEditingAppointmentId.bind(this);
+    this.saveAppointmentsToDatabase = this.saveAppointmentsToDatabase.bind(this);
+    this.readData = this.readData.bind(this);
+    this.saveModsData = this.saveModsData.bind(this);
   }
 
   // checks if event.data.title is contained in array of modules
@@ -136,19 +138,19 @@ export default class Table extends React.Component {
     let background = '';
     let titles = this.state.modTitles;
     let colors = this.state.modsColor;
-    console.log(colors);
+    // console.log(colors);
     let current = props.data.title;
     if (current === 'Consult') {
       background = '#7D7684';
     } else if (titles.includes(current) && titles.length < colors.length) { //if mod already in modlist
      background = colors[titles.indexOf(current)];
-     console.log('title includes current')
+    //  console.log('title includes current')
     } else if (titles.length < colors.length) {
      background = colors[titles.length];
-     console.log('title length< colors length')
+    //  console.log('title length< colors length')
     } else {
       background = colors[titles.length % colors.length];
-      console.log('modulo block')
+      // console.log('modulo block')
     }
 
     return <Appointments.Appointment {...props} style={{backgroundColor: background}}
@@ -167,17 +169,17 @@ export default class Table extends React.Component {
             // pop up confirm booking dialog
             let result = window.confirm("Confirm booking?");
             if (result) {
-              console.log('event.data', event.data)
+              // console.log('event.data', event.data)
               // redirects user to MyConsults page
               this.setState({
                 redirectTo: true,
                 consultData: event.data
               });
             }
-          } else if (!this.containsModule(event.data.title)) { // for slots that are not modules nor consults
-            // the code has yet to be implemented
+          // } else if (!this.containsModule(event.data.title)) { // for slots that are not modules nor consults
+          //   // the code has yet to be implemented
           } else { // for mod slots, shows alternative slots
-            let alternatives = this.showAlternatives(event.data.title, event.data.lessonType, event.data.classNo);
+          let alternatives = this.showAlternatives(event.data.title, event.data.lessonType, event.data.classNo);
             this.setState({
               displayedData: this.state.displayedData.concat(alternatives),
               isEditing: true
@@ -229,33 +231,80 @@ export default class Table extends React.Component {
     }
   }
 
-  changeAddedAppointment(addedAppointment) {
-    this.setState({ addedAppointment });
-  }
+  // process(lessons) {
+  //   let result = []; // array of selected lesson slots to be shown
+  //   let modulekeys = Object.keys(lessons); //arr of mod keys
+  //   modulekeys.forEach(module => { //for each module array
+  //     let lessonTypekeys = Object.keys(lessons[module]);
+  //     lessonTypekeys.forEach(lessonType => { //for each lesson type
+  //       let classNokeys = Object.keys(lessons[module][lessonType]);
+  //         result = result.concat(lessons[module][lessonType][classNokeys[0]]); //concat first class no into result
+  //     })
+  //   })
+  //   return result;
+  // }
 
-  changeAppointmentChanges(appointmentChanges) {
-    this.setState({ appointmentChanges });
-  }
 
-  changeEditingAppointmentId(editingAppointmentId) {
-    this.setState({ editingAppointmentId });
-  }
+  // helps update dipslayed data whenever mods are added in myModules
+  // componentWillReceiveProps(nextProps) {
+  //   if (nextProps.lessons !== this.state.data) {
+  //     let displayedData = this.state.displayedData;
+  //     let data = this.state.data;
+  //     let newData = nextProps.lessons;
+  //     let modTitles = this.state.modTitles;
 
+  //     let modKeys = Object.keys(newData);
+  //     console.log('modKeys', modKeys)
+  //     console.log("displayed data", displayedData)
+  //     modKeys.forEach(key => { //for each mod in new data
+  //       // seems like theres a problem with displayedData keys
+  //       if (!displayedData.hasOwnProperty(key)) {
+  //         console.log('push mod to displayeddata')
+  //         displayedData.push(newData[key]);
+  //         console.log("after push dd", displayedData)
+  //         modTitles.push(key)
+  //       }
+  //     })
+  //     console.log("in compwillreceive b4 process", displayedData)
+  //     displayedData = this.process(displayedData);
+  //     console.log("in compwillreceive after process", displayedData)
+  //     data.push(newData)
+  //     this.setState({
+  //       data: data,
+  //       displayedData: displayedData,
+  //       modTitles: modTitles
+  //     });
+  //   }
+  // }
+
+  /*Returns duplicated time slots. Not sure if problem is here or in comp will receive props
+  input correct, output has extra array of the same module. Only when we add another mod. When
+  we only add 1 mod it works fine.*/
   process(lessons) {
     let result = []; // array of selected lesson slots to be shown
     let modulekeys = Object.keys(lessons); //arr of mod keys
     modulekeys.forEach(module => { //for each module array
       let lessonTypekeys = Object.keys(lessons[module]);
-      lessonTypekeys.forEach(lessonType => { //for each lesson type
-        let classNokeys = Object.keys(lessons[module][lessonType]);
-          result = result.concat(lessons[module][lessonType][classNokeys[0]]); //concat first class no into result
-      })
+      if (lessonTypekeys[0] !== "startDate" && lessonTypekeys[0] !== "classNo") { // if data has not been processed
+        lessonTypekeys.forEach(lessonType => { //for each lesson type
+          let classNokeys = Object.keys(lessons[module][lessonType]);
+          console.log("if block",lessons[module][lessonType][classNokeys[0]])
+            result = result.concat(lessons[module][lessonType][classNokeys[0]]); //concat first class no into result
+            console.log("result", result)
+          })
+        }
+    //  else {
+    //     console.log("else block", lessons[module])
+    //     result = result.concat(lessons[module]);
+    //   }
     })
     return result;
   }
 
   showAlternatives(modCode, lessonType, classNo) {
+    console.log('data', this.state.data)
     let newdata = this.state.data[modCode][lessonType]; //arr with classNos
+    
     let keys = Object.keys(newdata); //arr of classNo keys
     let result = [];
     keys.forEach(key => { //get rid of keys
@@ -286,6 +335,131 @@ export default class Table extends React.Component {
     return displayedData;
   }
 
+  readData() {
+    console.log("before reading data", this.state.displayedData)
+    let appointments = [];
+    let data = [];
+    let snapshotIsEmpty = false;
+    if (this.props.firebase.auth.currentUser) {
+      let ref = this.props.firebase.user(this.props.firebase.auth.currentUser.uid).child('appointments');
+      ref.on('value', function(snapshot) {
+        console.log('dd snapshot.val()', snapshot.val())
+        if (snapshot.val()) { //if snapshot is not empty
+          snapshotIsEmpty = true;  //snapshot is not empty
+          appointments.push(Object.values(snapshot.val()));
+        }          
+      });
+      
+      ref.child('modsData').on('value', function(snapshot) {
+        console.log('data snapshot.val()', snapshot.val())
+        if (snapshot.val()) { //if snapshot is not empty
+          snapshotIsEmpty = true;  //snapshot is not empty
+          data.push(snapshot.val());
+        }          
+      });
+
+      if (!snapshotIsEmpty) { //if snapshot is empty, finish loading
+        console.log('snapshot is empty', snapshotIsEmpty) //loads before snapshot loads
+        this.setState({
+          isDataLoaded: true
+        })
+      } else if (appointments[0] && (appointments !== []) && data) { //if snapshot is not empty
+        console.log('snapshot is not empty-data', data[0])
+        console.log('snapshot is not empty-dd',  Object.values(appointments[0][0]))
+        
+        let modulekeys = Object.keys(data[0]); //arr of mod keys
+        let data2 = [];
+        modulekeys.forEach(module => { //for each module array
+          console.log("module", module)
+          let lessonTypekeys = Object.keys(data[0][module]);
+          console.log("lessonTypekeys", lessonTypekeys)
+            lessonTypekeys.forEach(lessonType => { //for each lesson type
+            console.log('lessonType', lessonType)
+            let classNokeys = Object.keys(data[0][module][lessonType]);
+            console.log("classNokeys", classNokeys)
+            classNokeys.forEach(classNo => {
+              console.log('classNo', classNo)
+              let arr = Object.values(data[0][module][lessonType][classNo]);
+              console.log('arr', arr)
+              if (!data2.hasOwnProperty(module)) {
+                data2[module] = [];
+                data2[module][lessonType] = [];
+              } else if (!data2[module].hasOwnProperty(lessonType)) {
+                data2[module][lessonType] = [];
+              }
+              data2[module][lessonType][classNo] = [];
+              data2[module][lessonType][classNo] = data2[module][lessonType][classNo].concat(Object.values(arr));
+            });
+          });
+        })
+        console.log('data', data2)
+        this.setState({
+          displayedData: Object.values(appointments[0][0]),
+          isDataLoaded: true,
+          data: data2
+        })
+      }
+    }
+  }
+
+  saveAppointmentsToDatabase() {
+    console.log("displayeddata to save", this.state.displayedData)
+    //reseting the database first
+    this.props.firebase.user(this.props.firebase.auth.currentUser.uid)
+      .child('appointments').child('appointmentsArr')
+      .set({});
+      
+    let displayedData = this.state.displayedData;
+    
+    //looping through this.state.data and adding apppointments into db
+    displayedData.map(appointment => {
+      console.log("appointment",  appointment)
+      console.log("replace", JSON.stringify(appointment.startDate))
+      this.props.firebase.user(this.props.firebase.auth.currentUser.uid)
+      .child('appointments').child('appointmentsArr')
+      .push({
+        startDate: JSON.stringify(appointment.startDate).replace(/^"(.*)"$/, '$1'),
+        endDate: JSON.stringify(appointment.endDate).replace(/^"(.*)"$/, '$1'),
+        title: appointment.title,
+        lessonType: appointment.lessonType,
+        classNo: appointment.classNo
+      });
+    });
+    this.saveModsData();
+    console.log("after save", this.state.displayedData)
+  }
+
+  saveModsData() {
+    console.log("data to save", this.state.data)
+    let data = this.state.data;
+    this.props.firebase.user(this.props.firebase.auth.currentUser.uid)
+      .child('appointments').child('modsData')
+      .set({});
+
+    let modulekeys = Object.keys(data); //arr of mod keys
+    modulekeys.forEach(module => { //for each module array
+      let lessonTypekeys = Object.keys(data[module]);
+      lessonTypekeys.forEach(lessonType => { //for each lesson type
+        let classNokeys = Object.keys(data[module][lessonType]);
+        classNokeys.forEach(classNo => {
+          let arr = data[module][lessonType][classNo];
+          for (let i = 0; i < arr.length; i++) {
+            this.props.firebase.user(this.props.firebase.auth.currentUser.uid)
+            .child('appointments').child('modsData').child(module).child(lessonType).child(classNo)
+            .push({
+              startDate: JSON.stringify(arr[i].startDate).replace(/^"(.*)"$/, '$1'),
+              endDate: JSON.stringify(arr[i].endDate).replace(/^"(.*)"$/, '$1'),
+              title: module,
+              lessonType: lessonType,
+              classNo: classNo
+            });
+          }
+
+        })
+      })
+    })
+  }
+ 
   render() {
     if (this.state.redirectTo) {
       return <Redirect to={{
@@ -302,6 +476,10 @@ export default class Table extends React.Component {
 
     return (
       <div>
+        <div className="buttons-div">
+            <button onClick={this.saveAppointmentsToDatabase} className="save-button"><i className="fa fa-save"></i>Save</button>
+            <button onClick={this.readData} className="refresh-button"><i className="fa fa-refresh"></i>Refresh appointments</button>
+          </div>
         <ThemeProvider theme={theme}>
           <Paper>
             <Scheduler
@@ -313,14 +491,6 @@ export default class Table extends React.Component {
               />
               <EditingState
                 onCommitChanges={this.commitChanges}
-                addedAppointment={this.state.addedAppointment}
-                onAddedAppointmentChange={this.changeAddedAppointment}
-
-                appointmentChanges={this.state.appointmentChanges}
-                onAppointmentChangesChange={this.changeAppointmentChanges}
-
-                editingAppointmentId={this.state.editingAppointmentId}
-                onEditingAppointmentIdChange={this.changeEditingAppointmentId}
               />
               <IntegratedEditing />
               <WeekView
@@ -343,3 +513,5 @@ export default class Table extends React.Component {
       </div>);
   }
 }
+
+export default withFirebase(Table);
