@@ -109,6 +109,7 @@ export default class Table extends React.Component {
       modsColor: ['#95AAE0', '#CB70DD', '#D17373', '#B17542', '#CC5688', '#6E59A7', '#63B586', '#891F1F', '#897F54'],
       modTitles: []
     }
+    this.containsModule = this.containsModule.bind(this);
     this.replaceSlot = this.replaceSlot.bind(this);
     this.showAlternatives = this.showAlternatives.bind(this);
     this.process = this.process.bind(this);
@@ -119,7 +120,17 @@ export default class Table extends React.Component {
     this.changeEditingAppointmentId = this.changeEditingAppointmentId.bind(this);
   }
 
+  // checks if event.data.title is contained in array of modules
+  containsModule(title) {
+    let modules = this.props.modules;
+    for (let i = 0; i < modules.length; i++) {
+      if (modules[i].label === title) {
+        return true;
+      }
+    }
 
+    return false;
+  }
 
   myAppointment(props) {
     let background = '';
@@ -139,34 +150,41 @@ export default class Table extends React.Component {
       background = colors[titles.length % colors.length];
       console.log('modulo block')
     }
-    
-    return <Appointments.Appointment {...props} style={{backgroundColor: background}} 
+
+    return <Appointments.Appointment {...props} style={{backgroundColor: background}}
       onClick={(event) => {
         if (this.state.isEditing) {
-          let displayedData = this.replaceSlot(event.data.title, event.data.lessonType, event.data);
-          this.setState({ 
-            displayedData: displayedData,
-            isEditing: false
-          });
+          if (event.data.title.toLowerCase() !== "consult" || event.data.title.toLowerCase() !== "consultation") {
+            let displayedData = this.replaceSlot(event.data.title, event.data.lessonType, event.data);
+            this.setState({
+              displayedData: displayedData,
+              isEditing: false
+            });
+          }
         } else {
-          if (event.data.title === "Consult") {
+          // converts title to lowercase for uniformity
+          if (event.data.title.toLowerCase() === "consult" || event.data.title.toLowerCase() === "consultation") {
+            // pop up confirm booking dialog
             let result = window.confirm("Confirm booking?");
             if (result) {
               console.log('event.data', event.data)
-              this.setState({ 
+              // redirects user to MyConsults page
+              this.setState({
                 redirectTo: true,
-                consultData: event.data 
-              }); 
+                consultData: event.data
+              });
             }
-          } else {
+          } else if (!this.containsModule(event.data.title)) { // for slots that are not modules nor consults
+            // the code has yet to be implemented
+          } else { // for mod slots, shows alternative slots
             let alternatives = this.showAlternatives(event.data.title, event.data.lessonType, event.data.classNo);
-            this.setState({ 
+            this.setState({
               displayedData: this.state.displayedData.concat(alternatives),
-              isEditing: true 
+              isEditing: true
             })
           }
       }
-    }}/>
+    }} />
   }
 
   commitChanges({ added, changed, deleted }) {
@@ -187,12 +205,13 @@ export default class Table extends React.Component {
     });
   }
 
+  // helps update dipslayed data whenever mods are added in myModules
   componentWillReceiveProps(nextProps) {
     if (nextProps.lessons !== this.state.data) {
       let displayedData = this.state.displayedData;
       let newData = nextProps.lessons;
       let modTitles = this.state.modTitles;
-      
+
       let modKeys = Object.keys(newData);
       modKeys.forEach(key => { //for each mod in new data
         if (!displayedData.hasOwnProperty(key)) {
@@ -202,14 +221,14 @@ export default class Table extends React.Component {
       })
 
       displayedData = this.process(displayedData);
-      this.setState({ 
+      this.setState({
         data: nextProps.lessons,
         displayedData: displayedData,
         modTitles: modTitles
       });
     }
   }
-  
+
   changeAddedAppointment(addedAppointment) {
     this.setState({ addedAppointment });
   }
@@ -248,16 +267,17 @@ export default class Table extends React.Component {
     return result;
   }
 
+  // replaces all alternatives with a slot that is chosen by user
   replaceSlot(modCode, lessonType, eventData) {
     let lessons = this.state.displayedData;
     let displayedData = [];
     let changed = false;
     for (let i = 0; i < lessons.length; i++) {
+      // check if slot chosen matches the modcode and lessontype
       if (!changed && lessons[i].title === modCode && lessons[i].lessonType === lessonType) {
         displayedData.push(eventData);
         changed = true;
       } else if (lessons[i].title === modCode && lessons[i].lessonType === lessonType){
-        
       } else {
         displayedData.push(lessons[i]);
       }
@@ -265,12 +285,12 @@ export default class Table extends React.Component {
 
     return displayedData;
   }
-  
+
   render() {
     if (this.state.redirectTo) {
       return <Redirect to={{
         pathname: '/MyConsults',
-        consult: { 
+        consult: {
           name: 'Lian Chiu',
           title: this.state.consultData.title,
           startDate: this.state.consultData.startDate,
@@ -280,7 +300,7 @@ export default class Table extends React.Component {
       }}/>;
     }
 
-    return (    
+    return (
       <div>
         <ThemeProvider theme={theme}>
           <Paper>
@@ -322,4 +342,4 @@ export default class Table extends React.Component {
         </ThemeProvider>
       </div>);
   }
-} 
+}

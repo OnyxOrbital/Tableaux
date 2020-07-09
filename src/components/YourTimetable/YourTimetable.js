@@ -13,30 +13,46 @@ export default class YourTimetable extends React.Component {
       modules: [],
       lessons: []
     }
+    this.containsModule = this.containsModule.bind(this);
     this.filterLessons = this.filterLessons.bind(this);
     this.convertTime = this.convertTime.bind(this);
     this.addModule = this.addModule.bind(this);
     this.processData = this.processData.bind(this);
   }
 
+  // checks if event.data.title is contained in array of modules
+  containsModule(title) {
+    let modules = this.state.modules;
+    for (let i = 0; i < modules.length; i++) {
+      if (modules[i].label === title) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   //onclick on module option in searchbar,
-  //adds module to module list in state, 
+  //adds module to module list in state,
   //fetches more info (including lesson timing) from api
   //appends the extended info into search results, calls process data
   async addModule(module) {
-    let modules = this.state.modules;
-    modules.push(module);
-    this.setState({ modules: modules });
+    // checks for duplicate mod entry
+    if (!this.containsModule(module.label)) {
+      let modules = this.state.modules;
+      modules.push(module);
+      this.setState({ modules: modules });
 
-    let newSearchResults = [];
-    await Promise.all(modules.map(module => {
-      return fetch(`https://api.nusmods.com/v2/2019-2020/modules/${module.label}.json`)
-      .then(response => response.json())
-      .then(searchResults => {
-        newSearchResults.push(searchResults);
-      });
-    }));
-    this.processData(newSearchResults);
+      let newSearchResults = [];
+      await Promise.all(modules.map(module => {
+        return fetch(`https://api.nusmods.com/v2/2019-2020/modules/${module.label}.json`)
+        .then(response => response.json())
+        .then(searchResults => {
+          newSearchResults.push(searchResults);
+        });
+      }));
+      this.processData(newSearchResults);
+    }
   }
 
   //converts searchresults into array of lesson timings,
@@ -84,7 +100,7 @@ export default class YourTimetable extends React.Component {
       obj[lesson.lessonType].push(lesson);
       return obj;
     }, []);
-    
+
     let lessonTypekeys = Object.keys(lessonTypes);
     lessonTypekeys.forEach(lessonType => {
       lessonTypes[lessonType] = lessonTypes[lessonType].reduce(function(obj, lesson){
@@ -97,7 +113,7 @@ export default class YourTimetable extends React.Component {
     })
     return lessonTypes;
   }
-  
+
   convertTime(day, oldtime) {
     let time = oldtime.substring(0,2) + ':' + oldtime.substring(2,4);
     switch(day) {
@@ -130,7 +146,7 @@ export default class YourTimetable extends React.Component {
             <img src={FrontArrow} id="forward-arrow" alt=''/>
           </div>
           <div className="table">
-            <Table className="table" lessons={this.state.lessons} />
+            <Table className="table" lessons={this.state.lessons} modules={this.state.modules} />
           </div>
           <button id="share">Share</button>
           <button id="createEventbtn">Add Event</button>

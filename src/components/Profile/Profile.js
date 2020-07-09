@@ -12,6 +12,15 @@ const Profile = () => (
 );
 
 class ProfileBase extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      displayName: null,
+      email: null,
+      phoneNumber: null
+    }
+  }
+
   render() {
     if (this.props.user) {
       console.log(this.props.user)
