@@ -118,7 +118,7 @@ class Table extends React.Component {
     this.myAppointment = this.myAppointment.bind(this);
     this.commitChanges = this.commitChanges.bind(this);
     this.saveAppointmentsToDatabase = this.saveAppointmentsToDatabase.bind(this);
-    this.readData = this.readData.bind(this);
+    // this.readData = this.readData.bind(this);
     this.saveModsData = this.saveModsData.bind(this);
   }
 
@@ -171,6 +171,7 @@ class Table extends React.Component {
             if (result) {
               // console.log('event.data', event.data)
               // redirects user to MyConsults page
+
               this.setState({
                 redirectTo: true,
                 consultData: event.data
@@ -209,22 +210,38 @@ class Table extends React.Component {
 
   // helps update dipslayed data whenever mods are added in myModules
   componentWillReceiveProps(nextProps) {
-    if (nextProps.lessons !== this.state.data) {
-      let displayedData = this.state.displayedData;
-      let newData = nextProps.lessons;
+    // if data is updated (i.e mod added)
+    if (nextProps.data !== this.state.data || nextProps.displayedData !== this.state.displayedData) {
+      console.log("cwrp if block")
+      console.log("next props dd", nextProps.displayedData)
+      let displayedData = nextProps.displayedData;
+      let newData = nextProps.data;
       let modTitles = this.state.modTitles;
 
       let modKeys = Object.keys(newData);
+
+      console.log("modKeys", modKeys)
+      //loop through data, if there are mods in data that
+      //is not in dd, push mod to dd (and modTitles)
+      console.log("displayedData", displayedData)
       modKeys.forEach(key => { //for each mod in new data
-        if (!displayedData.hasOwnProperty(key)) {
+        let isIndd = false;
+        displayedData.forEach(slot => {
+          if (slot.title === key) {
+            isIndd = true;
+          }
+        })
+        if (!isIndd) {
+          console.log("newData[key]", newData[key])
           displayedData.push(newData[key]);
           modTitles.push(key)
         }
       })
-
+      console.log("b4 process dd", displayedData)
       displayedData = this.process(displayedData);
+      console.log("new dd", displayedData)
       this.setState({
-        data: nextProps.lessons,
+        data: newData,
         displayedData: displayedData,
         modTitles: modTitles
       });
@@ -285,7 +302,7 @@ class Table extends React.Component {
     let modulekeys = Object.keys(lessons); //arr of mod keys
     modulekeys.forEach(module => { //for each module array
       let lessonTypekeys = Object.keys(lessons[module]);
-      if (lessonTypekeys[0] !== "startDate" && lessonTypekeys[0] !== "classNo") { // if data has not been processed
+      if (lessonTypekeys[0] !== "endDate" && lessonTypekeys[0] !== "startDate" && lessonTypekeys[0] !== "classNo") { // if data has not been processed
         lessonTypekeys.forEach(lessonType => { //for each lesson type
           let classNokeys = Object.keys(lessons[module][lessonType]);
           console.log("if block",lessons[module][lessonType][classNokeys[0]])
@@ -293,10 +310,10 @@ class Table extends React.Component {
             console.log("result", result)
           })
         }
-    //  else {
-    //     console.log("else block", lessons[module])
-    //     result = result.concat(lessons[module]);
-    //   }
+     else {
+        console.log("else block", lessons[module])
+        result = result.concat(lessons[module]);
+      }
     })
     return result;
   }
@@ -335,72 +352,72 @@ class Table extends React.Component {
     return displayedData;
   }
 
-  readData() {
-    console.log("before reading data", this.state.displayedData)
-    let appointments = [];
-    let data = [];
-    let snapshotIsEmpty = false;
-    if (this.props.firebase.auth.currentUser) {
-      let ref = this.props.firebase.user(this.props.firebase.auth.currentUser.uid).child('appointments');
-      ref.on('value', function(snapshot) {
-        console.log('dd snapshot.val()', snapshot.val())
-        if (snapshot.val()) { //if snapshot is not empty
-          snapshotIsEmpty = true;  //snapshot is not empty
-          appointments.push(Object.values(snapshot.val()));
-        }          
-      });
+  // readData() {
+  //   console.log("before reading data", this.state.displayedData)
+  //   let appointments = [];
+  //   let data = [];
+  //   let snapshotIsEmpty = false;
+  //   if (this.props.firebase.auth.currentUser) {
+  //     let ref = this.props.firebase.user(this.props.firebase.auth.currentUser.uid).child('appointments');
+  //     ref.on('value', function(snapshot) {
+  //       console.log('dd snapshot.val()', snapshot.val())
+  //       if (snapshot.val()) { //if snapshot is not empty
+  //         snapshotIsEmpty = true;  //snapshot is not empty
+  //         appointments.push(Object.values(snapshot.val()));
+  //       }          
+  //     });
       
-      ref.child('modsData').on('value', function(snapshot) {
-        console.log('data snapshot.val()', snapshot.val())
-        if (snapshot.val()) { //if snapshot is not empty
-          snapshotIsEmpty = true;  //snapshot is not empty
-          data.push(snapshot.val());
-        }          
-      });
+  //     ref.child('modsData').on('value', function(snapshot) {
+  //       console.log('data snapshot.val()', snapshot.val())
+  //       if (snapshot.val()) { //if snapshot is not empty
+  //         snapshotIsEmpty = true;  //snapshot is not empty
+  //         data.push(snapshot.val());
+  //       }          
+  //     });
 
-      if (!snapshotIsEmpty) { //if snapshot is empty, finish loading
-        console.log('snapshot is empty', snapshotIsEmpty) //loads before snapshot loads
-        this.setState({
-          isDataLoaded: true
-        })
-      } else if (appointments[0] && (appointments !== []) && data) { //if snapshot is not empty
-        console.log('snapshot is not empty-data', data[0])
-        console.log('snapshot is not empty-dd',  Object.values(appointments[0][0]))
+  //     if (!snapshotIsEmpty) { //if snapshot is empty, finish loading
+  //       console.log('snapshot is empty', snapshotIsEmpty) //loads before snapshot loads
+  //       this.setState({
+  //         isDataLoaded: true
+  //       })
+  //     } else if (appointments[0] && (appointments !== []) && data) { //if snapshot is not empty
+  //       console.log('snapshot is not empty-data', data[0])
+  //       console.log('snapshot is not empty-dd',  Object.values(appointments[0][0]))
         
-        let modulekeys = Object.keys(data[0]); //arr of mod keys
-        let data2 = [];
-        modulekeys.forEach(module => { //for each module array
-          console.log("module", module)
-          let lessonTypekeys = Object.keys(data[0][module]);
-          console.log("lessonTypekeys", lessonTypekeys)
-            lessonTypekeys.forEach(lessonType => { //for each lesson type
-            console.log('lessonType', lessonType)
-            let classNokeys = Object.keys(data[0][module][lessonType]);
-            console.log("classNokeys", classNokeys)
-            classNokeys.forEach(classNo => {
-              console.log('classNo', classNo)
-              let arr = Object.values(data[0][module][lessonType][classNo]);
-              console.log('arr', arr)
-              if (!data2.hasOwnProperty(module)) {
-                data2[module] = [];
-                data2[module][lessonType] = [];
-              } else if (!data2[module].hasOwnProperty(lessonType)) {
-                data2[module][lessonType] = [];
-              }
-              data2[module][lessonType][classNo] = [];
-              data2[module][lessonType][classNo] = data2[module][lessonType][classNo].concat(Object.values(arr));
-            });
-          });
-        })
-        console.log('data', data2)
-        this.setState({
-          displayedData: Object.values(appointments[0][0]),
-          isDataLoaded: true,
-          data: data2
-        })
-      }
-    }
-  }
+  //       let modulekeys = Object.keys(data[0]); //arr of mod keys
+  //       let data2 = [];
+  //       modulekeys.forEach(module => { //for each module array
+  //         console.log("module", module)
+  //         let lessonTypekeys = Object.keys(data[0][module]);
+  //         console.log("lessonTypekeys", lessonTypekeys)
+  //           lessonTypekeys.forEach(lessonType => { //for each lesson type
+  //           console.log('lessonType', lessonType)
+  //           let classNokeys = Object.keys(data[0][module][lessonType]);
+  //           console.log("classNokeys", classNokeys)
+  //           classNokeys.forEach(classNo => {
+  //             console.log('classNo', classNo)
+  //             let arr = Object.values(data[0][module][lessonType][classNo]);
+  //             console.log('arr', arr)
+  //             if (!data2.hasOwnProperty(module)) {
+  //               data2[module] = [];
+  //               data2[module][lessonType] = [];
+  //             } else if (!data2[module].hasOwnProperty(lessonType)) {
+  //               data2[module][lessonType] = [];
+  //             }
+  //             data2[module][lessonType][classNo] = [];
+  //             data2[module][lessonType][classNo] = data2[module][lessonType][classNo].concat(Object.values(arr));
+  //           });
+  //         });
+  //       })
+  //       console.log('data', data2)
+  //       this.setState({
+  //         displayedData: Object.values(appointments[0][0]),
+  //         isDataLoaded: true,
+  //         data: data2
+  //       })
+  //     }
+  //   }
+  // }
 
   saveAppointmentsToDatabase() {
     console.log("displayeddata to save", this.state.displayedData)
@@ -413,17 +430,25 @@ class Table extends React.Component {
     
     //looping through this.state.data and adding apppointments into db
     displayedData.map(appointment => {
-      console.log("appointment",  appointment)
-      console.log("replace", JSON.stringify(appointment.startDate))
-      this.props.firebase.user(this.props.firebase.auth.currentUser.uid)
-      .child('appointments').child('appointmentsArr')
-      .push({
-        startDate: JSON.stringify(appointment.startDate).replace(/^"(.*)"$/, '$1'),
-        endDate: JSON.stringify(appointment.endDate).replace(/^"(.*)"$/, '$1'),
-        title: appointment.title,
-        lessonType: appointment.lessonType,
-        classNo: appointment.classNo
-      });
+      if (!appointment.classNo) {
+        this.props.firebase.user(this.props.firebase.auth.currentUser.uid)
+        .child('appointments').child('appointmentsArr')
+        .push({
+          startDate: JSON.stringify(appointment.startDate).replace(/^"(.*)"$/, '$1'),
+          endDate: JSON.stringify(appointment.endDate).replace(/^"(.*)"$/, '$1'),
+          title: appointment.title,
+        });
+      } else {
+        this.props.firebase.user(this.props.firebase.auth.currentUser.uid)
+        .child('appointments').child('appointmentsArr')
+        .push({
+          startDate: JSON.stringify(appointment.startDate).replace(/^"(.*)"$/, '$1'),
+          endDate: JSON.stringify(appointment.endDate).replace(/^"(.*)"$/, '$1'),
+          title: appointment.title,
+          lessonType: appointment.lessonType,
+          classNo: appointment.classNo
+        });
+      }
     });
     this.saveModsData();
     console.log("after save", this.state.displayedData)
@@ -478,7 +503,7 @@ class Table extends React.Component {
       <div>
         <div className="buttons-div">
             <button onClick={this.saveAppointmentsToDatabase} className="save-button"><i className="fa fa-save"></i>Save</button>
-            <button onClick={this.readData} className="refresh-button"><i className="fa fa-refresh"></i>Refresh appointments</button>
+            {/* <button onClick={this.readData} className="refresh-button"><i className="fa fa-refresh"></i>Refresh appointments</button> */}
           </div>
         <ThemeProvider theme={theme}>
           <Paper>
