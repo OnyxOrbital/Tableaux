@@ -13,7 +13,7 @@ export default class Module extends React.Component {
         return(
             <div className="Module">
                 <div className="Module-information">
-                    <h3>{this.props.module.label}</h3>
+                    <h3>{this.props.module}</h3>
                 </div>
                 {/* <button className="Module-action" onClick={this.removeModule}>-</button> */}
             </div>
