@@ -527,7 +527,7 @@ class Table extends React.Component {
     return (
       <div>
         <div className="buttons-div">
-            <button onClick={this.saveAppointmentsToDatabase} className="save-button"><i className="fa fa-save"></i>Save</button>
+            <button id="save" onClick={this.saveAppointmentsToDatabase} className="save-button"><i className="fa fa-save"></i>Save</button>
             {/* <button onClick={this.readData} className="refresh-button"><i className="fa fa-refresh"></i>Refresh appointments</button> */}
           </div>
         <ThemeProvider theme={theme}>

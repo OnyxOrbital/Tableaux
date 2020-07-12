@@ -15,6 +15,7 @@ import Profile from '../Profile/Profile';
 import ModuleInfo from '../Modules/ModuleInfo/ModuleInfo';
 import * as ROUTES from '../../constants/routes';
 import Timetable from '../Timetable/Timetable';
+import OtherTimetable from '../OtherTimetable/OtherTimetable';
 
 class App extends React.Component {
    render() {
@@ -33,7 +34,7 @@ class App extends React.Component {
                 <Route className="page" path={ROUTES.YOUR_TIMETABLE} component={YourTimetable} />
                 <Switch>
                   <Route exact path={ROUTES.SHARED_TIMETABLE} component={SharedTimetable} />
-                  <Route path={`/SharedTimetables/:name`} component={Timetable} />
+                  <Route path={`/SharedTimetables/:username`} component={OtherTimetable} />
                 </Switch>
                 <Switch>
                   <Route exact path={ROUTES.MODULES} component={Modules} />

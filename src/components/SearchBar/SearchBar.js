@@ -19,6 +19,7 @@ class SearchBar extends React.Component {
   }
 
   render() {
+    console.log("mods search options", this.state.searchResults.map(module => { return {value: module.moduleCode, label: module.moduleCode}}))
     return (
       // search bar a bit laggy
       <Select id="searchBar" placeholder='Enter module code'

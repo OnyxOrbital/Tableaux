@@ -7,7 +7,7 @@ import modulesIcon from '../../images/all-modules-grey.gif';
 import sharedTimetablesIcon from '../../images/shared-timetables-grey.gif';
 import myConsultationIcon from '../../images/my-consultations-grey.gif';
 // import settingsIcon from '../../images/settings-grey.gif';
-// import yourTimetableYellowIcon from '../../images/my-timetable.gif';
+// import yourTimetableYellouwIcon from '../../images/my-timetable.gif';
 // import modulesYellowIcon from '../../images/all-modules.gif';
 // import sharedTimetablesYellowIcon from '../../images/shared-timetables.gif';
 // import myConsultationYellowIcon from '../../images/my-consultations.gif';

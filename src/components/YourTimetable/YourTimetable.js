@@ -6,6 +6,8 @@ import SearchBar from '../SearchBar/SearchBar';
 import MyModules from '../YourTimetable/MyModules/MyModules';
 import Table from '../Timetable/Timetable';
 import { withFirebase } from '../Firebase/index';
+import ShareDialog from '../ShareDialog/ShareDialog';
+import ShareSearchBar from '../ShareSearchBar/ShareSearchBar';
 
 class YourTimetable extends React.Component {
   constructor(props) {
@@ -24,6 +26,7 @@ class YourTimetable extends React.Component {
     this.addModule = this.addModule.bind(this);
     this.processData = this.processData.bind(this);
     this.readData = this.readData.bind(this);
+    this.readUsers = this.readUsers.bind(this);
   }
 
   // checks if event.data.title is contained in array of modules
@@ -212,6 +215,25 @@ class YourTimetable extends React.Component {
     }
   }
 
+  readUsers() {
+    let users = [];
+    if (this.props.firebase.auth.currentUser) {
+        // ref is the users hashcode
+      let ref = this.props.firebase.users();
+      ref.on('value', function(snapshot) {
+        console.log('dd snapshot', snapshot)
+        if (snapshot.val()) { //if snapshot is not empty
+          snapshot.forEach(user => {
+            // really dk what's happening
+            console.log('username', user.val().username)
+            users.push(user.val().username);
+          })
+        }
+      })
+    }
+    return users;
+  }
+
   render(){
     console.log("data", this.state.data)
     console.log("dd", this.state.displayedData)
@@ -246,6 +268,7 @@ class YourTimetable extends React.Component {
         allMods = allMods.concat([key.value]);
       }
     })
+
     console.log('allMods', allMods)
     return (
       <div className="yourTimetable">
@@ -263,8 +286,9 @@ class YourTimetable extends React.Component {
           <div className="table">
             <Table className="table" data={allData} displayedData={this.state.displayedData} modules={allMods} />
           </div>
-          <button id="share">Share</button>
-          <button id="createEventbtn">Add Event</button>
+          <ShareDialog users={this.readUsers()} />
+          {/* <ShareSearchBar /> */}
+          {/* <button id="share" onClick={this.displayDialog}>Share</button> */}
       </div>
     );
   }

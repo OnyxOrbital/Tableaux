@@ -1,14 +1,4 @@
-.TSLayout {
-  background-color: black;
-}
-
-.TSLabel {
-  background-color: white;
-  color: blue;
-
-}
-
-#save {
+#cancel, #share, #confirm {
   float: right;
   margin: 1rem;
   color: white;
@@ -21,7 +11,7 @@
   padding: 0 1rem;
 }
 
-#save:hover {
+#cancel:hover, #share:hover, #confirm:hover {
   background-color: #F1C944;
   color: #171a24;
 }
