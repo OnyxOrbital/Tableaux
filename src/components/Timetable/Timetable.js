@@ -107,10 +107,11 @@ class Table extends React.Component {
       redirectTo: null,
       consultData: null,
       isEditing: false,
-      modsColor: ['#95AAE0', '#CB70DD', '#D17373', '#B17542', '#CC5688', '#6E59A7', '#63B586', '#891F1F', '#897F54'],
+      modsColor: ['#95AAE0', '#CB70DD', '#D17373', '#bd814d', '#CC5688', '#6E59A7', '#63B586', '#891F1F', '#897F54'],
       modTitles: [],
       isDataLoaded: false,
     }
+    this.indexOfModule = this.indexOfModule.bind(this);
     this.containsModule = this.containsModule.bind(this);
     this.replaceSlot = this.replaceSlot.bind(this);
     this.showAlternatives = this.showAlternatives.bind(this);
@@ -123,10 +124,9 @@ class Table extends React.Component {
   }
 
   // checks if event.data.title is contained in array of modules
-  containsModule(title) {
-    let modules = this.props.modules;
-    for (let i = 0; i < modules.length; i++) {
-      if (modules[i].label === title) {
+  containsModule(title, arr) {
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i].title === title) {
         return true;
       }
     }
@@ -136,20 +136,21 @@ class Table extends React.Component {
 
   myAppointment(props) {
     let background = '';
-    let titles = this.state.modTitles;
+    let titles = this.props.modules;
+    console.log("titles", titles)
     let colors = this.state.modsColor;
     // console.log(colors);
     let current = props.data.title;
     if (current === 'Consult') {
-      background = '#7D7684';
-    } else if (titles.includes(current) && titles.length < colors.length) { //if mod already in modlist
-     background = colors[titles.indexOf(current)];
+      // background = '#7D7684';
+      background = '#bd814d';
+    } else if (this.indexOfModule(current, titles) < colors.length) {
+     background = colors[this.indexOfModule(current, titles)];
+     console.log("index of module", this.indexOfModule(current, titles))
     //  console.log('title includes current')
-    } else if (titles.length < colors.length) {
-     background = colors[titles.length];
-    //  console.log('title length< colors length')
-    } else {
+    } else { // if no more colors to assign
       background = colors[titles.length % colors.length];
+      console.log("modding color", titles.length % colors.length)
       // console.log('modulo block')
     }
 
@@ -176,8 +177,8 @@ class Table extends React.Component {
                 consultData: event.data
               });
             }
-          // } else if (!this.containsModule(event.data.title)) { // for slots that are not modules nor consults
-          //   // the code has yet to be implemented
+          } else if (!this.containsModule(event.data.title, this.props.modules)) { // for slots that are not modules nor consults
+            // the code has yet to be implemented
           } else { // for mod slots, shows alternative slots
           let alternatives = this.showAlternatives(event.data.title, event.data.lessonType, event.data.classNo);
             this.setState({
@@ -187,6 +188,17 @@ class Table extends React.Component {
           }
       }
     }} />
+  }
+
+  indexOfModule(title, modules) {
+    let index = 0
+    for (let i = 0; i < modules.length; i++) {
+      if (modules[i].value === title) {
+        index = i;
+      }
+    }
+
+    return index;
   }
 
   commitChanges({ added, changed, deleted }) {
@@ -215,14 +227,24 @@ class Table extends React.Component {
       let modTitles = this.state.modTitles;
 
       let modKeys = Object.keys(newData);
+      console.log("modKeys", modKeys)
+      console.log("displayed data check key", displayedData)
       modKeys.forEach(key => { //for each mod in new data
-        if (!displayedData.hasOwnProperty(key)) {
+          console.log("came here")
           displayedData.push(newData[key]);
           modTitles.push(key)
-        }
       })
 
+      console.log("final modTitles", modTitles)
       displayedData = this.process(displayedData);
+
+      // modKeys.forEach(key => {
+      //   if (!this.containsModule(key, displayedData)) {
+      //     modTitles.push(key)
+      //   }
+      // })
+
+      console.log("now displayed data", displayedData)
       this.setState({
         data: nextProps.lessons,
         displayedData: displayedData,
@@ -230,6 +252,7 @@ class Table extends React.Component {
       });
     }
   }
+
 
   // process(lessons) {
   //   let result = []; // array of selected lesson slots to be shown
@@ -304,7 +327,7 @@ class Table extends React.Component {
   showAlternatives(modCode, lessonType, classNo) {
     console.log('data', this.state.data)
     let newdata = this.state.data[modCode][lessonType]; //arr with classNos
-    
+
     let keys = Object.keys(newdata); //arr of classNo keys
     let result = [];
     keys.forEach(key => { //get rid of keys
@@ -347,15 +370,15 @@ class Table extends React.Component {
         if (snapshot.val()) { //if snapshot is not empty
           snapshotIsEmpty = true;  //snapshot is not empty
           appointments.push(Object.values(snapshot.val()));
-        }          
+        }
       });
-      
+
       ref.child('modsData').on('value', function(snapshot) {
         console.log('data snapshot.val()', snapshot.val())
         if (snapshot.val()) { //if snapshot is not empty
           snapshotIsEmpty = true;  //snapshot is not empty
           data.push(snapshot.val());
-        }          
+        }
       });
 
       if (!snapshotIsEmpty) { //if snapshot is empty, finish loading
@@ -366,7 +389,7 @@ class Table extends React.Component {
       } else if (appointments[0] && (appointments !== []) && data) { //if snapshot is not empty
         console.log('snapshot is not empty-data', data[0])
         console.log('snapshot is not empty-dd',  Object.values(appointments[0][0]))
-        
+
         let modulekeys = Object.keys(data[0]); //arr of mod keys
         let data2 = [];
         modulekeys.forEach(module => { //for each module array
@@ -408,9 +431,9 @@ class Table extends React.Component {
     this.props.firebase.user(this.props.firebase.auth.currentUser.uid)
       .child('appointments').child('appointmentsArr')
       .set({});
-      
+
     let displayedData = this.state.displayedData;
-    
+
     //looping through this.state.data and adding apppointments into db
     displayedData.map(appointment => {
       console.log("appointment",  appointment)
@@ -459,7 +482,7 @@ class Table extends React.Component {
       })
     })
   }
- 
+
   render() {
     if (this.state.redirectTo) {
       return <Redirect to={{
