@@ -107,7 +107,7 @@ class Table extends React.Component {
       redirectTo: null,
       consultData: null,
       isEditing: false,
-      modsColor: ['#95AAE0', '#CB70DD', '#D17373', '#bd814d', '#CC5688', '#6E59A7', '#63B586', '#891F1F', '#897F54'],
+      modsColor: ['#95AAE0', '#af82b8', '#d47d7d', '#7bc6c7', '#b6b88d', '#e8c26f', '#a63f3f', '#8a8674'],
       modTitles: [],
       isDataLoaded: false,
     }
@@ -126,7 +126,7 @@ class Table extends React.Component {
   // checks if event.data.title is contained in array of modules
   containsModule(title, arr) {
     for (let i = 0; i < arr.length; i++) {
-      if (arr[i].title === title) {
+      if (arr[i] === title) {
         return true;
       }
     }
@@ -141,12 +141,14 @@ class Table extends React.Component {
     let colors = this.state.modsColor;
     // console.log(colors);
     let current = props.data.title;
-    if (current === 'Consult') {
-      background = '#7D7684';
-      // background = '#bd814d';
+    if (current.toLowerCase() === 'consult' || current.toLowerCase() === 'consultation') {
+      background = '#847d8a';
+    } else if (!this.containsModule(current, titles)) { // neither consult nor mod
+      background = '#9e7d5f';
     } else if (this.indexOfModule(current, titles) < colors.length) {
      background = colors[this.indexOfModule(current, titles)];
      console.log("index of module", this.indexOfModule(current, titles))
+     console.log("curent", current)
     //  console.log('title includes current')
     } else { // if no more colors to assign
       background = colors[titles.length % colors.length];
@@ -179,6 +181,7 @@ class Table extends React.Component {
               });
             }
           } else if (!this.containsModule(event.data.title, this.props.modules)) { // for slots that are not modules nor consults
+            console.log("this.props.modules", this.props.modules)
             // the code has yet to be implemented
           } else { // for mod slots, shows alternative slots
           let alternatives = this.showAlternatives(event.data.title, event.data.lessonType, event.data.classNo);
@@ -195,7 +198,7 @@ class Table extends React.Component {
   indexOfModule(title, modules) {
     let index = 0
     for (let i = 0; i < modules.length; i++) {
-      if (modules[i].value === title) {
+      if (modules[i] === title) {
         index = i;
       }
     }
@@ -248,6 +251,7 @@ class Table extends React.Component {
           console.log("newData[key]", newData[key])
           displayedData.push(newData[key]);
           modTitles.push(key)
+        }
       })
 
       console.log("final modTitles", modTitles)

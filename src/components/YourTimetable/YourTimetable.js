@@ -151,15 +151,15 @@ class YourTimetable extends React.Component {
         if (snapshot.val()) { //if snapshot is not empty
           snapshotIsEmpty = true;  //snapshot is not empty
           appointments.push(Object.values(snapshot.val()));
-        }          
+        }
       });
-      
+
       ref.child('modsData').on('value', function(snapshot) {
         console.log('data snapshot.val()', snapshot.val())
         if (snapshot.val()) { //if snapshot is not empty
           snapshotIsEmpty = true;  //snapshot is not empty
           data.push(snapshot.val());
-        }          
+        }
       });
 
       if (!snapshotIsEmpty) { //if snapshot is empty, finish loading
@@ -170,7 +170,7 @@ class YourTimetable extends React.Component {
       } else if (appointments[0] && (appointments !== []) && data) { //if snapshot is not empty
         console.log('snapshot is not empty-data', data[0])
         console.log('snapshot is not empty-dd',  Object.values(appointments[0][0]))
-        
+
         let modulekeys = Object.keys(data[0]); //arr of mod keys
         let data2 = [];
         modulesFromDB = modulekeys;
@@ -236,14 +236,15 @@ class YourTimetable extends React.Component {
     let modKeys1 = Object.values(modules);
     let modKeys2 = Object.keys(modulesFromDB);
     console.log("modkeys2", modKeys2)
+    modKeys2.forEach(key => {
+      allMods = allMods.concat([modulesFromDB[key]]);
+    })
+    
     modKeys1.forEach(key => {
       console.log("key.value", typeof key.value)
       if (!this.containsModule(key.value, this.state.modulesFromDB)) {
         allMods = allMods.concat([key.value]);
       }
-    })
-    modKeys2.forEach(key => {
-      allMods = allMods.concat([modulesFromDB[key]]);
     })
     console.log('allMods', allMods)
     return (
