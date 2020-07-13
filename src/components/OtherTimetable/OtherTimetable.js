@@ -98,6 +98,7 @@ class OtherTimetable extends React.Component {
     this.state = {
       displayedData: [],
       username: null,
+      uid: null,
       titles: [],
       redirectTo: null,
       consultData: null,
@@ -111,9 +112,11 @@ class OtherTimetable extends React.Component {
   componentDidMount() {
     let username = this.props.location.props.username;
     let displayedData = Object.values(this.props.location.props)[0];
+    let uid = this.props.location.props.uid;
     let titles = [];
     console.log('displayedData', displayedData)
     console.log('username', username)
+    console.log('uid in other tt', uid)
 
     displayedData.forEach(appointment => {
         // if mod is not in titles array
@@ -127,6 +130,7 @@ class OtherTimetable extends React.Component {
     this.setState({
       displayedData: displayedData,
       username: username,
+      uid: uid,
       titles: titles
     })
   }
@@ -145,7 +149,7 @@ class OtherTimetable extends React.Component {
   myAppointment(props) {
     let background = '';
     let titles = this.state.titles;
-    console.log("titles", titles)
+    // console.log("titles", titles)
     let colors = this.state.modsColor;
     // console.log(colors);
     let current = props.data.title;
@@ -155,12 +159,12 @@ class OtherTimetable extends React.Component {
       background = '#9e7d5f';
     } else if (this.indexOfModule(current, titles) < colors.length) {
      background = colors[this.indexOfModule(current, titles)];
-     console.log("index of module", this.indexOfModule(current, titles))
-     console.log("curent", current)
+    //  console.log("index of module", this.indexOfModule(current, titles))
+    //  console.log("curent", current)
     //  console.log('title includes current')
     } else { // if no more colors to assign
       background = colors[titles.length % colors.length];
-      console.log("modding color", titles.length % colors.length)
+      // console.log("modding color", titles.length % colors.length)
       // console.log('modulo block')
     }
 
@@ -168,9 +172,24 @@ class OtherTimetable extends React.Component {
       onClick={(event) => {
           // converts title to lowercase for uniformity
           if (event.data.title.toLowerCase() === "consult" || event.data.title.toLowerCase() === "consultation") {
+            console.log("event data", event.data)
             // pop up confirm booking dialog
             let result = window.confirm("Confirm booking?");
             if (result) {
+              // store consult data into user database under "MyConsults"
+              this.props.firebase.database.ref('users')
+              .child(this.props.firebase.auth.currentUser.uid)
+              .child("MyConsults")
+              .push({
+                username: this.state.username,
+                startDate: event.data.startDate,
+                endDate: event.data.endDate,
+                status: 'Pending',
+                identity: 'TA'
+              });
+              
+              this.writeToMyConsults(event);
+            
               // redirects user to MyConsults page
               this.setState({
                 redirectTo: true,
@@ -181,6 +200,20 @@ class OtherTimetable extends React.Component {
       }}
       onDoubleClick={() => { }}
     />
+  }
+
+  // write to the database of the uid user (user's timetable you're viewing)
+  writeToMyConsults(event) {
+    this.props.firebase.database.ref('users')
+      .child(this.state.uid)
+      .child("MyConsults")
+      .push({
+        username: this.props.firebase.auth.currentUser.displayName,
+        startDate: event.data.startDate,
+        endDate: event.data.endDate,
+        status: 'Pending',
+        identity: 'Student'
+      });
   }
 
   // finds index of title in modules arr
@@ -201,14 +234,7 @@ class OtherTimetable extends React.Component {
     console.log('state username', this.state.username)
     if (this.state.redirectTo) {
       return <Redirect to={{
-        pathname: '/MyConsults',
-        consult: {
-          name: this.state.username,
-          title: this.state.consultData.title,
-          startDate: this.state.consultData.startDate,
-          endDate: this.state.consultData.endDate,
-          status: 'Pending'
-        }
+        pathname: '/MyConsults'
       }}/>;
     }
  

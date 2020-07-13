@@ -5,6 +5,8 @@ import './Timetable.css';
 import {
   Scheduler,
   WeekView,
+  Toolbar,
+  DateNavigator,
   Appointments,
   AppointmentForm,
   ConfirmationDialog
@@ -95,7 +97,7 @@ const LayoutBase = ({ classes, ...restProps }) => {
 const currentDate = '2020-06-22';
 
 //Table class
-class Table extends React.Component {
+class Table extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -167,21 +169,8 @@ class Table extends React.Component {
             });
           }
         } else {
-          // converts title to lowercase for uniformity
-          if (event.data.title.toLowerCase() === "consult" || event.data.title.toLowerCase() === "consultation") {
-            // pop up confirm booking dialog
-            let result = window.confirm("Confirm booking?");
-            if (result) {
-              // console.log('event.data', event.data)
-              // redirects user to MyConsults page
-
-              this.setState({
-                redirectTo: true,
-                consultData: event.data
-              });
-            }
-          } else if (!this.containsModule(event.data.title, this.props.modules)) { // for slots that are not modules nor consults
-            console.log("this.props.modules", this.props.modules)
+          if (event.data.title.toLowerCase() === "consult" || event.data.title.toLowerCase() === "consultation" || !this.containsModule(event.data.title, this.props.modules)) { // for slots that are not modules nor consults
+            // console.log("this.props.modules", this.props.modules)
             // the code has yet to be implemented
           } else { // for mod slots, shows alternative slots
           let alternatives = this.showAlternatives(event.data.title, event.data.lessonType, event.data.classNo);
@@ -257,12 +246,6 @@ class Table extends React.Component {
       console.log("final modTitles", modTitles)
       displayedData = this.process(displayedData);
 
-      // modKeys.forEach(key => {
-      //   if (!this.containsModule(key, displayedData)) {
-      //     modTitles.push(key)
-      //   }
-      // })
-
       console.log("now displayed data", displayedData)
       this.setState({
         data: newData,
@@ -271,53 +254,6 @@ class Table extends React.Component {
       });
     }
   }
-
-
-  // process(lessons) {
-  //   let result = []; // array of selected lesson slots to be shown
-  //   let modulekeys = Object.keys(lessons); //arr of mod keys
-  //   modulekeys.forEach(module => { //for each module array
-  //     let lessonTypekeys = Object.keys(lessons[module]);
-  //     lessonTypekeys.forEach(lessonType => { //for each lesson type
-  //       let classNokeys = Object.keys(lessons[module][lessonType]);
-  //         result = result.concat(lessons[module][lessonType][classNokeys[0]]); //concat first class no into result
-  //     })
-  //   })
-  //   return result;
-  // }
-
-
-  // helps update dipslayed data whenever mods are added in myModules
-  // componentWillReceiveProps(nextProps) {
-  //   if (nextProps.lessons !== this.state.data) {
-  //     let displayedData = this.state.displayedData;
-  //     let data = this.state.data;
-  //     let newData = nextProps.lessons;
-  //     let modTitles = this.state.modTitles;
-
-  //     let modKeys = Object.keys(newData);
-  //     console.log('modKeys', modKeys)
-  //     console.log("displayed data", displayedData)
-  //     modKeys.forEach(key => { //for each mod in new data
-  //       // seems like theres a problem with displayedData keys
-  //       if (!displayedData.hasOwnProperty(key)) {
-  //         console.log('push mod to displayeddata')
-  //         displayedData.push(newData[key]);
-  //         console.log("after push dd", displayedData)
-  //         modTitles.push(key)
-  //       }
-  //     })
-  //     console.log("in compwillreceive b4 process", displayedData)
-  //     displayedData = this.process(displayedData);
-  //     console.log("in compwillreceive after process", displayedData)
-  //     data.push(newData)
-  //     this.setState({
-  //       data: data,
-  //       displayedData: displayedData,
-  //       modTitles: modTitles
-  //     });
-  //   }
-  // }
 
   /*Returns duplicated time slots. Not sure if problem is here or in comp will receive props
   input correct, output has extra array of the same module. Only when we add another mod. When
@@ -377,73 +313,6 @@ class Table extends React.Component {
     return displayedData;
   }
 
-  // readData() {
-  //   console.log("before reading data", this.state.displayedData)
-  //   let appointments = [];
-  //   let data = [];
-  //   let snapshotIsEmpty = false;
-  //   if (this.props.firebase.auth.currentUser) {
-  //     let ref = this.props.firebase.user(this.props.firebase.auth.currentUser.uid).child('appointments');
-  //     ref.on('value', function(snapshot) {
-  //       console.log('dd snapshot.val()', snapshot.val())
-  //       if (snapshot.val()) { //if snapshot is not empty
-  //         snapshotIsEmpty = true;  //snapshot is not empty
-  //         appointments.push(Object.values(snapshot.val()));
-  //       }
-  //     });
-
-  //     ref.child('modsData').on('value', function(snapshot) {
-  //       console.log('data snapshot.val()', snapshot.val())
-  //       if (snapshot.val()) { //if snapshot is not empty
-  //         snapshotIsEmpty = true;  //snapshot is not empty
-  //         data.push(snapshot.val());
-  //       }
-  //     });
-
-  //     if (!snapshotIsEmpty) { //if snapshot is empty, finish loading
-  //       console.log('snapshot is empty', snapshotIsEmpty) //loads before snapshot loads
-  //       this.setState({
-  //         isDataLoaded: true
-  //       })
-  //     } else if (appointments[0] && (appointments !== []) && data) { //if snapshot is not empty
-  //       console.log('snapshot is not empty-data', data[0])
-  //       console.log('snapshot is not empty-dd',  Object.values(appointments[0][0]))
-
-  //       let modulekeys = Object.keys(data[0]); //arr of mod keys
-  //       let data2 = [];
-  //       modulekeys.forEach(module => { //for each module array
-  //         console.log("module", module)
-  //         let lessonTypekeys = Object.keys(data[0][module]);
-  //         console.log("lessonTypekeys", lessonTypekeys)
-  //           lessonTypekeys.forEach(lessonType => { //for each lesson type
-  //           console.log('lessonType', lessonType)
-  //           let classNokeys = Object.keys(data[0][module][lessonType]);
-  //           console.log("classNokeys", classNokeys)
-  //           classNokeys.forEach(classNo => {
-  //             console.log('classNo', classNo)
-  //             let arr = Object.values(data[0][module][lessonType][classNo]);
-  //             console.log('arr', arr)
-  //             if (!data2.hasOwnProperty(module)) {
-  //               data2[module] = [];
-  //               data2[module][lessonType] = [];
-  //             } else if (!data2[module].hasOwnProperty(lessonType)) {
-  //               data2[module][lessonType] = [];
-  //             }
-  //             data2[module][lessonType][classNo] = [];
-  //             data2[module][lessonType][classNo] = data2[module][lessonType][classNo].concat(Object.values(arr));
-  //           });
-  //         });
-  //       })
-  //       console.log('data', data2)
-  //       this.setState({
-  //         displayedData: Object.values(appointments[0][0]),
-  //         isDataLoaded: true,
-  //         data: data2
-  //       })
-  //     }
-  //   }
-  // }
-
   saveAppointmentsToDatabase() {
     console.log("displayeddata to save", this.state.displayedData)
     //reseting the database first
@@ -455,7 +324,7 @@ class Table extends React.Component {
 
     //looping through this.state.data and adding apppointments into db
     displayedData.map(appointment => {
-      if (!appointment.classNo) {
+      if (!appointment.classNo) { //if its a consult slot
         this.props.firebase.user(this.props.firebase.auth.currentUser.uid)
         .child('appointments').child('appointmentsArr')
         .push({
@@ -463,7 +332,7 @@ class Table extends React.Component {
           endDate: JSON.stringify(appointment.endDate).replace(/^"(.*)"$/, '$1'),
           title: appointment.title,
         });
-      } else {
+      } else { //module slot
         this.props.firebase.user(this.props.firebase.auth.currentUser.uid)
         .child('appointments').child('appointmentsArr')
         .push({
@@ -471,7 +340,9 @@ class Table extends React.Component {
           endDate: JSON.stringify(appointment.endDate).replace(/^"(.*)"$/, '$1'),
           title: appointment.title,
           lessonType: appointment.lessonType,
-          classNo: appointment.classNo
+          classNo: appointment.classNo,
+          rRule: appointment.rRule,
+          exDate: appointment.exDate
         });
       }
     });
@@ -527,9 +398,8 @@ class Table extends React.Component {
     return (
       <div>
         <div className="buttons-div">
-            <button id="save" onClick={this.saveAppointmentsToDatabase} className="save-button"><i className="fa fa-save"></i>Save</button>
-            {/* <button onClick={this.readData} className="refresh-button"><i className="fa fa-refresh"></i>Refresh appointments</button> */}
-          </div>
+          <button id="save" onClick={this.saveAppointmentsToDatabase} className="save-button"><i className="fa fa-save"></i>Save</button>
+        </div>
         <ThemeProvider theme={theme}>
           <Paper>
             <Scheduler
@@ -537,7 +407,7 @@ class Table extends React.Component {
               height={660}
             >
               <ViewState
-                currentDate={currentDate}
+                defaultCurrentDate={new Date()}
               />
               <EditingState
                 onCommitChanges={this.commitChanges}
@@ -552,9 +422,10 @@ class Table extends React.Component {
                 timeScaleLabelComponent={TimeScaleLabel}
                 dayScaleEmptyCellComponent={DayScaleEmptyCell}
                 layoutComponent={LayoutBase}
-                excludedDays={[0]}
               />
-              <ConfirmationDialog />
+              <Toolbar />
+              <DateNavigator />
+              <ConfirmationDialog /> 
               <Appointments appointmentComponent={this.myAppointment} />
               <AppointmentForm />
             </Scheduler>

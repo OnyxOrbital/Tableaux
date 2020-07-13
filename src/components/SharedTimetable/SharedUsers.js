@@ -14,8 +14,9 @@ import { withFirebase } from '../Firebase';
                 <Link to={{
                   pathname: `/SharedTimetables/${user[0].replace(/\s/g, "")}`, 
                   props: {
-                    displayedData: user[1],
-                    username: user[0]
+                    displayedData: user[2],
+                    username: user[0],
+                    uid: user[1]
                     }
                   }}>{user[0]}</Link>
               </li>)}) : (<li>You have no friends :(</li>)}

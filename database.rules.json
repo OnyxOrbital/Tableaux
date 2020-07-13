@@ -1,18 +1,6 @@
 {
   "rules": {
-    "users" : {
-      "$uid": {
-	      ".read": "$uid === auth.uid",
-        ".write": "$uid === auth.uid",
-	      "appointments": {
-          "appointmentsArr": {
-	          ".read": "root.child(“users”).child($uid).child(“peopleISharedMyTTWith”).hasChild(auth.uid)"
-          }
-        },
-        "username": {
-          ".read": "root.child(“users”).child($uid).child(“peopleISharedMyTTWith”).hasChild(auth.uid)"
-        } 
-      }
-    }
+    ".read": "auth != null",
+    ".write": "auth != null"
   }
 }

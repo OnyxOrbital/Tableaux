@@ -36,7 +36,7 @@ class SharedTimetable extends React.Component {
     let results = [];
 
     // check if array is not empty
-    if (peopleWhoSharedTheirTTWithMeuid && peopleWhoSharedTheirTTWithMeuid != []) {
+    if (peopleWhoSharedTheirTTWithMeuid && peopleWhoSharedTheirTTWithMeuid !== []) {
       console.log('peopleWhoSharedTheirTTWithMeuid', peopleWhoSharedTheirTTWithMeuid)
       // loop through each uid in array to retrieve [username, appointmentsArr]
       peopleWhoSharedTheirTTWithMeuid.forEach(uid => {
@@ -49,7 +49,7 @@ class SharedTimetable extends React.Component {
           console.log('snap.val', snapshot.val())
           username = snapshot.val().username;
           appointmentsArr.push(Object.values(snapshot.val().appointments.appointmentsArr));
-          results.push([username, appointmentsArr[0]]);
+          results.push([username, uid, appointmentsArr[0]]);
         })
         console.log('username', username)
         console.log('appt arr', appointmentsArr[0])

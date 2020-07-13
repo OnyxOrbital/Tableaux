@@ -53,7 +53,7 @@ class YourTimetable extends React.Component {
 
       let newSearchResults = [];
       await Promise.all(modules.map(module => {
-        return fetch(`https://api.nusmods.com/v2/2019-2020/modules/${module.label}.json`)
+        return fetch(`https://api.nusmods.com/v2/2020-2021/modules/${module.label}.json`)
         .then(response => response.json())
         .then(searchResults => {
           newSearchResults.push(searchResults);
@@ -90,7 +90,9 @@ class YourTimetable extends React.Component {
             endDate: this.convertTime(slot.day, slot.endTime),
             title: timetable[0], //module code
             lessonType: slot.lessonType,
-            classNo: slot.classNo
+            classNo: slot.classNo,
+            rRule: 'FREQ=WEEKLY',
+            exDate: '20201205T235959Z',
           }
           arr.push(lesson);
         });
@@ -126,15 +128,15 @@ class YourTimetable extends React.Component {
     let time = oldtime.substring(0,2) + ':' + oldtime.substring(2,4);
     switch(day) {
       case 'Monday' :
-        return  `2020-06-22T${time}`;
+        return  `2020-08-10T${time}`;
       case 'Tuesday' :
-        return `2020-06-23T${time}`;
+        return `2020-08-11T${time}`;
       case 'Wednesday' :
-        return `2020-06-24T${time}`;
+        return `2020-08-12T${time}`;
       case 'Thursday' :
-        return `2020-06-25T${time}`;
+        return `2020-08-13T${time}`;
       case 'Friday' :
-        return `2020-06-26T${time}`;
+        return `2020-08-14T${time}`;
       default:
         return;
     }
