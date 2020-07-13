@@ -26,7 +26,7 @@ class ProfileBase extends React.Component {
       console.log(this.props.user)
       return (
           <div>
-            <h2>User Profile</h2>
+            <h1>User Profile</h1>
             <div className="details"><h3>Name: </h3><p>{this.props.user.displayName}</p></div>
             <div className="details"><h3>Email: </h3><p>{this.props.user.email}</p></div>
             <div className="details"><h3>Phone Number: </h3><p>{this.props.user.phoneNumber ? this.props.user.phoneNumber : '-'}</p></div>

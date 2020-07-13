@@ -1,21 +1,33 @@
-/*Colors:*/
-/*yellow: #F1C944*/
-/*white-ish: #e2dce3*/
+/*Colors:
+yellow: #F1C944
+white-ish: #e2dce3
+background color: #171a24
+tab color:  #212636 / rgb(33, 38, 54)
+pink: #e8007c
+button grey border: #aaa2ab*/
+body {
+  background-color: #171a24;
+}
+
 .app {
   display: flex;
   color: #e2dce3;
   font-family: Monda, Arial;
-  
 }
 
 .content {
-  padding: 1rem;
+  margin: 0 1rem;
   width: 100%;
   height: 100%;
 }
 
 @media (max-width: 800px) {
   .app {
-      display: block;
+    display: block;
+  }
+
+  .content {
+    margin: 0 1rem;
+    width: auto;
   }
 }

@@ -1,0 +1,35 @@
+.navMenu {
+  display: none;
+}
+
+.navMenu button {
+  color: #F1C944;
+  background-color: #212636;
+  outline: none;
+  border: none;
+  cursor: pointer;
+}
+
+.menu {
+  position: fixed;
+  top: 5rem;
+  left: 0;
+  height: 100%;
+}
+
+.menu a {
+  display: flex;
+  padding: 1rem;
+  background-color: #212636 ;
+}
+
+.menu a:hover {
+  background-color: rgb(61, 71, 102);
+}
+
+@media (max-width: 800px) {
+  .navMenu {
+    display: block;
+    z-index: 100;
+  }
+}

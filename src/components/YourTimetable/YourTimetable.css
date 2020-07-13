@@ -2,40 +2,6 @@
     display: block;
 }
 
-.yourTimetable hr {
-    margin-top: 1rem;
-}
-
-#yourModules {
-    text-align: left;
-    font-size: 1.5rem;
-}
-
-.date-panel {
-    display: flex;
-    justify-content: center;
-}
-
-#forward-arrow, #back-arrow {
-    margin: 1.4rem;
-    height: 30px;
-    width: 30px;
-    cursor: pointer;
-}
-
-.date-panel h3 {
-    font-family: Monda, Arial;
-    color: #F1C944;
-    margin: 0.1rem;
-    display: flex;
-    justify-content: center;
-    margin-top: 1.3rem;
-}
-
-::-webkit-scrollbar {
-   display: none;
-}
-
 .refresh-button {
     float: right;
     margin: 1rem;
@@ -47,12 +13,26 @@
     border-radius: 3px;
     text-decoration: none;
     padding: 0 1rem;
-  }
+}
   
 .refresh-button:hover {
     background-color: #F1C944;
     color: #171a24;
-  }
+}
 
+.share-button {
+    display: block;
+}
 
+.yourTimetable hr {
+    margin-top: 1rem;
+}
 
+.your-modules-text {
+    text-align: left;
+    font-size: 1.5rem;
+}
+
+::-webkit-scrollbar {
+   display: none;
+}

@@ -1,7 +1,6 @@
 import React from 'react';
 import './SharedTimetable.css';
 import { Link } from 'react-router-dom';
-import SharedUsers from './SharedUsers';
 import { withFirebase } from '../Firebase/index';
 
 class SharedTimetable extends React.Component {
@@ -58,45 +57,47 @@ class SharedTimetable extends React.Component {
     }
     return results;
   }
+
+  renderTableData(userList) {
+    return userList.map((user, key) => {
+      return (
+        <tr id={key}>
+          <td>
+            <Link to={{
+              pathname: `/SharedTimetables/${user[0].replace(/\s/g, "")}`, 
+              props: {
+                displayedData: user[2],
+                username: user[0],
+                uid: user[1]
+                }
+              }}>{user[0]}</Link>
+          </td>
+        </tr>)
+    })
+ }
+
+ renderTableHeader(userList) {
+    return <th>Name</th>
+}
   
   render() {
-    return (
-        // <div className="sharedTimetables">
-        //     <h2>Shared Timetables</h2>
-        //     <div className="sharedList">
-        //         <table>
-        //         <thead>
-        //             <tr>
-        //             <th>Name</th>
-        //             <th>Identity</th>
-        //             </tr>
-        //         </thead>
-        //         <tbody>
-        //             <tr className="evenRow">
-        //                 <td><Link className="link" to="/SharedTimetables/LianChiu">Lian Chiu</Link></td>
-        //                 <td>TA</td>
-        //             </tr>
-        //             <tr className="oddRow">
-        //             <td><a className="link">Benson Lee</a></td>
-        //             <td>TA</td>
-        //             </tr>
-        //             <tr className="evenRow">
-        //             <td><a className="link">Michelle Goh</a></td>
-        //             <td>Student</td>
-        //             </tr>
-        //             <tr className="oddRow">
-        //             <td><a className="link">Jamie Ferguson</a></td>
-        //             <td>Student</td>
-        //             </tr>
-        //         </tbody>
-        //         </table>
-        //     </div>
-        // </div>
-      <div className="sharedTimetables">
-          <h2>Shared Timetables</h2>
-          <SharedUsers users={this.readPeopleWhoSharedTheirTTWithMe()}/>
-      </div>
-    );
+    let userList = this.readPeopleWhoSharedTheirTTWithMe();
+    if (userList && userList !== []) {
+      console.log('userList', userList)
+      return (
+        <div className="sharedTimetables">
+            <h1>Shared Timetables</h1>
+          <table className="sharedList">
+            <tbody>
+              <tr>{this.renderTableHeader(userList)}</tr>
+              {this.renderTableData(userList)}
+            </tbody>
+          </table>
+        </div>
+      );
+    } else {
+      return <p style={{color: 'red'}}>No shared timetables to show :(</p>
+    }
   }
 }
 

@@ -1,10 +1,12 @@
 import * as React from 'react';
-import './OtherTimetable.css';
 import Paper from '@material-ui/core/Paper';
 import { ViewState } from '@devexpress/dx-react-scheduler';
+import './OtherTimetable.css';
 import {
   Scheduler,
   WeekView,
+  Toolbar,
+  DateNavigator,
   Appointments,
   AppointmentForm,
   ConfirmationDialog
@@ -91,6 +93,10 @@ const LayoutBase = ({ classes, ...restProps }) => {
   return <WeekView.Layout {...restProps} style={{backgroundColor: '#69616b'}} />
 };
 
+//Styles space above timetable (toolbar)
+const ToolbarRoot = ({ classes, ...restProps }) => {
+  return <Toolbar.Root {...restProps} style={{backgroundColor: '#171a24'}} />
+};
 
 class OtherTimetable extends React.Component {
   constructor(props) {
@@ -248,7 +254,7 @@ class OtherTimetable extends React.Component {
               height={660}
             >
               <ViewState
-                currentDate='2020-06-22'
+                defaultCurrentDate={new Date()}
               />
               <WeekView
                 startDayHour={8}
@@ -261,6 +267,10 @@ class OtherTimetable extends React.Component {
                 layoutComponent={LayoutBase}
                 excludedDays={[0]}
               />
+              <Toolbar 
+                rootComponent={ToolbarRoot} 
+              />
+              <DateNavigator />
               <Appointments appointmentComponent={this.myAppointment} />
               <AppointmentForm />
             </Scheduler>

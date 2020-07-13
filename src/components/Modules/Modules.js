@@ -14,7 +14,7 @@ export default class Modules extends React.Component {
   }
 
   componentDidMount() {
-    fetch(`https://api.nusmods.com/v2/2019-2020/moduleInfo.json`)
+    fetch(`https://api.nusmods.com/v2/2020-2021/moduleList.json`)
       .then(response => response.json())
       .then(moduleListResults => this.setState({ moduleListResults: moduleListResults }));
   }
@@ -26,8 +26,8 @@ export default class Modules extends React.Component {
         <ul>
           {this.state.moduleListResults.map(module => {
             return (
-              <li key={module.moduleCode} style={{textAlign: 'left'}}>
-                <Link to={`/Modules/${module.moduleCode}`}  style={{textDecoration: 'none', color: '#e2dce3'}}>{module.moduleCode} {module.title}</Link>
+              <li key={module.moduleCode}>
+                <Link to={`/Modules/${module.moduleCode}`}>{module.moduleCode} {module.title}</Link>
               </li>)})}
         </ul>
       </div>);

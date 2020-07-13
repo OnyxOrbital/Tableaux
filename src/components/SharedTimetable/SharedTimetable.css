@@ -3,6 +3,10 @@
     font-size: 2rem;
 }
 
+.sharedList {
+    width: 100%;
+}
+
 .sharedList td {
     padding: 0;
     text-align: left;
@@ -24,11 +28,9 @@
     background-color: rgb(61, 71, 102);
 }
 
-.link {
-    padding-right: ;
+a {
     text-decoration: none;
     text-align: left;
-    float: left;
 }
 
 .oddRow a:hover {

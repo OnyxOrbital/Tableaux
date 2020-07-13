@@ -79,7 +79,8 @@ class ShareDialog extends React.Component {
   render() {
     return (
       <div>
-        <button id="share" onClick={this.handleClickOpen}>
+        <button className="share-button" onClick={this.handleClickOpen}>
+          <i className="fa fa-share-alt"></i>
           Share
         </button>
         <Dialog open={this.state.setOpen} onClose={this.handleClose} aria-labelledby="form-dialog-title">

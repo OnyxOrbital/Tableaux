@@ -4,21 +4,15 @@ import logo from '../../images/tableaux-logo.gif';
 import { Notifications } from './Notifications/Notifications';
 import SearchBar from '../SearchBar/SearchBar';
 import SignInButton from '../SignIn/SignIn';
+import NavMenu from '../Navigation/NavMenu';
 import {
   withRouter
 } from 'react-router-dom';
-import { AuthUserContext } from '../Session';
 import { withFirebase } from '../Firebase';
 import { compose } from 'recompose';
 
-const TopPanel = () => (
-  <AuthUserContext.Consumer>
-    {authUser => {
-    return <TopPanelBase user={authUser}/>}}
-  </AuthUserContext.Consumer>
-);
 
-class TopPanelBase extends React.Component {
+class TopPanel extends React.Component {
     constructor(props) {
       super(props);
       this.handleChange = this.handleChange.bind(this)
@@ -31,21 +25,22 @@ class TopPanelBase extends React.Component {
     render() {
         return (
           <div className="top-panel">
+            <NavMenu className="navMenuButton" user={this.props.firebase.auth.currentUser}/>
             <div className="logo">
               <img src={logo} height="100px" width="100px" id="logoImg" alt=''/>
               <p>Tableaux</p>
             </div>
             <SearchBar action={this.handleChange}/>
             <div>
-              {this.props.user 
+              {this.props.firebase.auth.currentUser 
               ? (
                 <div>
-                  <p>{this.props.user.displayName}</p>
+                  <p>{this.props.firebase.auth.currentUser.displayName}</p>
                 </div>)
               : <SignInButton />}
             </div>
             <Notifications />
-            <p id="semesterdate">AY2019/20, Special Term 1</p>
+            <p id="semesterdate">AY2019/20, Special Term 2</p>
           </div>
         );
     }

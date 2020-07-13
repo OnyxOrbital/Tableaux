@@ -26,12 +26,14 @@ const theme = createMuiTheme({
       dark: '#171a24',
       main: 'rgb(33, 38, 54)',
       light: '#e2dce3',
+      contrastText: '#F1C944',
     }
   }
 });
 
 const style = theme => ({
   normalCellDark: {
+    color: theme.palette.contrastText,
     backgroundColor: fade(theme.palette.primary.dark, 1),
     '&:hover': {
       backgroundColor: fade(theme.palette.primary.dark, 0.8),
@@ -93,8 +95,10 @@ const LayoutBase = ({ classes, ...restProps }) => {
   return <WeekView.Layout {...restProps} style={{backgroundColor: '#69616b'}} />
 };
 
-//Hard coded data
-const currentDate = '2020-06-22';
+//Styles space above timetable (toolbar)
+const ToolbarRoot = ({ classes, ...restProps }) => {
+  return <Toolbar.Root {...restProps} style={{backgroundColor: '#171a24'}} />
+};
 
 //Table class
 class Table extends React.PureComponent {
@@ -397,9 +401,6 @@ class Table extends React.PureComponent {
 
     return (
       <div>
-        <div className="buttons-div">
-          <button id="save" onClick={this.saveAppointmentsToDatabase} className="save-button"><i className="fa fa-save"></i>Save</button>
-        </div>
         <ThemeProvider theme={theme}>
           <Paper>
             <Scheduler
@@ -423,7 +424,9 @@ class Table extends React.PureComponent {
                 dayScaleEmptyCellComponent={DayScaleEmptyCell}
                 layoutComponent={LayoutBase}
               />
-              <Toolbar />
+              <Toolbar 
+                rootComponent={ToolbarRoot} 
+              />
               <DateNavigator />
               <ConfirmationDialog /> 
               <Appointments appointmentComponent={this.myAppointment} />
@@ -431,6 +434,9 @@ class Table extends React.PureComponent {
             </Scheduler>
           </Paper>
         </ThemeProvider>
+        <div className="buttons-div">
+          <button id="save" onClick={this.saveAppointmentsToDatabase} className="save-button"><i className="fa fa-save"></i>Save</button>
+        </div>
       </div>);
   }
 }

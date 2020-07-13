@@ -274,23 +274,18 @@ class YourTimetable extends React.Component {
     console.log('allMods', allMods)
     return (
       <div className="yourTimetable">
-          <h2>Your Timetable</h2>
-          <SearchBar action={this.addModule}/>
-          <p id="yourModules">Your modules:</p>
-            <MyModules modules={allMods} />
+        <h1>Your Timetable</h1>
+        <Table className="table" data={allData} displayedData={this.state.displayedData} modules={allMods} />
+        <ShareDialog className="share-button" users={this.readUsers()} />
+        <button onClick={this.readData} className="refresh-button"><i className="fa fa-refresh"></i>Refresh appointments</button>
+        <div>
+          <br></br>
+          <br></br>
           <hr></hr>
-          <div className="date-panel">
-            <img src={BackArrow} id="back-arrow" alt=''/>
-            <h3>Special Term 1</h3>
-            <img src={FrontArrow} id="forward-arrow" alt=''/>
-          </div>
-          <button onClick={this.readData} className="refresh-button"><i className="fa fa-refresh"></i>Refresh appointments</button>
-          <div className="table">
-            <Table className="table" data={allData} displayedData={this.state.displayedData} modules={allMods} />
-          </div>
-          <ShareDialog users={this.readUsers()} />
-          {/* <ShareSearchBar /> */}
-          {/* <button id="share" onClick={this.displayDialog}>Share</button> */}
+          <SearchBar action={this.addModule}/>
+          <p className="your-modules-text">Your modules:</p>
+            <MyModules modules={allMods} />
+        </div>
       </div>
     );
   }

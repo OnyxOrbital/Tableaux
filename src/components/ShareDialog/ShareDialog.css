@@ -1,4 +1,4 @@
-#cancel, #share, #confirm {
+.share-button {
   float: right;
   margin: 1rem;
   color: white;
@@ -11,7 +11,7 @@
   padding: 0 1rem;
 }
 
-#cancel:hover, #share:hover, #confirm:hover {
+.share-button:hover {
   background-color: #F1C944;
   color: #171a24;
 }

@@ -1,11 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { withFirebase } from '../Firebase/index';
 import './Navigation.css';
 import * as ROUTES from '../../constants/routes';
-import yourTimetableIcon from '../../images/my-timetable-grey.gif';
-import modulesIcon from '../../images/all-modules-grey.gif';
-import sharedTimetablesIcon from '../../images/shared-timetables-grey.gif';
-import myConsultationIcon from '../../images/my-consultations-grey.gif';
+import NavMenu from './NavMenu';
+// import yourTimetableIcon from '../../images/my-timetable-grey.gif';
+// import modulesIcon from '../../images/all-modules-grey.gif';
+// import sharedTimetablesIcon from '../../images/shared-timetables-grey.gif';
+// import myConsultationIcon from '../../images/my-consultations-grey.gif';
 // import settingsIcon from '../../images/settings-grey.gif';
 // import yourTimetableYellouwIcon from '../../images/my-timetable.gif';
 // import modulesYellowIcon from '../../images/all-modules.gif';
@@ -18,7 +20,7 @@ import myConsultationIcon from '../../images/my-consultations-grey.gif';
 //   grey: yourTimetableIcon
 // }
 
-export default class Navigation extends React.Component {
+class Navigation extends React.Component {
   constructor(props) {
     super(props);
     // this.state = {
@@ -66,34 +68,51 @@ export default class Navigation extends React.Component {
     // console.log('imageName', imageName)
 
     return (
-      <ul className="navBar">
-        <li className="navLink" id="yourTimetableTab"
-        // onClick={this.changeBackground} onBlur={this.resetBackground}
-        >
-          <Link to={ROUTES.YOUR_TIMETABLE}><img className='icon' src={yourTimetableIcon} alt=''/><p>Your Timetable</p></Link>
-        </li>
-        <li className="navLink"
-        // onClick={this.changeBackground} onBlur={this.resetBackground}
-        >
-          <Link to={ROUTES.MODULES}><img className='icon' src={modulesIcon} alt='' /><p>Modules</p></Link>
-        </li>
-        <li className="navLink"
-        // onClick={(e) => this.changeBackground(e, sharedTimetablesYellowIcon)} onBlur={this.resetBackground}
-        >
-          <Link to={ROUTES.SHARED_TIMETABLE}><img className='icon' src={sharedTimetablesIcon} alt='' /><p>Shared Timetables</p></Link>
-        </li>
-        <li className="navLink"
-        // onClick={(e) => this.changeBackground(e, myConsultationYellowIcon)} onBlur={this.resetBackground}
-        >
-          <Link to={ROUTES.MY_CONSULTS}><img className='icon' src={myConsultationIcon} alt='' /><p>My Consults</p></Link>
-        </li>
-        <li className="navLink" id="profile"
-        // onClick={(e) => this.changeBackground(e, settingsYellowIcon)} onBlur={this.resetBackground}
-        >
-          {/* <Link to={ROUTES.SETTINGS}><img className='icon' src={settingsIcon} alt='' /><p>Settings</p></Link> */}
-          <Link to={ROUTES.PROFILE}><i class="fa fa-user-circle" style={{fontSize: '25px'}}></i><p>Profile</p></Link>
-        </li>
-      </ul>
+      <div>
+        <ul className="navBar">
+          <li className="navLink" id="yourTimetableTab"
+          // onClick={this.changeBackground} onBlur={this.resetBackground}
+          >
+            <Link to={ROUTES.YOUR_TIMETABLE}>
+              {/* <img className='icon' src={yourTimetableIcon} alt=''/> */}
+              <i class="fa fa-calendar-o" style={{fontSize: '25px'}}></i>
+              <p>Your Timetable</p></Link>
+          </li>
+          <li className="navLink"
+          // onClick={this.changeBackground} onBlur={this.resetBackground}
+          >
+            <Link to={ROUTES.MODULES}>
+              {/* <img className='icon' src={modulesIcon} alt='' /> */}
+              <i class="fa fa-graduation-cap" style={{fontSize: '25px'}}></i>
+              <p>Modules</p></Link>
+          </li>
+          <li className="navLink"
+          // onClick={(e) => this.changeBackground(e, sharedTimetablesYellowIcon)} onBlur={this.resetBackground}
+          >
+            <Link to={ROUTES.SHARED_TIMETABLE}>
+              {/* <img className='icon' src={sharedTimetablesIcon} alt='' /> */}
+              <i class="fa fa-share-alt" style={{fontSize: '25px'}}></i>
+              <p>Shared Timetables</p></Link>
+          </li>
+          <li className="navLink"
+          // onClick={(e) => this.changeBackground(e, myConsultationYellowIcon)} onBlur={this.resetBackground}
+          >
+            <Link to={ROUTES.MY_CONSULTS}>
+              {/* <img className='icon' src={myConsultationIcon} alt='' /> */}
+              <i class="fa fa-users" style={{fontSize: '25px'}}></i>
+              <p>My Consults</p></Link>
+          </li>
+          <li className="navLink" id="profile"
+          // onClick={(e) => this.changeBackground(e, settingsYellowIcon)} onBlur={this.resetBackground}
+          >
+            {/* <Link to={ROUTES.SETTINGS}><img className='icon' src={settingsIcon} alt='' /><p>Settings</p></Link> */}
+            <Link to={ROUTES.PROFILE}><i class="fa fa-user-circle" style={{fontSize: '25px'}}></i><p>Profile</p></Link>
+          </li>
+        </ul>
+        {/* <NavMenu className="navMenuButton" user={this.props.firebase.auth.currentUser}/> */}
+      </div>
     );
   }
 }
+
+export default withFirebase(Navigation);

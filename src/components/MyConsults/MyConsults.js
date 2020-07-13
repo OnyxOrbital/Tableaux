@@ -28,31 +28,51 @@ class MyConsults extends React.Component {
     }  
   }
 
+  renderTableData(consults) {
+    return consults.map((slot, key) => {
+       return (
+          <tr id={key}>
+             <td>{slot.username}</td>
+             <td>{slot.identity}</td>
+             <td>{slot.startDate}</td>
+             <td>{slot.endDate}</td>
+             <td className="status">{slot.status}</td>
+             {slot.identity === "Student" ?
+                (<div>
+                  <td><button>Accept</button><button>Decline</button></td>
+                </div>):
+                (<td><button>Cancel</button></td>)
+              }
+          </tr>
+       )
+    })
+ }
+
+ renderTableHeader(consults) {
+    return (
+    <tr>
+      <th>Name</th>
+      <th>Identity</th>
+      <th>Start Time</th>
+      <th>End Time</th>
+      <th>Status</th>
+      <th></th>
+    </tr>);
+}
   render(){
     return (
       <div>
+        <h1>My Consults</h1>
         <div className="consultsList">
-        <h2>My Consults</h2>
-
-        {this.state.consults ? (<table>
-          <tbody>
-            <tr>
-              <th>Name</th>
-              <th>Identity</th>
-              <th>Start Time</th>
-              <th>End Time</th>
-              <th>Venue</th>
-              <th>Status</th>
-              <th>Remarks</th>
-              <th></th>
-            </tr>
-            {this.state.consults.map(consult => {
-                 return <Consult consult={consult} />
-             })}
-          </tbody>
-        </table>) : <p style={{color: 'red'}}>You have no consults, you should start booking one :)</p> }
-
-      </div>
+          {this.state.consults ? (
+            <table className="consults-table">
+              <tbody>
+                {this.renderTableHeader(this.state.consults)}
+                {this.renderTableData(this.state.consults)}
+              </tbody>
+            </table>) 
+          : <p style={{color: 'red'}}>You have no consults, you should start booking one :)</p> }
+        </div>
       </div>
     );
   }
