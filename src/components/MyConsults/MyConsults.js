@@ -1,9 +1,6 @@
 import React from 'react';
 import './MyConsults.css';
-// import ConsultList from './ConsultList/ConsultList';
-import Consult from './Consult/Consult';
 import { withFirebase } from '../Firebase/index';
-
 class MyConsults extends React.Component {
   constructor(props) {
     super(props);
