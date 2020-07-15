@@ -280,6 +280,8 @@ class Table extends React.PureComponent {
         result = result.concat(lessons[module]);
       }
     })
+
+    console.log("resultssss", result)
     return result;
   }
 
@@ -398,6 +400,7 @@ class Table extends React.PureComponent {
         }
       }}/>;
     }
+    console.log("DISPLAYED DATA", this.state.displayedData)
 
     return (
       <div>
@@ -424,11 +427,11 @@ class Table extends React.PureComponent {
                 dayScaleEmptyCellComponent={DayScaleEmptyCell}
                 layoutComponent={LayoutBase}
               />
-              <Toolbar 
-                rootComponent={ToolbarRoot} 
+              <Toolbar
+                rootComponent={ToolbarRoot}
               />
               <DateNavigator />
-              <ConfirmationDialog /> 
+              <ConfirmationDialog />
               <Appointments appointmentComponent={this.myAppointment} />
               <AppointmentForm />
             </Scheduler>

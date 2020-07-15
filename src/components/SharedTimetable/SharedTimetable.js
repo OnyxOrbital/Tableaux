@@ -22,9 +22,9 @@ class SharedTimetable extends React.Component {
           peopleWhoSharedTheirTTWithMeuid.push(Object.values(snapshot.val())[0]);
         })
       console.log('peopleWhoSharedTheirTTWithMeuid', peopleWhoSharedTheirTTWithMeuid)
-    
+
       peopleWhoSharedTheirTTWithMeuid = this.getSharedData(peopleWhoSharedTheirTTWithMeuid);
-     
+
     }
 
     return peopleWhoSharedTheirTTWithMeuid;
@@ -45,10 +45,17 @@ class SharedTimetable extends React.Component {
         this.props.firebase.database.ref('users')
         .child(uid)
         .on('value', function(snapshot) {
-          console.log('snap.val', snapshot.val())
+          // console.log('snap.val', snapshot.val())
+          // console.log('snap val username', snapshot.val().username)
+          // console.log("snap val appointments", Object.values(snapshot.val().appointments.appointmentsArr))
           username = snapshot.val().username;
-          appointmentsArr.push(Object.values(snapshot.val().appointments.appointmentsArr));
-          results.push([username, uid, appointmentsArr[0]]);
+          if (snapshot.val().appointments) {
+            // console.log("snap val appointments", Object.values(snapshot.val().appointments.appointmentsArr))
+            appointmentsArr.push(Object.values(snapshot.val().appointments.appointmentsArr));
+            results.push([username, uid, appointmentsArr[0]]);
+          } else {
+            results.push([username, uid, appointmentsArr]);
+          }
         })
         console.log('username', username)
         console.log('appt arr', appointmentsArr[0])
@@ -64,7 +71,7 @@ class SharedTimetable extends React.Component {
         <tr id={key}>
           <td>
             <Link to={{
-              pathname: `/SharedTimetables/${user[0].replace(/\s/g, "")}`, 
+              pathname: `/SharedTimetables/${user[0].replace(/\s/g, "")}`,
               props: {
                 displayedData: user[2],
                 username: user[0],
@@ -79,7 +86,7 @@ class SharedTimetable extends React.Component {
  renderTableHeader(userList) {
     return <th>Name</th>
 }
-  
+
   render() {
     let userList = this.readPeopleWhoSharedTheirTTWithMe();
     if (userList && userList !== []) {

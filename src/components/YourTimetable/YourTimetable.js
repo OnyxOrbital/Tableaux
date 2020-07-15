@@ -173,40 +173,44 @@ class YourTimetable extends React.Component {
           isDataLoaded: true
         })
       } else if (appointments[0] && (appointments !== []) && data) { //if snapshot is not empty
-        console.log('snapshot is not empty-data', data[0])
-        console.log('snapshot is not empty-dd',  Object.values(appointments[0][0]))
-
-        let modulekeys = Object.keys(data[0]); //arr of mod keys
+        // console.log('snapshot is not empty-data', data[0])
+        // console.log('snapshot is not empty-dd',  Object.values(appointments[0][0]))
+        //
+        // console.log("module keys", data)
         let data2 = [];
-        modulesFromDB = modulekeys;
-        modulekeys.forEach(module => { //for each module array
-          // console.log("module", module)
-          let lessonTypekeys = Object.keys(data[0][module]);
-          // console.log("lessonTypekeys", lessonTypekeys)
-            lessonTypekeys.forEach(lessonType => { //for each lesson type
-            // console.log('lessonType', lessonType)
-            let classNokeys = Object.keys(data[0][module][lessonType]);
-            // console.log("classNokeys", classNokeys)
-            classNokeys.forEach(classNo => {
-              // console.log('classNo', classNo)
-              let arr = Object.values(data[0][module][lessonType][classNo]);
-              // console.log('arr', arr)
-              if (!data2.hasOwnProperty(module)) {
-                data2[module] = [];
-                data2[module][lessonType] = [];
-              } else if (!data2[module].hasOwnProperty(lessonType)) {
-                data2[module][lessonType] = [];
-              }
-              data2[module][lessonType][classNo] = [];
-              data2[module][lessonType][classNo] = data2[module][lessonType][classNo].concat(Object.values(arr));
+
+        if (data[0]) {
+          let modulekeys = Object.keys(data[0]); //arr of mod keys
+          modulesFromDB = modulekeys;
+          modulekeys.forEach(module => { //for each module array
+            // console.log("module", module)
+            let lessonTypekeys = Object.keys(data[0][module]);
+            // console.log("lessonTypekeys", lessonTypekeys)
+              lessonTypekeys.forEach(lessonType => { //for each lesson type
+              // console.log('lessonType', lessonType)
+              let classNokeys = Object.keys(data[0][module][lessonType]);
+              // console.log("classNokeys", classNokeys)
+              classNokeys.forEach(classNo => {
+                // console.log('classNo', classNo)
+                let arr = Object.values(data[0][module][lessonType][classNo]);
+                // console.log('arr', arr)
+                if (!data2.hasOwnProperty(module)) {
+                  data2[module] = [];
+                  data2[module][lessonType] = [];
+                } else if (!data2[module].hasOwnProperty(lessonType)) {
+                  data2[module][lessonType] = [];
+                }
+                data2[module][lessonType][classNo] = [];
+                data2[module][lessonType][classNo] = data2[module][lessonType][classNo].concat(Object.values(arr));
+              });
             });
-          });
-        })
-        console.log('data', data2)
-        console.log('appointments',appointments)
-        console.log('appointments[0]',appointments[0])
-        console.log('appointments[0][0]',appointments[0][0])
-        console.log('Object.values(appointments[0][0])', Object.values(appointments[0][0]))
+          })
+        }
+        // console.log('data', data2)
+        // console.log('appointments',appointments)
+        // console.log('appointments[0]',appointments[0])
+        // console.log('appointments[0][0]',appointments[0][0])
+        // console.log('Object.values(appointments[0][0])', Object.values(appointments[0][0]))
         this.setState({
           displayedData: Object.values(appointments[0][0]),
           isDataLoaded: true,
@@ -263,7 +267,7 @@ class YourTimetable extends React.Component {
     modKeys2.forEach(key => {
       allMods = allMods.concat([modulesFromDB[key]]);
     })
-    
+
     modKeys1.forEach(key => {
       console.log("key.value", typeof key.value)
       if (!this.containsModule(key.value, this.state.modulesFromDB)) {
@@ -272,6 +276,7 @@ class YourTimetable extends React.Component {
     })
 
     console.log('allMods', allMods)
+    console.log("YOURTIMETABLE DISPLAYED DATA", allData)
     return (
       <div className="yourTimetable">
         <h1>Your Timetable</h1>
