@@ -1,6 +1,7 @@
 import React from 'react';
 import './Profile.css';
 import SignOutButton from '../SignOut/SignOut';
+import SignInButton from '../SignIn/SignIn';
 import { AuthUserContext } from '../Session';
 import { withFirebase } from '../Firebase';
 
@@ -34,7 +35,11 @@ class ProfileBase extends React.Component {
           </div>
       );
     } else {
-      return <p style={{color: 'red'}}>Waiting for user data...</p>
+      return (
+      <div>
+        <p>Please sign in to view your profile page.</p>
+        <SignInButton />
+      </div>);
     }
   }
 }

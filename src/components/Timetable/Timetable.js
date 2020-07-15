@@ -125,7 +125,6 @@ class Table extends React.PureComponent {
     this.myAppointment = this.myAppointment.bind(this);
     this.commitChanges = this.commitChanges.bind(this);
     this.saveAppointmentsToDatabase = this.saveAppointmentsToDatabase.bind(this);
-    // this.readData = this.readData.bind(this);
     this.saveModsData = this.saveModsData.bind(this);
   }
 
@@ -136,7 +135,6 @@ class Table extends React.PureComponent {
         return true;
       }
     }
-
     return false;
   }
 
@@ -321,39 +319,44 @@ class Table extends React.PureComponent {
 
   saveAppointmentsToDatabase() {
     console.log("displayeddata to save", this.state.displayedData)
-    //reseting the database first
-    this.props.firebase.user(this.props.firebase.auth.currentUser.uid)
+    if (this.props.firebase.auth.currentUser) {
+      //reseting the database first
+      this.props.firebase.user(this.props.firebase.auth.currentUser.uid)
       .child('appointments').child('appointmentsArr')
       .set({});
 
-    let displayedData = this.state.displayedData;
+      let displayedData = this.state.displayedData;
 
-    //looping through this.state.data and adding apppointments into db
-    displayedData.map(appointment => {
-      if (!appointment.classNo) { //if its a consult slot
-        this.props.firebase.user(this.props.firebase.auth.currentUser.uid)
-        .child('appointments').child('appointmentsArr')
-        .push({
-          startDate: JSON.stringify(appointment.startDate).replace(/^"(.*)"$/, '$1'),
-          endDate: JSON.stringify(appointment.endDate).replace(/^"(.*)"$/, '$1'),
-          title: appointment.title,
-        });
-      } else { //module slot
-        this.props.firebase.user(this.props.firebase.auth.currentUser.uid)
-        .child('appointments').child('appointmentsArr')
-        .push({
-          startDate: JSON.stringify(appointment.startDate).replace(/^"(.*)"$/, '$1'),
-          endDate: JSON.stringify(appointment.endDate).replace(/^"(.*)"$/, '$1'),
-          title: appointment.title,
-          lessonType: appointment.lessonType,
-          classNo: appointment.classNo,
-          rRule: appointment.rRule,
-          exDate: appointment.exDate
-        });
-      }
-    });
-    this.saveModsData();
-    console.log("after save", this.state.displayedData)
+      //looping through this.state.data and adding apppointments into db
+      displayedData.map(appointment => {
+        if (!appointment.classNo) { //if its a consult slot
+          this.props.firebase.user(this.props.firebase.auth.currentUser.uid)
+          .child('appointments').child('appointmentsArr')
+          .push({
+            startDate: JSON.stringify(appointment.startDate).replace(/^"(.*)"$/, '$1'),
+            endDate: JSON.stringify(appointment.endDate).replace(/^"(.*)"$/, '$1'),
+            title: appointment.title,
+          });
+        } else { //module slot
+          this.props.firebase.user(this.props.firebase.auth.currentUser.uid)
+          .child('appointments').child('appointmentsArr')
+          .push({
+            startDate: JSON.stringify(appointment.startDate).replace(/^"(.*)"$/, '$1'),
+            endDate: JSON.stringify(appointment.endDate).replace(/^"(.*)"$/, '$1'),
+            title: appointment.title,
+            lessonType: appointment.lessonType,
+            classNo: appointment.classNo,
+            rRule: appointment.rRule,
+            exDate: appointment.exDate
+          });
+        }
+      });
+      this.saveModsData();
+      console.log("after save", this.state.displayedData)
+    } else {
+      window.alert("Please sign in to use this function.");
+    }
+    
   }
 
   saveModsData() {

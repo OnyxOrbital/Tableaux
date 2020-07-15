@@ -12,7 +12,7 @@ class ModuleInfo extends React.Component {
   render() {
     let moduleCode = this.props.match.params.moduleCode;
 
-    fetch(`https://api.nusmods.com/v2/2019-2020/modules/${moduleCode}.json`)
+    fetch(`https://api.nusmods.com/v2/2020-2021/modules/${moduleCode}.json`)
       .then(response => response.json())
       .then(module => this.setState({ module: module }));
 

@@ -13,7 +13,7 @@ class SearchBar extends React.Component {
   }
 
   componentDidMount() {
-    fetch(`https://api.nusmods.com/v2/2019-2020/moduleList.json`)
+    fetch(`https://api.nusmods.com/v2/2020-2021/moduleList.json`)
       .then(response => response.json())
       .then(searchResults => this.setState({ searchResults: searchResults }));
   }

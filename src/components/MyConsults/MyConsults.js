@@ -9,15 +9,17 @@ class MyConsults extends React.Component {
     }
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     let newConsults = [];
     if (this.props.firebase.auth.currentUser) {
-      this.props.firebase.database.ref('users')
+      let ref = this.props.firebase.database.ref('users')
       .child(this.props.firebase.auth.currentUser.uid)
       .child('MyConsults')
-      .on('value', function(snapshot) {
-        newConsults.push(Object.values(snapshot.val()))
-      })
+      let snapshot = await ref.once('value');
+      let value = snapshot.val();
+      if (value) {
+        newConsults.push(Object.values(snapshot.val()));
+      }
       if (newConsults) {
         console.log('newconsults', newConsults[0])
         this.setState({ consults: newConsults[0] });
@@ -45,7 +47,7 @@ class MyConsults extends React.Component {
     })
  }
 
- renderTableHeader(consults) {
+ renderTableHeader() {
     return (
     <tr>
       <th>Name</th>
@@ -57,21 +59,45 @@ class MyConsults extends React.Component {
     </tr>);
 }
   render(){
-    return (
-      <div>
-        <h1>My Consults</h1>
-        <div className="consultsList">
-          {this.state.consults ? (
+    console.log(this.state.consults)
+    if (this.props.firebase.auth.currentUser) {
+      return (
+        <div>
+          <h1>My Consults</h1>
+          <div className="consultsList">
+            {this.state.consults && this.state.consults.length > 0 ? (
+              <table className="consults-table">
+                <tbody>
+                  {this.renderTableHeader()}
+                  {this.renderTableData(this.state.consults)}
+                </tbody>
+              </table>) 
+            : (<div>
+              <table className="consults-table">
+                <tbody>
+                  {this.renderTableHeader()}
+                </tbody>
+              </table>
+              <p style={{textAlign: 'center', color: '#e8007c'}}>No consults to show :(</p>
+            </div>) }
+          </div>
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          <h1>My Consults</h1>
+          <div className="consultsList">
             <table className="consults-table">
               <tbody>
-                {this.renderTableHeader(this.state.consults)}
-                {this.renderTableData(this.state.consults)}
+                {this.renderTableHeader()}
               </tbody>
-            </table>) 
-          : <p style={{color: 'red'}}>You have no consults, you should start booking one :)</p> }
+            </table>
+            <p style={{textAlign: 'center', color: '#e8007c'}}>Please sign in to use this function.</p>
+          </div>
         </div>
-      </div>
-    );
+      );
+    }
   }
 }
 

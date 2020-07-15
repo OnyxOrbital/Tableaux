@@ -24,9 +24,13 @@ class ShareDialog extends React.Component {
   }
   
   handleClickOpen() {
-    this.setState({
-      setOpen: true
-    });
+    if (this.props.firebase.auth.currentUser) {
+      this.setState({
+        setOpen: true
+      });
+    } else {
+      window.alert("Please sign in to use this function.");
+    }
   }
 
   handleCloseCancel() {

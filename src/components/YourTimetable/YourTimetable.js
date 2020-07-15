@@ -143,7 +143,7 @@ class YourTimetable extends React.Component {
   }
 
   // reads both displayed data and data
-  readData() {
+  async readData() {
     console.log("before reading data", this.state.displayedData)
     let appointments = [];
     let data = [];
@@ -151,21 +151,20 @@ class YourTimetable extends React.Component {
     let snapshotIsEmpty = false;
     if (this.props.firebase.auth.currentUser) {
       let ref = this.props.firebase.user(this.props.firebase.auth.currentUser.uid).child('appointments');
-      ref.on('value', function(snapshot) {
-        console.log('dd snapshot.val()', snapshot.val())
-        if (snapshot.val()) { //if snapshot is not empty
-          snapshotIsEmpty = true;  //snapshot is not empty
-          appointments.push(Object.values(snapshot.val()));
-        }
-      });
+      let snapshot = await ref.once('value');
+      let value = snapshot.val();
+      if (value) { //if snapshot is not empty
+        snapshotIsEmpty = true;  //snapshot is not empty
+        appointments.push(Object.values(value));
+      }
 
-      ref.child('modsData').on('value', function(snapshot) {
-        console.log('data snapshot.val()', snapshot.val())
-        if (snapshot.val()) { //if snapshot is not empty
-          snapshotIsEmpty = true;  //snapshot is not empty
-          data.push(snapshot.val());
-        }
-      });
+      let ref2 = ref.child('modsData');
+      let snapshot2 = await ref2.once('value');
+      let value2 = snapshot2.val();
+      if (value2) { //if snapshot is not empty
+        snapshotIsEmpty = true;  //snapshot is not empty
+        data.push(value2);
+      }
 
       if (!snapshotIsEmpty) { //if snapshot is empty, finish loading
         console.log('snapshot is empty', snapshotIsEmpty) //loads before snapshot loads
@@ -218,7 +217,10 @@ class YourTimetable extends React.Component {
           modulesFromDB: modulesFromDB
         })
       }
+    } else {
+      window.alert("Please sign in to use this function.")
     }
+
   }
 
   readUsers() {
@@ -282,7 +284,7 @@ class YourTimetable extends React.Component {
         <h1>Your Timetable</h1>
         <Table className="table" data={allData} displayedData={this.state.displayedData} modules={allMods} />
         <ShareDialog className="share-button" users={this.readUsers()} />
-        <button onClick={this.readData} className="refresh-button"><i className="fa fa-refresh"></i>Refresh appointments</button>
+        <button onClick={this.readData} className="refresh-button"><i className="fa fa-refresh"></i>Refresh Data</button>
         <div>
           <br></br>
           <br></br>
