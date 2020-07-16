@@ -120,18 +120,13 @@ class OtherTimetable extends React.Component {
     let displayedData = Object.values(this.props.location.props)[0];
     let uid = this.props.location.props.uid;
     let titles = [];
-    console.log('displayedData', displayedData)
-    console.log('username', username)
-    console.log('uid in other tt', uid)
 
     displayedData.forEach(appointment => {
         // if mod is not in titles array
-        console.log('appt', appointment.title);
         if (!titles.includes(appointment.title)) {
           titles.push(appointment.title);
         }
     })
-    console.log('titles', titles)
 
     this.setState({
       displayedData: displayedData,
@@ -148,16 +143,13 @@ class OtherTimetable extends React.Component {
         return true;
       }
     }
-
     return false;
   }
 
   myAppointment(props) {
     let background = '';
     let titles = this.state.titles;
-    // console.log("titles", titles)
     let colors = this.state.modsColor;
-    // console.log(colors);
     let current = props.data.title;
     if (current.toLowerCase() === 'consult' || current.toLowerCase() === 'consultation') {
       background = '#847d8a';
@@ -165,37 +157,37 @@ class OtherTimetable extends React.Component {
       background = '#9e7d5f';
     } else if (this.indexOfModule(current, titles) < colors.length) {
      background = colors[this.indexOfModule(current, titles)];
-    //  console.log("index of module", this.indexOfModule(current, titles))
-    //  console.log("curent", current)
-    //  console.log('title includes current')
     } else { // if no more colors to assign
       background = colors[titles.length % colors.length];
-      // console.log("modding color", titles.length % colors.length)
-      // console.log('modulo block')
     }
 
     return <Appointments.Appointment {...props} style={{backgroundColor: background}}
       onClick={(event) => {
           // converts title to lowercase for uniformity
           if (event.data.title.toLowerCase() === "consult" || event.data.title.toLowerCase() === "consultation") {
-            console.log("event data", event.data)
             // pop up confirm booking dialog
             let result = window.confirm("Confirm booking?");
             if (result) {
-              // store consult data into user database under "MyConsults"
-              this.props.firebase.database.ref('users')
+              let ref = this.props.firebase.database.ref('users')
               .child(this.props.firebase.auth.currentUser.uid)
-              .child("MyConsults")
-              .push({
-                username: this.state.username,
-                startDate: event.data.startDate,
-                endDate: event.data.endDate,
-                status: 'Pending',
-                identity: 'TA'
-              });
+              .child("MyConsults");
               
-              this.writeToMyConsults(event);
-            
+              ref.orderByChild("startDate").equalTo(event.data.startDate).once("value",
+                snapshot => {
+                  if(!snapshot.exists()) {
+                    //if no clashing consult slots, store consult data into user database under "MyConsults"
+                    ref.push({
+                      username: this.state.username,
+                      startDate: event.data.startDate,
+                      endDate: event.data.endDate,
+                      status: 'Pending',
+                      identity: 'TA'
+                    });
+                    this.writeToMyConsults(event);
+                  } else { //has clashing consult slot
+                    window.alert("You cannot book a consult at this timing!")
+                  }});
+
               // redirects user to MyConsults page
               this.setState({
                 redirectTo: true,
@@ -236,8 +228,6 @@ class OtherTimetable extends React.Component {
 
   render() {
     let displayedData = this.state.displayedData;
-    console.log('state displayedData', this.state.displayedData)
-    console.log('state username', this.state.username)
     if (this.state.redirectTo) {
       return <Redirect to={{
         pathname: '/MyConsults'

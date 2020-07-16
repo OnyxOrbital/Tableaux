@@ -1,13 +1,10 @@
 import React from 'react';
 import './YourTimetable.css';
-import BackArrow from '../../images/backwardarrow.png';
-import FrontArrow from '../../images/forwardarrow.png';
 import SearchBar from '../SearchBar/SearchBar';
 import MyModules from '../YourTimetable/MyModules/MyModules';
 import Table from '../Timetable/Timetable';
 import { withFirebase } from '../Firebase/index';
 import ShareDialog from '../ShareDialog/ShareDialog';
-import ShareSearchBar from '../ShareSearchBar/ShareSearchBar';
 
 class YourTimetable extends React.Component {
   constructor(props) {
@@ -167,32 +164,21 @@ class YourTimetable extends React.Component {
       }
 
       if (!snapshotIsEmpty) { //if snapshot is empty, finish loading
-        console.log('snapshot is empty', snapshotIsEmpty) //loads before snapshot loads
         this.setState({
           isDataLoaded: true
         })
       } else if (appointments[0] && (appointments !== []) && data) { //if snapshot is not empty
-        // console.log('snapshot is not empty-data', data[0])
-        // console.log('snapshot is not empty-dd',  Object.values(appointments[0][0]))
-        //
-        // console.log("module keys", data)
         let data2 = [];
 
         if (data[0]) {
           let modulekeys = Object.keys(data[0]); //arr of mod keys
           modulesFromDB = modulekeys;
           modulekeys.forEach(module => { //for each module array
-            // console.log("module", module)
             let lessonTypekeys = Object.keys(data[0][module]);
-            // console.log("lessonTypekeys", lessonTypekeys)
               lessonTypekeys.forEach(lessonType => { //for each lesson type
-              // console.log('lessonType', lessonType)
               let classNokeys = Object.keys(data[0][module][lessonType]);
-              // console.log("classNokeys", classNokeys)
               classNokeys.forEach(classNo => {
-                // console.log('classNo', classNo)
                 let arr = Object.values(data[0][module][lessonType][classNo]);
-                // console.log('arr', arr)
                 if (!data2.hasOwnProperty(module)) {
                   data2[module] = [];
                   data2[module][lessonType] = [];
@@ -205,11 +191,6 @@ class YourTimetable extends React.Component {
             });
           })
         }
-        // console.log('data', data2)
-        // console.log('appointments',appointments)
-        // console.log('appointments[0]',appointments[0])
-        // console.log('appointments[0][0]',appointments[0][0])
-        // console.log('Object.values(appointments[0][0])', Object.values(appointments[0][0]))
         this.setState({
           displayedData: Object.values(appointments[0][0]),
           isDataLoaded: true,
@@ -229,11 +210,8 @@ class YourTimetable extends React.Component {
         // ref is the users hashcode
       let ref = this.props.firebase.users();
       ref.on('value', function(snapshot) {
-        console.log('dd snapshot', snapshot)
         if (snapshot.val()) { //if snapshot is not empty
           snapshot.forEach(user => {
-            // really dk what's happening
-            console.log('username', user.val().username)
             users.push(user.val().username);
           })
         }
@@ -243,10 +221,6 @@ class YourTimetable extends React.Component {
   }
 
   render(){
-    console.log("data", this.state.data)
-    console.log("dd", this.state.displayedData)
-    console.log('lessons', this.state.lessons)
-
     let data = this.state.data;
     let lessons = this.state.lessons;
     let allData = [];
@@ -261,33 +235,28 @@ class YourTimetable extends React.Component {
 
     let modules = this.state.modules;
     let modulesFromDB = this.state.modulesFromDB;
-    console.log("this.state.modules", this.state.modules)
     let allMods = [];
     let modKeys1 = Object.values(modules);
     let modKeys2 = Object.keys(modulesFromDB);
-    console.log("modkeys2", modKeys2)
     modKeys2.forEach(key => {
       allMods = allMods.concat([modulesFromDB[key]]);
     })
 
     modKeys1.forEach(key => {
-      console.log("key.value", typeof key.value)
       if (!this.containsModule(key.value, this.state.modulesFromDB)) {
         allMods = allMods.concat([key.value]);
       }
     })
 
-    console.log('allMods', allMods)
-    console.log("YOURTIMETABLE DISPLAYED DATA", allData)
     return (
       <div className="yourTimetable">
         <h1>Your Timetable</h1>
         <Table className="table" data={allData} displayedData={this.state.displayedData} modules={allMods} />
-        <ShareDialog className="share-button" users={this.readUsers()} />
-        <button onClick={this.readData} className="refresh-button"><i className="fa fa-refresh"></i>Refresh Data</button>
+        <div className="buttons-div">
+          <ShareDialog className="share-button" users={this.readUsers()} />
+          <button onClick={this.readData} className="refresh-button"><i className="fa fa-refresh"></i>Refresh Data</button>
+        </div>
         <div>
-          <br></br>
-          <br></br>
           <hr></hr>
           <SearchBar action={this.addModule}/>
           <p className="your-modules-text">Your modules:</p>

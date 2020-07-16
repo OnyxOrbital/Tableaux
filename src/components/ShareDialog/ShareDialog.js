@@ -52,32 +52,42 @@ class ShareDialog extends React.Component {
   }
 
   // writes user chosen in share search bar into "peopleISharedMyTTWith" database
-  addPeopleISharedMyTTWith(){
+  async addPeopleISharedMyTTWith(){
     if (this.state.event) {
       let uid = null;
-      //Query data for uid
+      
+      //Query data for uid of user you want to share TT with
       this.props.firebase.database.ref('users')
         .orderByChild("username")
         .equalTo(this.state.event.value).on("value", function(snapshot) {
-          console.log('snapshot.val', Object.keys(snapshot.val())[0]);
           uid = Object.keys(snapshot.val())[0];
         })
-        console.log("uid", uid);
+      
+      // if uid you chose is not your uid
       if (uid !== this.props.firebase.auth.currentUser.uid) {
-        this.props.firebase.database.ref('users')
+        // check if uid you chose already exists in your database
+        let ref = this.props.firebase.database.ref('users')
         .child(this.props.firebase.auth.currentUser.uid)
-        .child('peopleISharedMyTTWith')
-        .push(uid)
+        .child('peopleISharedMyTTWith');
+        let snapshot = await ref.once('value');
+        let value = snapshot.val();
+        // console.log('val', value)
+        // console.log('!value.hasOwnProperty(uid)',  !Object.values(value).includes(uid))
+        if (!value || !Object.values(value).includes(uid)) {
+          // write to database of user
+          this.props.firebase.database.ref('users')
+          .child(this.props.firebase.auth.currentUser.uid)
+          .child('peopleISharedMyTTWith')
+          .push(uid)
 
-        this.props.firebase.database.ref('users')
-        .child(uid)
-        .child('peopleWhoSharedTheirTTWithMe')
-        .push(this.props.firebase.auth.currentUser.uid)
+          // write to database to the user whom you shared your TT with
+          this.props.firebase.database.ref('users')
+          .child(uid)
+          .child('peopleWhoSharedTheirTTWithMe')
+          .push(this.props.firebase.auth.currentUser.uid)
+        }
       }
     }
-    //Write uid to 'peopleisharedmyttwith'
-    console.log("current uid", this.props.firebase.auth.currentUser.uid)
-
   }
   
   render() {

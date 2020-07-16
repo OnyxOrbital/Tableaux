@@ -21,7 +21,6 @@ class MyConsults extends React.Component {
         newConsults.push(Object.values(snapshot.val()));
       }
       if (newConsults) {
-        console.log('newconsults', newConsults[0])
         this.setState({ consults: newConsults[0] });
       }
     }  
@@ -33,8 +32,8 @@ class MyConsults extends React.Component {
           <tr id={key}>
              <td>{slot.username}</td>
              <td>{slot.identity}</td>
-             <td>{slot.startDate}</td>
-             <td>{slot.endDate}</td>
+             <td>{new Date(slot.startDate).toDateString()} {new Date(slot.startDate).toLocaleTimeString()}</td>
+             <td>{new Date(slot.endDate).toDateString()} {new Date(slot.endDate).toLocaleTimeString()}</td>
              <td className="status">{slot.status}</td>
              {slot.identity === "Student" ?
                 (<div>
@@ -59,7 +58,6 @@ class MyConsults extends React.Component {
     </tr>);
 }
   render(){
-    console.log(this.state.consults)
     if (this.props.firebase.auth.currentUser) {
       return (
         <div>

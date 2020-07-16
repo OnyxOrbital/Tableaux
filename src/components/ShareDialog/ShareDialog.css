@@ -14,4 +14,5 @@
 .share-button:hover {
   background-color: #F1C944;
   color: #171a24;
+  cursor: pointer;
 }

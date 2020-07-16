@@ -19,12 +19,9 @@ class SharedTimetable extends React.Component {
         .child('peopleWhoSharedTheirTTWithMe')
         .on('value', function(snapshot) {
           if (snapshot.val()) {
-            console.log('snap.val', snapshot.val())
             peopleWhoSharedTheirTTWithMeuid.push(Object.values(snapshot.val())[0]);
           }
         })
-      console.log('peopleWhoSharedTheirTTWithMeuid', peopleWhoSharedTheirTTWithMeuid)
-
       peopleWhoSharedTheirTTWithMeuid = this.getSharedData(peopleWhoSharedTheirTTWithMeuid);
 
     }
@@ -35,25 +32,18 @@ class SharedTimetable extends React.Component {
   // retrieve appointments from each uid if the array is not empty
   getSharedData(peopleWhoSharedTheirTTWithMeuid) {
     let results = [];
-
     // check if array is not empty
     if (peopleWhoSharedTheirTTWithMeuid && peopleWhoSharedTheirTTWithMeuid !== []) {
-      console.log('peopleWhoSharedTheirTTWithMeuid', peopleWhoSharedTheirTTWithMeuid)
       // loop through each uid in array to retrieve [username, appointmentsArr]
       peopleWhoSharedTheirTTWithMeuid.forEach(uid => {
-        console.log("uid", uid)
         let username = null;
         let appointmentsArr = [];
         this.props.firebase.database.ref('users')
         .child(uid)
         .on('value', function(snapshot) {
-          // console.log('snap.val', snapshot.val())
-          // console.log('snap val username', snapshot.val().username)
-          // console.log("snap val appointments", Object.values(snapshot.val().appointments.appointmentsArr))
           if (snapshot.val()) {
             username = snapshot.val().username;
             if (snapshot.val().appointments) {
-              // console.log("snap val appointments", Object.values(snapshot.val().appointments.appointmentsArr))
               appointmentsArr.push(Object.values(snapshot.val().appointments.appointmentsArr));
               results.push([username, uid, appointmentsArr[0]]);
             } else {
@@ -61,16 +51,12 @@ class SharedTimetable extends React.Component {
             }
           }
         })
-        console.log('username', username)
-        console.log('appt arr', appointmentsArr[0])
       })
-      console.log('results', results)
     }
     return results;
   }
 
   renderTableData(userList) {
-    console.log('rendertabledata', userList)
     return userList.map((user, key) => {
       return (
         <tr id={key}>

@@ -24,7 +24,6 @@ class ProfileBase extends React.Component {
 
   render() {
     if (this.props.user) {
-      console.log(this.props.user)
       return (
           <div>
             <h1>User Profile</h1>

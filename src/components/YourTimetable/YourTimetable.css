@@ -18,14 +18,21 @@
 .refresh-button:hover {
     background-color: #F1C944;
     color: #171a24;
+    cursor: pointer;
 }
 
 .share-button {
     display: block;
 }
 
+.buttons-div {
+    display: flex;
+    float: right;
+}
+
 .yourTimetable hr {
     margin-top: 1rem;
+    width: 100%;
 }
 
 .your-modules-text {

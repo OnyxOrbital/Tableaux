@@ -40,7 +40,7 @@ class TopPanel extends React.Component {
               : <SignInButton />}
             </div>
             <Notifications />
-            <p id="semesterdate">AY2019/20, Special Term 2</p>
+            <p id="semesterdate">AY2020/21, Semester 1</p>
           </div>
         );
     }

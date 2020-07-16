@@ -141,41 +141,43 @@ class Table extends React.PureComponent {
   myAppointment(props) {
     let background = '';
     let titles = this.props.modules;
-    console.log("titles", titles)
     let colors = this.state.modsColor;
-    // console.log(colors);
     let current = props.data.title;
+    console.log('current', current)
+    if (!current) { //if no title is entered, put 'event' as default title
+      current = 'Event';
+      props.data.title = 'Event';
+      console.log('current', current)
+    }
     if (current.toLowerCase() === 'consult' || current.toLowerCase() === 'consultation') {
       background = '#847d8a';
     } else if (!this.containsModule(current, titles)) { // neither consult nor mod
       background = '#9e7d5f';
     } else if (this.indexOfModule(current, titles) < colors.length) {
      background = colors[this.indexOfModule(current, titles)];
-     console.log("index of module", this.indexOfModule(current, titles))
-     console.log("curent", current)
-    //  console.log('title includes current')
     } else { // if no more colors to assign
       background = colors[titles.length % colors.length];
-      console.log("modding color", titles.length % colors.length)
-      // console.log('modulo block')
     }
 
     return <Appointments.Appointment {...props} style={{backgroundColor: background}}
       onClick={(event) => {
+        let current = event.data.title;
+        if (!current) {
+          current = 'Event';
+        }
         if (this.state.isEditing) {
-          if (event.data.title.toLowerCase() !== "consult" || event.data.title.toLowerCase() !== "consultation") {
-            let displayedData = this.replaceSlot(event.data.title, event.data.lessonType, event.data);
+          if (current.toLowerCase() !== "consult" || current.toLowerCase() !== "consultation") {
+            let displayedData = this.replaceSlot(current, event.data.lessonType, event.data);
             this.setState({
               displayedData: displayedData,
               isEditing: false
             });
           }
         } else {
-          if (event.data.title.toLowerCase() === "consult" || event.data.title.toLowerCase() === "consultation" || !this.containsModule(event.data.title, this.props.modules)) { // for slots that are not modules nor consults
-            // console.log("this.props.modules", this.props.modules)
+          if (current.toLowerCase() === "consult" || current.toLowerCase() === "consultation" || !this.containsModule(current, this.props.modules)) { // for slots that are not modules nor consults
             // the code has yet to be implemented
           } else { // for mod slots, shows alternative slots
-          let alternatives = this.showAlternatives(event.data.title, event.data.lessonType, event.data.classNo);
+          let alternatives = this.showAlternatives(current, event.data.lessonType, event.data.classNo);
             this.setState({
               displayedData: this.state.displayedData.concat(alternatives),
               isEditing: true
@@ -219,18 +221,12 @@ class Table extends React.PureComponent {
   componentWillReceiveProps(nextProps) {
     // if data is updated (i.e mod added)
     if (nextProps.data !== this.state.data || nextProps.displayedData !== this.state.displayedData) {
-      console.log("cwrp if block")
-      console.log("next props dd", nextProps.displayedData)
       let displayedData = nextProps.displayedData;
       let newData = nextProps.data;
       let modTitles = this.state.modTitles;
-
       let modKeys = Object.keys(newData);
-
-      console.log("modKeys", modKeys)
       //loop through data, if there are mods in data that
       //is not in dd, push mod to dd (and modTitles)
-      console.log("displayedData", displayedData)
       modKeys.forEach(key => { //for each mod in new data
         let isIndd = false;
         displayedData.forEach(slot => {
@@ -239,16 +235,11 @@ class Table extends React.PureComponent {
           }
         })
         if (!isIndd) {
-          console.log("newData[key]", newData[key])
           displayedData.push(newData[key]);
           modTitles.push(key)
         }
       })
-
-      console.log("final modTitles", modTitles)
       displayedData = this.process(displayedData);
-
-      console.log("now displayed data", displayedData)
       this.setState({
         data: newData,
         displayedData: displayedData,
@@ -268,23 +259,16 @@ class Table extends React.PureComponent {
       if (lessonTypekeys[0] !== "endDate" && lessonTypekeys[0] !== "startDate" && lessonTypekeys[0] !== "classNo") { // if data has not been processed
         lessonTypekeys.forEach(lessonType => { //for each lesson type
           let classNokeys = Object.keys(lessons[module][lessonType]);
-          console.log("if block",lessons[module][lessonType][classNokeys[0]])
             result = result.concat(lessons[module][lessonType][classNokeys[0]]); //concat first class no into result
-            console.log("result", result)
           })
-        }
-     else {
-        console.log("else block", lessons[module])
+      } else {
         result = result.concat(lessons[module]);
       }
     })
-
-    console.log("resultssss", result)
     return result;
   }
 
   showAlternatives(modCode, lessonType, classNo) {
-    console.log('data', this.state.data)
     let newdata = this.state.data[modCode][lessonType]; //arr with classNos
 
     let keys = Object.keys(newdata); //arr of classNo keys
@@ -294,7 +278,6 @@ class Table extends React.PureComponent {
         result = result.concat(newdata[key]);
       }
     })
-
     return result;
   }
 
@@ -313,31 +296,39 @@ class Table extends React.PureComponent {
         displayedData.push(lessons[i]);
       }
     }
-
     return displayedData;
   }
 
   saveAppointmentsToDatabase() {
-    console.log("displayeddata to save", this.state.displayedData)
     if (this.props.firebase.auth.currentUser) {
       //reseting the database first
       this.props.firebase.user(this.props.firebase.auth.currentUser.uid)
       .child('appointments').child('appointmentsArr')
       .set({});
-
       let displayedData = this.state.displayedData;
 
-      //looping through this.state.data and adding apppointments into db
+      //looping through this.state.displayedData and adding apppointments into db
       displayedData.map(appointment => {
-        if (!appointment.classNo) { //if its a consult slot
-          this.props.firebase.user(this.props.firebase.auth.currentUser.uid)
-          .child('appointments').child('appointmentsArr')
-          .push({
-            startDate: JSON.stringify(appointment.startDate).replace(/^"(.*)"$/, '$1'),
-            endDate: JSON.stringify(appointment.endDate).replace(/^"(.*)"$/, '$1'),
-            title: appointment.title,
-          });
-        } else { //module slot
+        if (!appointment.classNo) { //if its a consult slot/other appt slot
+          if (appointment.rRule) { //if is a repeating event,
+            this.props.firebase.user(this.props.firebase.auth.currentUser.uid)
+            .child('appointments').child('appointmentsArr')
+            .push({
+              startDate: JSON.stringify(appointment.startDate).replace(/^"(.*)"$/, '$1'),
+              endDate: JSON.stringify(appointment.endDate).replace(/^"(.*)"$/, '$1'),
+              title: appointment.title,
+              rRule: appointment.rRule
+            });
+          } else { //if its not a repeating event
+            this.props.firebase.user(this.props.firebase.auth.currentUser.uid)
+            .child('appointments').child('appointmentsArr')
+            .push({
+              startDate: JSON.stringify(appointment.startDate).replace(/^"(.*)"$/, '$1'),
+              endDate: JSON.stringify(appointment.endDate).replace(/^"(.*)"$/, '$1'),
+              title: appointment.title,
+            });
+          }
+        } else { //if its a module slot
           this.props.firebase.user(this.props.firebase.auth.currentUser.uid)
           .child('appointments').child('appointmentsArr')
           .push({
@@ -352,7 +343,6 @@ class Table extends React.PureComponent {
         }
       });
       this.saveModsData();
-      console.log("after save", this.state.displayedData)
     } else {
       window.alert("Please sign in to use this function.");
     }
@@ -360,7 +350,6 @@ class Table extends React.PureComponent {
   }
 
   saveModsData() {
-    console.log("data to save", this.state.data)
     let data = this.state.data;
     this.props.firebase.user(this.props.firebase.auth.currentUser.uid)
       .child('appointments').child('modsData')
@@ -384,7 +373,6 @@ class Table extends React.PureComponent {
               classNo: classNo
             });
           }
-
         })
       })
     })
@@ -403,8 +391,6 @@ class Table extends React.PureComponent {
         }
       }}/>;
     }
-    console.log("DISPLAYED DATA", this.state.displayedData)
-
     return (
       <div>
         <ThemeProvider theme={theme}>
