@@ -22,7 +22,7 @@ class ShareDialog extends React.Component {
     this.addPeopleISharedMyTTWith = this.addPeopleISharedMyTTWith.bind(this);
     this.saveEvent = this.saveEvent.bind(this);
   }
-  
+
   handleClickOpen() {
     if (this.props.firebase.auth.currentUser) {
       this.setState({
@@ -43,26 +43,29 @@ class ShareDialog extends React.Component {
     this.setState({
       setOpen: false
     });
-    
+
+
+
     this.addPeopleISharedMyTTWith();
   }
-  
+
   saveEvent(event) {
     this.setState({ event: event });
   }
 
   // writes user chosen in share search bar into "peopleISharedMyTTWith" database
   async addPeopleISharedMyTTWith(){
+
     if (this.state.event) {
       let uid = null;
-      
+
       //Query data for uid of user you want to share TT with
       this.props.firebase.database.ref('users')
         .orderByChild("username")
         .equalTo(this.state.event.value).on("value", function(snapshot) {
           uid = Object.keys(snapshot.val())[0];
         })
-      
+
       // if uid you chose is not your uid
       if (uid !== this.props.firebase.auth.currentUser.uid) {
         // check if uid you chose already exists in your database
@@ -89,7 +92,7 @@ class ShareDialog extends React.Component {
       }
     }
   }
-  
+
   render() {
     return (
       <div>

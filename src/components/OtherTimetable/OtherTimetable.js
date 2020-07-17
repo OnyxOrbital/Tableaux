@@ -114,12 +114,13 @@ class OtherTimetable extends React.Component {
     this.myAppointment = this.myAppointment.bind(this);
     this.containsModule = this.containsModule.bind(this);
   }
- 
+
   componentDidMount() {
     let username = this.props.location.props.username;
     let displayedData = Object.values(this.props.location.props)[0];
     let uid = this.props.location.props.uid;
     let titles = [];
+    // let sharedAs = this.props.location.props.sharedAs;
 
     displayedData.forEach(appointment => {
         // if mod is not in titles array
@@ -128,6 +129,19 @@ class OtherTimetable extends React.Component {
         }
     })
 
+    // if shared as TA, loop through each appointment in displayedData to filter out non-mods
+    // if (sharedAs === "TA") {
+    //   let newdd = [];
+    //   displayedData.forEach(appointment => {
+    //     // if appointment is a consult slot
+    //     if (appointment.title.toLowerCase() === "consult" || ppointment.title.toLowerCase() === "consultation") {
+    //       newdd.push(appointment);
+    //     }
+    //   })
+    //
+    //   displayedData = newdd;
+    // }
+
     this.setState({
       displayedData: displayedData,
       username: username,
@@ -135,7 +149,7 @@ class OtherTimetable extends React.Component {
       titles: titles
     })
   }
- 
+
   // checks if event.data.title is contained in array of modules
   containsModule(title, arr) {
     for (let i = 0; i < arr.length; i++) {
@@ -171,7 +185,7 @@ class OtherTimetable extends React.Component {
               let ref = this.props.firebase.database.ref('users')
               .child(this.props.firebase.auth.currentUser.uid)
               .child("MyConsults");
-              
+
               ref.orderByChild("startDate").equalTo(event.data.startDate).once("value",
                 snapshot => {
                   if(!snapshot.exists()) {
@@ -194,7 +208,7 @@ class OtherTimetable extends React.Component {
                 consultData: event.data
               });
             }
-          } 
+          }
       }}
       onDoubleClick={() => { }}
     />
@@ -233,7 +247,7 @@ class OtherTimetable extends React.Component {
         pathname: '/MyConsults'
       }}/>;
     }
- 
+
     return (
       <div>
         <h1>{this.state.username}'s Timetable</h1>
@@ -257,8 +271,8 @@ class OtherTimetable extends React.Component {
                 layoutComponent={LayoutBase}
                 excludedDays={[0]}
               />
-              <Toolbar 
-                rootComponent={ToolbarRoot} 
+              <Toolbar
+                rootComponent={ToolbarRoot}
               />
               <DateNavigator />
               <Appointments appointmentComponent={this.myAppointment} />
@@ -269,5 +283,5 @@ class OtherTimetable extends React.Component {
       </div>);
   }
 }
- 
+
 export default withFirebase(OtherTimetable);

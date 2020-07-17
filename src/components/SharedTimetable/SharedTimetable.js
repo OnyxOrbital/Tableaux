@@ -38,19 +38,26 @@ class SharedTimetable extends React.Component {
       peopleWhoSharedTheirTTWithMeuid.forEach(uid => {
         let username = null;
         let appointmentsArr = [];
+        // let content = [];
+
         this.props.firebase.database.ref('users')
         .child(uid)
         .on('value', function(snapshot) {
           if (snapshot.val()) {
             username = snapshot.val().username;
+            // content.push(username);
+            // content.push(uid);
             if (snapshot.val().appointments) {
               appointmentsArr.push(Object.values(snapshot.val().appointments.appointmentsArr));
               results.push([username, uid, appointmentsArr[0]]);
+              // content.push(appointmentsArr[0]);
             } else {
-              results.push([username, uid, appointmentsArr]);
+              results.push([username, uid, appointmentsArr, ]);
+              // content.push(appointmentsArr);
             }
           }
         })
+
       })
     }
     return results;
@@ -66,7 +73,8 @@ class SharedTimetable extends React.Component {
               props: {
                 displayedData: user[2],
                 username: user[0],
-                uid: user[1]
+                uid: user[1],
+                // sharedAs: user[3]
                 }
               }}>{user[0]}</Link>
           </td>
