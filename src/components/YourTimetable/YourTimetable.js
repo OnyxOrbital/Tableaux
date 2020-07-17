@@ -233,6 +233,10 @@ class YourTimetable extends React.Component {
       allData[key] = lessons[key];
     })
 
+    // console.log("this.state.data", this.state.data)
+    // console.log("this.state.lessons", this.state.lessons)
+    // console.log("allData", allData)
+
     let modules = this.state.modules;
     let modulesFromDB = this.state.modulesFromDB;
     let allMods = [];
@@ -247,6 +251,13 @@ class YourTimetable extends React.Component {
         allMods = allMods.concat([key.value]);
       }
     })
+    // console.log("this.state.modules", this.state.modules)
+    // console.log("modulesfromDB", this.state.modulesFromDB)
+    // console.log("all mods", allMods)
+
+    console.log("allData", allData)
+    console.log("this.state.displayedData", this.state.displayedData)
+
 
     return (
       <div className="yourTimetable">

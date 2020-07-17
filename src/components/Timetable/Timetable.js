@@ -117,6 +117,7 @@ class Table extends React.PureComponent {
       modTitles: [],
       isDataLoaded: false,
     }
+    this.checkIfConsultSlotIsInArr = this.checkIfConsultSlotIsInArr.bind(this);
     this.indexOfModule = this.indexOfModule.bind(this);
     this.containsModule = this.containsModule.bind(this);
     this.replaceSlot = this.replaceSlot.bind(this);
@@ -199,12 +200,36 @@ class Table extends React.PureComponent {
     return index;
   }
 
+  checkIfConsultSlotIsInArr(arr, consult) {
+    let inArr = false;
+    for (let i = 0; i < arr.length; i++) {
+      let slot = arr[i];
+      if (slot.title.toLowerCase() === "consult" || slot.title.toLowerCase() === "consultation") {
+        if (slot.startDate === consult.startDate && slot.endDate === consult.endDate) {
+          inArr = true;
+        }
+      }
+    }
+
+    return inArr;
+  }
+
   commitChanges({ added, changed, deleted }) {
     this.setState((state) => {
       let { displayedData } = state;
       if (added) {
         const startingAddedId = displayedData.length > 0 ? displayedData[displayedData.length - 1].id + 1 : 0;
-        displayedData = [...displayedData, { id: startingAddedId, ...added }];
+        // console.log("added", added)
+        // console.log("displayed data commit", displayedData)
+        if (added.title.toLowerCase() === "consult" || added.title.toLowerCase() === "consultation") {
+            if (!this.checkIfConsultSlotIsInArr(displayedData, added)) {
+              displayedData = [...displayedData, { id: startingAddedId, ...added }];
+            } else {
+              window.alert("Sorry, you cannot add a duplicate consultation slot.");
+            }
+        } else {
+          displayedData = [...displayedData, { id: startingAddedId, ...added }];
+        }
       }
       if (changed) {
         displayedData = displayedData.map(appointment => (
@@ -225,6 +250,9 @@ class Table extends React.PureComponent {
       let newData = nextProps.data;
       let modTitles = this.state.modTitles;
       let modKeys = Object.keys(newData);
+
+      console.log("props displayedData", displayedData)
+      console.log("props newData", newData)
       //loop through data, if there are mods in data that
       //is not in dd, push mod to dd (and modTitles)
       modKeys.forEach(key => { //for each mod in new data
@@ -239,13 +267,20 @@ class Table extends React.PureComponent {
           modTitles.push(key)
         }
       })
+
+      console.log("dd before process", displayedData)
       displayedData = this.process(displayedData);
+
+      console.log("processed dd", displayedData)
       this.setState({
         data: newData,
         displayedData: displayedData,
         modTitles: modTitles
       });
     }
+
+
+
   }
 
   /*Returns duplicated time slots. Not sure if problem is here or in comp will receive props
@@ -346,7 +381,7 @@ class Table extends React.PureComponent {
     } else {
       window.alert("Please sign in to use this function.");
     }
-    
+
   }
 
   saveModsData() {
