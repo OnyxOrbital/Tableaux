@@ -8,6 +8,7 @@ class SharedTimetable extends React.Component {
     super(props);
     this.getSharedData = this.getSharedData.bind(this);
     this.readPeopleWhoSharedTheirTTWithMe = this.readPeopleWhoSharedTheirTTWithMe.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
   }
 
   readPeopleWhoSharedTheirTTWithMe() {
@@ -63,11 +64,38 @@ class SharedTimetable extends React.Component {
     return results;
   }
 
+  handleDelete(uid) {
+    console.log('uid', uid)
+    this.props.firebase.database.ref('users')
+      .child(this.props.firebase.auth.currentUser.uid)
+      .child('peopleWhoSharedTheirTTWithMe')
+      .once('value', snapshot => {
+        snapshot.forEach(child => {
+          console.log(child.val())
+          if (child.val() === uid) {
+            child.ref.remove();
+          }
+        })
+      });
+
+    this.props.firebase.database.ref('users')
+      .child(uid)
+      .child('peopleISharedMyTTWith')
+       .once('value', snapshot => {
+        snapshot.forEach(child => {
+          console.log(child.val())
+          if (child.val() === this.props.firebase.auth.currentUser.uid) {
+            child.ref.remove();
+          }
+        })
+      });
+  }
+
   renderTableData(userList) {
     return userList.map((user, key) => {
       return (
         <tr id={key}>
-          <td>
+          <td className="shared-td">
             <Link to={{
               pathname: `/SharedTimetables/${user[0].replace(/\s/g, "")}`,
               props: {
@@ -77,10 +105,13 @@ class SharedTimetable extends React.Component {
                 // sharedAs: user[3]
                 }
               }}>{user[0]}</Link>
+              <button onClick={() => this.handleDelete(user[1])}>
+                <i className="fa fa-trash-o" aria-hidden="true"></i>
+              </button>
           </td>
         </tr>)
     })
- }
+  }
 
  renderTableHeader() {
     return <th>Name</th>
@@ -95,7 +126,7 @@ class SharedTimetable extends React.Component {
               <h1>Shared Timetables</h1>
             <table className="sharedList">
               <tbody>
-                <tr>{this.renderTableHeader()}</tr>
+                <tr >{this.renderTableHeader()}</tr>
                 {this.renderTableData(userList)}
               </tbody>
             </table>

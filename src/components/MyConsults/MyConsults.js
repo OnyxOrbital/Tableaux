@@ -26,6 +26,37 @@ class MyConsults extends React.Component {
     }  
   }
 
+  handleCancel(uid, startDate, endDate) {
+    console.log('uid', uid)
+    this.props.firebase.database.ref('users')
+      .child(this.props.firebase.auth.currentUser.uid)
+      .child('MyConsults')
+      .once('value', snapshot => {
+        snapshot.forEach(child => {
+          console.log(child.val())
+          if (child.val().uid === uid 
+            && child.val().startDate === startDate
+            && child.val().endDate === endDate) {
+            child.ref.remove();
+          }
+        })
+      });
+
+    this.props.firebase.database.ref('users')
+      .child(uid)
+      .child('MyConsults')
+       .once('value', snapshot => {
+        snapshot.forEach(child => {
+          console.log(child.val())
+          if (child.val().uid === this.props.firebase.auth.currentUser.uid
+              && child.val().startDate === startDate
+              && child.val().endDate === endDate) {
+            child.ref.remove();
+          }
+        })
+      });
+  }
+
   renderTableData(consults) {
     return consults.map((slot, key) => {
        return (
@@ -39,7 +70,7 @@ class MyConsults extends React.Component {
                 (<div>
                   <td><button>Accept</button><button>Decline</button></td>
                 </div>):
-                (<td><button>Cancel</button></td>)
+                (<td><button onClick={() => this.handleCancel(slot.uid, slot.startDate, slot.endDate)}>Cancel</button></td>)
               }
           </tr>
        )

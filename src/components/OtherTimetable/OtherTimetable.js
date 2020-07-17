@@ -191,6 +191,7 @@ class OtherTimetable extends React.Component {
                   if(!snapshot.exists()) {
                     //if no clashing consult slots, store consult data into user database under "MyConsults"
                     ref.push({
+                      uid: this.state.uid,
                       username: this.state.username,
                       startDate: event.data.startDate,
                       endDate: event.data.endDate,
@@ -220,6 +221,7 @@ class OtherTimetable extends React.Component {
       .child(this.state.uid)
       .child("MyConsults")
       .push({
+        uid: this.props.firebase.auth.currentUser.uid,
         username: this.props.firebase.auth.currentUser.displayName,
         startDate: event.data.startDate,
         endDate: event.data.endDate,
