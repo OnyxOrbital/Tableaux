@@ -144,11 +144,9 @@ class Table extends React.PureComponent {
     let titles = this.props.modules;
     let colors = this.state.modsColor;
     let current = props.data.title;
-    console.log('current', current)
     if (!current) { //if no title is entered, put 'event' as default title
       current = 'Event';
       props.data.title = 'Event';
-      console.log('current', current)
     }
     if (current.toLowerCase() === 'consult' || current.toLowerCase() === 'consultation') {
       background = '#847d8a';
@@ -219,8 +217,6 @@ class Table extends React.PureComponent {
       let { displayedData } = state;
       if (added) {
         const startingAddedId = displayedData.length > 0 ? displayedData[displayedData.length - 1].id + 1 : 0;
-        // console.log("added", added)
-        // console.log("displayed data commit", displayedData)
         if (added.title.toLowerCase() === "consult" || added.title.toLowerCase() === "consultation") {
             if (!this.checkIfConsultSlotIsInArr(displayedData, added)) {
               displayedData = [...displayedData, { id: startingAddedId, ...added }];
@@ -246,41 +242,41 @@ class Table extends React.PureComponent {
   componentWillReceiveProps(nextProps) {
     // if data is updated (i.e mod added)
     if (nextProps.data !== this.state.data || nextProps.displayedData !== this.state.displayedData) {
-      let displayedData = nextProps.displayedData;
+      let newdisplayedData = nextProps.dd;
       let newData = nextProps.data;
       let modTitles = this.state.modTitles;
       let modKeys = Object.keys(newData);
 
-      console.log("props displayedData", displayedData)
-      console.log("props newData", newData)
       //loop through data, if there are mods in data that
       //is not in dd, push mod to dd (and modTitles)
-      modKeys.forEach(key => { //for each mod in new data
+      modKeys.forEach(modCode => { //for each mod in new data
         let isIndd = false;
-        displayedData.forEach(slot => {
-          if (slot.title === key) {
-            isIndd = true;
-          }
+        newdisplayedData.forEach(module => {
+          let lessonTypekeys = Object.keys(module);
+          lessonTypekeys.forEach(lessonType => {
+            let classNokeys = Object.keys(module[lessonType]);
+            classNokeys.forEach(classNo => {
+              let slot = module[lessonType][classNo][0]
+              if (slot.title === modCode) {
+                isIndd = true;
+              }
+            })
+          })
         })
         if (!isIndd) {
-          displayedData.push(newData[key]);
-          modTitles.push(key)
+          newdisplayedData.push(newData[modCode]);
+          modTitles.push(modCode)
         }
       })
 
-      console.log("dd before process", displayedData)
-      displayedData = this.process(displayedData);
+      newdisplayedData = this.process(newdisplayedData);
 
-      console.log("processed dd", displayedData)
       this.setState({
         data: newData,
-        displayedData: displayedData,
+        displayedData: newdisplayedData,
         modTitles: modTitles
       });
     }
-
-
-
   }
 
   /*Returns duplicated time slots. Not sure if problem is here or in comp will receive props

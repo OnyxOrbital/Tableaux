@@ -13,7 +13,7 @@ class YourTimetable extends React.Component {
       modules: [],
       modulesFromDB: [],
       data: [],
-      displayedData: [],
+      dd: [],
       lessons: [],
       isDataLoaded: false
     }
@@ -33,15 +33,15 @@ class YourTimetable extends React.Component {
         return true;
       }
     }
-
     return false;
   }
 
-  //onclick on module option in searchbar,
-  //adds module to module list in state,
-  //fetches more info (including lesson timing) from api
-  //appends the extended info into search results, calls process data
+  /*onclick on module option in searchbar,
+  adds module to this.state.modules,
+  fetches more info (including lesson timing) from api
+  appends the extended info into search results, calls process data*/
   async addModule(module) {
+    console.log('called addModule', this.state.dd)
     // checks for duplicate mod entry
     if (!this.containsModule(module.label, this.state.modules)) {
       let modules = this.state.modules;
@@ -49,7 +49,7 @@ class YourTimetable extends React.Component {
       this.setState({ modules: modules });
 
       let newSearchResults = [];
-      await Promise.all(modules.map(module => {
+      await Promise.all(modules.map(module => { //wait should this fetch for all modules or only the new mod added??
         return fetch(`https://api.nusmods.com/v2/2020-2021/modules/${module.label}.json`)
         .then(response => response.json())
         .then(searchResults => {
@@ -63,6 +63,7 @@ class YourTimetable extends React.Component {
   //converts searchresults into array of lesson timings,
   //stores in this.state.lessons
   processData(searchResults) {
+    console.log('called processData', this.state.dd)
     let lessons = []; // array that stores all mods -> lessontypes -> classnos -> lesson obj
     let timetables = []; //timetable[0] is modcode, timetable[1] is array of lesson objs
     searchResults.forEach(module => {
@@ -96,10 +97,12 @@ class YourTimetable extends React.Component {
         lessons[timetable[0]] = this.filterLessons(arr);
       }
     });
+    console.log('lessons', lessons)
     this.setState({ lessons: lessons });
   }
 
   filterLessons(arr) { //takes array of lesson objects
+    console.log('called filterLessons', this.state.dd)
     let lessonTypes = arr.reduce(function(obj, lesson) {
       if (!obj.hasOwnProperty(lesson.lessonType)){
         obj[lesson.lessonType] = [];
@@ -111,13 +114,14 @@ class YourTimetable extends React.Component {
     let lessonTypekeys = Object.keys(lessonTypes);
     lessonTypekeys.forEach(lessonType => {
       lessonTypes[lessonType] = lessonTypes[lessonType].reduce(function(obj, lesson){
-            if (!obj.hasOwnProperty(lesson.classNo)){
-              obj[lesson.classNo] = [];
-            }
-            obj[lesson.classNo].push(lesson);
-            return obj;
-          }, []);
+        if (!obj.hasOwnProperty(lesson.classNo)){
+          obj[lesson.classNo] = [];
+        }
+        obj[lesson.classNo].push(lesson);
+        return obj;
+      }, []);
     })
+    console.log('lessonTypes', lessonTypes)
     return lessonTypes;
   }
 
@@ -141,7 +145,7 @@ class YourTimetable extends React.Component {
 
   // reads both displayed data and data
   async readData() {
-    console.log("before reading data", this.state.displayedData)
+    console.log("called readData", this.state.dd)
     let appointments = [];
     let data = [];
     let modulesFromDB = [];
@@ -192,7 +196,7 @@ class YourTimetable extends React.Component {
           })
         }
         this.setState({
-          displayedData: Object.values(appointments[0][0]),
+          dd: Object.values(appointments[0][0]),
           isDataLoaded: true,
           data: data2,
           modules: [],
@@ -206,6 +210,7 @@ class YourTimetable extends React.Component {
   }
 
   readUsers() {
+    console.log('called readUsers')
     let users = [];
     if (this.props.firebase.auth.currentUser) {
         // ref is the users hashcode
@@ -234,10 +239,6 @@ class YourTimetable extends React.Component {
       allData[key] = lessons[key];
     })
 
-    // console.log("this.state.data", this.state.data)
-    // console.log("this.state.lessons", this.state.lessons)
-    // console.log("allData", allData)
-
     let modules = this.state.modules;
     let modulesFromDB = this.state.modulesFromDB;
     let allMods = [];
@@ -252,15 +253,12 @@ class YourTimetable extends React.Component {
         allMods = allMods.concat([key.value]);
       }
     })
-
-    console.log("allData", allData)
-    console.log("this.state.displayedData", this.state.displayedData)
-
-
+  
+    let dd = this.state.dd;
     return (
       <div className="yourTimetable">
         <h1>Your Timetable</h1>
-        <Table className="table" data={allData} displayedData={this.state.displayedData} modules={allMods} />
+        <Table className="table" data={allData} dd={dd} modules={allMods} />
         <div className="buttons-div">
           <ShareDialog className="share-button" users={this.readUsers()} />
           <button onClick={this.readData} className="refresh-button"><i className="fa fa-refresh"></i>Refresh Data</button>
