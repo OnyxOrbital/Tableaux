@@ -195,6 +195,7 @@ class YourTimetable extends React.Component {
           displayedData: Object.values(appointments[0][0]),
           isDataLoaded: true,
           data: data2,
+          modules: [],
           modulesFromDB: modulesFromDB
         })
       }
@@ -251,9 +252,6 @@ class YourTimetable extends React.Component {
         allMods = allMods.concat([key.value]);
       }
     })
-    // console.log("this.state.modules", this.state.modules)
-    // console.log("modulesfromDB", this.state.modulesFromDB)
-    // console.log("all mods", allMods)
 
     console.log("allData", allData)
     console.log("this.state.displayedData", this.state.displayedData)

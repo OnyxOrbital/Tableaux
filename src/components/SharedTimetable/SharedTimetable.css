@@ -12,6 +12,16 @@
     text-align: left;
 }
 
+.shared-td {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.shared-td a {
+    flex-grow: 1;
+}
+
 .sharedList th {
     color: #e2dce3;
     text-align: left;
@@ -46,3 +56,24 @@ a {
 ::-webkit-scrollbar {
     display: none;
  }
+
+
+button {
+    float: right;
+    color: white;
+    font-family: Monda, Arial;
+    background-color:rgb(33, 38, 54);
+    outline: none;
+    border: 0.5px solid #aaa2ab;
+    border-radius: 3px;
+    text-decoration: none;
+    padding: 0 1rem;
+    margin: 0.5rem 0rem;
+}
+  
+button:hover {
+    background-color: #F1C944;
+    color: #171a24;
+    cursor: pointer;
+}
+
