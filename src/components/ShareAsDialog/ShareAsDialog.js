@@ -108,10 +108,6 @@ class ShareDialog extends React.Component {
   render() {
     return (
       <div>
-        // <button className="share-button" onClick={this.handleClickOpen}>
-        //   <i className="fa fa-share-alt"></i>
-        //   Share As:
-        // </button>
         <Dialog open={this.state.setOpen} onClose={this.handleClose} aria-labelledby="form-dialog-title">
           <DialogTitle style={{backgroundColor: '#212636', zIndex: '10'}} id="form-dialog-title">Share Your Timetable</DialogTitle>
           <DialogContent style={{backgroundColor: '#40444f', zIndex: '10', height:'100px'}}>
