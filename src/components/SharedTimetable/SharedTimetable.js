@@ -35,13 +35,13 @@ class SharedTimetable extends React.Component {
     // check if array is not empty
     if (peopleWhoSharedTheirTTWithMeuid && peopleWhoSharedTheirTTWithMeuid !== []) {
       // loop through each uid in array to retrieve [username, appointmentsArr]
-      peopleWhoSharedTheirTTWithMeuid.forEach(uid => {
+      peopleWhoSharedTheirTTWithMeuid.forEach(user => {
         let username = null;
         let appointmentsArr = [];
         // let content = [];
 
         this.props.firebase.database.ref('users')
-        .child(uid)
+        .child(user[0])
         .on('value', function(snapshot) {
           if (snapshot.val()) {
             username = snapshot.val().username;
@@ -49,10 +49,10 @@ class SharedTimetable extends React.Component {
             // content.push(uid);
             if (snapshot.val().appointments) {
               appointmentsArr.push(Object.values(snapshot.val().appointments.appointmentsArr));
-              results.push([username, uid, appointmentsArr[0]]);
+              results.push([username, user[0], appointmentsArr[0], user[1]]);
               // content.push(appointmentsArr[0]);
             } else {
-              results.push([username, uid, appointmentsArr, ]);
+              results.push([username, user[0], appointmentsArr, user[1]]);
               // content.push(appointmentsArr);
             }
           }
@@ -74,7 +74,7 @@ class SharedTimetable extends React.Component {
                 displayedData: user[2],
                 username: user[0],
                 uid: user[1],
-                // sharedAs: user[3]
+                sharedAs: user[3]
                 }
               }}>{user[0]}</Link>
           </td>

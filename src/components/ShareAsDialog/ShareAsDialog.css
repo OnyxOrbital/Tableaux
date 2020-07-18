@@ -1,0 +1,18 @@
+.share-button {
+  float: right;
+  margin: 1rem;
+  color: white;
+  font-family: Monda, Arial;
+  background-color:rgb(33, 38, 54);
+  outline: none;
+  border: 0.5px solid #aaa2ab;
+  border-radius: 3px;
+  text-decoration: none;
+  padding: 0 1rem;
+}
+
+.share-button:hover {
+  background-color: #F1C944;
+  color: #171a24;
+  cursor: pointer;
+}

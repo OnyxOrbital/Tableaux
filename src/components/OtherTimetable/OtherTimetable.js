@@ -120,7 +120,7 @@ class OtherTimetable extends React.Component {
     let displayedData = Object.values(this.props.location.props)[0];
     let uid = this.props.location.props.uid;
     let titles = [];
-    // let sharedAs = this.props.location.props.sharedAs;
+    let sharedAs = this.props.location.props.sharedAs;
 
     displayedData.forEach(appointment => {
         // if mod is not in titles array
@@ -130,17 +130,17 @@ class OtherTimetable extends React.Component {
     })
 
     // if shared as TA, loop through each appointment in displayedData to filter out non-mods
-    // if (sharedAs === "TA") {
-    //   let newdd = [];
-    //   displayedData.forEach(appointment => {
-    //     // if appointment is a consult slot
-    //     if (appointment.title.toLowerCase() === "consult" || ppointment.title.toLowerCase() === "consultation") {
-    //       newdd.push(appointment);
-    //     }
-    //   })
-    //
-    //   displayedData = newdd;
-    // }
+    if (sharedAs === "TA") {
+      let newdd = [];
+      displayedData.forEach(appointment => {
+        // if appointment is a consult slot
+        if (appointment.title.toLowerCase() === "consult" || appointment.title.toLowerCase() === "consultation") {
+          newdd.push(appointment);
+        }
+      })
+
+      displayedData = newdd;
+    }
 
     this.setState({
       displayedData: displayedData,
