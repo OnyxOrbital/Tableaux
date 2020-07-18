@@ -16,12 +16,15 @@ class ShareDialog extends React.Component {
     this.state = {
       setOpen: false,
       event: null,
-      openShareAsDialog: false
+      openShareAsDialog: false,
+      shareAs: 'Student'
     }
     this.handleClickOpen = this.handleClickOpen.bind(this);
     this.handleCloseCancel = this.handleCloseCancel.bind(this);
-    this.handleCloseConfirm = this.handleCloseConfirm.bind(this);
-    // this.addPeopleISharedMyTTWith = this.addPeopleISharedMyTTWith.bind(this);
+    this.handleTA = this.handleTA.bind(this);
+    this.handleStudent = this.handleStudent.bind(this);
+    // this.handleCloseConfirm = this.handleCloseConfirm.bind(this);
+    this.addPeopleISharedMyTTWith = this.addPeopleISharedMyTTWith.bind(this);
     this.saveEvent = this.saveEvent.bind(this);
   }
 
@@ -41,20 +44,73 @@ class ShareDialog extends React.Component {
     });
   }
 
-  handleCloseConfirm() {
-    this.setState({
-      setOpen: false,
-      openShareAsDialog: true
-    });
-
-    console.log("here at cancel")
-    // return <ShareAsDialog setOpen="true" event={this.state.event.value} />
-
-    // this.addPeopleISharedMyTTWith();
-  }
+  // handleCloseConfirm() {
+  //   // this.setState({
+  //   //   setOpen: false,
+  //   //   openShareAsDialog: true
+  //   // });
+  //   this.addPeopleISharedMyTTWith();
+  // }
 
   saveEvent(event) {
     this.setState({ event: event });
+  }
+
+  handleStudent() {
+    this.setState({
+      shareAs: 'Student'
+    });
+  }
+
+  handleTA() {
+    this.setState({
+      shareAs: 'TA'
+    });
+  }
+
+  // writes user chosen in share search bar into "peopleISharedMyTTWith" database
+  async addPeopleISharedMyTTWith(){
+    let sharedAs = this.state.shareAs;
+
+    if (this.state.event) {
+      let uid = null;
+
+      //Query data for uid of user you want to share TT with
+      this.props.firebase.database.ref('users')
+        .orderByChild("username")
+        .equalTo(this.state.event).on("value", function(snapshot) {
+          uid = Object.keys(snapshot.val())[0];
+          console.log("new uid", uid)
+        })
+
+
+      // if uid you chose is not your uid
+      if (uid !== this.props.firebase.auth.currentUser.uid) {
+
+        console.log("i reached here")
+        // check if uid you chose already exists in your database
+        let ref = this.props.firebase.database.ref('users')
+        .child(this.props.firebase.auth.currentUser.uid)
+        .child('peopleISharedMyTTWith');
+        let snapshot = await ref.once('value');
+        let value = snapshot.val();
+        // console.log('val', value)
+        // console.log('!value.hasOwnProperty(uid)',  !Object.values(value).includes(uid))
+        if (!value || !Object.values(value).includes(uid)) {
+          // write to database of user
+          this.props.firebase.database.ref('users')
+          .child(this.props.firebase.auth.currentUser.uid)
+          .child('peopleISharedMyTTWith')
+          .push(uid)
+
+          // write to database to the user whom you shared your TT with
+          this.props.firebase.database.ref('users')
+          .child(uid)
+          .child('peopleWhoSharedTheirTTWithMe')
+          .push([this.props.firebase.auth.currentUser.uid, sharedAs])
+        }
+      }
+    }
   }
 
   // writes user chosen in share search bar into "peopleISharedMyTTWith" database
@@ -111,18 +167,29 @@ class ShareDialog extends React.Component {
               Search for the user you would like to share your timetable with:
             </DialogContentText>
             <ShareSearchBar users={this.props.users} action={this.saveEvent}/>
+            <DialogContentText style={{color: '#e2dce3'}}>
+              Select whether you would like to share as a TA or share as a student.
+              Share as TA: only consult slots will be shared.
+              Share as Student: all slots will be shared
+            </DialogContentText>
+            <button className="share-as-button" onClick={this.handleStudent} autoFocus>
+              Share as Student
+            </button>
+            <button className="share-as-button" onClick={this.handleTA}>
+              Share as TA
+            </button>
           </DialogContent>
           <DialogActions style={{backgroundColor: '#212636', zIndex: '10'}}>
             <button id="cancel" onClick={this.handleCloseCancel}>
               Cancel
             </button>
-            <button id="confirm" onClick={this.handleCloseConfirm}>
+            <button id="confirm" onClick={this.addPeopleISharedMyTTWith}>
               Confirm
             </button>
           </DialogActions>
         </Dialog>
 
-        { this.state.openShareAsDialog ? <ShareAsDialog setOpen="true" event={this.state.event.value} /> : <div /> }
+        {/* { this.state.openShareAsDialog ? <ShareAsDialog setOpen="true" event={this.state.event.value} /> : <div /> } */}
       </div>
     );
   }

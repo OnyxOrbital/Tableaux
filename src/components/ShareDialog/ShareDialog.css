@@ -16,3 +16,8 @@
   color: #171a24;
   cursor: pointer;
 }
+
+.share-as-button:focus {
+  background-color: #F1C944;
+  color: black;
+}

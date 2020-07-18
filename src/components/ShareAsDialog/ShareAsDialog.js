@@ -39,6 +39,10 @@ class ShareDialog extends React.Component {
     }
   }
 
+  saveEvent(event) {
+    this.setState({ event: event });
+  }
+
   handleStudent() {
     this.setState({
       setOpen: false
@@ -53,10 +57,6 @@ class ShareDialog extends React.Component {
     });
 
     this.addPeopleISharedMyTTWith("TA");
-  }
-
-  saveEvent(event) {
-    this.setState({ event: event });
   }
 
   // writes user chosen in share search bar into "peopleISharedMyTTWith" database
