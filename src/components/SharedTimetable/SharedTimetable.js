@@ -19,12 +19,16 @@ class SharedTimetable extends React.Component {
         .child(this.props.firebase.auth.currentUser.uid)
         .child('peopleWhoSharedTheirTTWithMe')
         .on('value', function(snapshot) {
+          console.log(snapshot.val())
+          
           if (snapshot.val()) {
-            peopleWhoSharedTheirTTWithMeuid.push(Object.values(snapshot.val())[0]);
+            console.log(Object.values(snapshot.val())[0])
+            peopleWhoSharedTheirTTWithMeuid.push([Object.values(snapshot.val())[0]]);
           }
         })
+      console.log('peopleWhoSharedTheirTTWithMeuid', peopleWhoSharedTheirTTWithMeuid)
       peopleWhoSharedTheirTTWithMeuid = this.getSharedData(peopleWhoSharedTheirTTWithMeuid);
-
+      
     }
 
     return peopleWhoSharedTheirTTWithMeuid;
@@ -32,35 +36,38 @@ class SharedTimetable extends React.Component {
 
   // retrieve appointments from each uid if the array is not empty
   getSharedData(peopleWhoSharedTheirTTWithMeuid) {
+    console.log('peopleWhoSharedTheirTTWithMeuid', peopleWhoSharedTheirTTWithMeuid)
     let results = [];
     // check if array is not empty
     if (peopleWhoSharedTheirTTWithMeuid && peopleWhoSharedTheirTTWithMeuid !== []) {
       // loop through each uid in array to retrieve [username, appointmentsArr]
       peopleWhoSharedTheirTTWithMeuid.forEach(user => {
+        console.log(user)
         let username = null;
         let appointmentsArr = [];
-        // let content = [];
 
+        // NOTE : user[0] might require mapping instead
         this.props.firebase.database.ref('users')
-        .child(user[0])
+        .child(user[0].uid)
         .on('value', function(snapshot) {
+          console.log('snapshot.val()', snapshot.val())
           if (snapshot.val()) {
             username = snapshot.val().username;
-            // content.push(username);
-            // content.push(uid);
             if (snapshot.val().appointments) {
               appointmentsArr.push(Object.values(snapshot.val().appointments.appointmentsArr));
-              results.push([username, user[0], appointmentsArr[0], user[1]]);
-              // content.push(appointmentsArr[0]);
+              results.push([username, user[0].uid, appointmentsArr[0], user[0].sharedAs]);
+              console.log("results push", [username, user[0].uid, appointmentsArr[0], user[0].sharedAs])
             } else {
-              results.push([username, user[0], appointmentsArr, user[1]]);
-              // content.push(appointmentsArr);
+              results.push([username, user.uid, appointmentsArr, user.sharedAs]);
+
             }
           }
         })
 
       })
     }
+
+    console.log("results", results)
     return results;
   }
 
@@ -72,7 +79,7 @@ class SharedTimetable extends React.Component {
       .once('value', snapshot => {
         snapshot.forEach(child => {
           console.log(child.val())
-          if (child.val() === uid) {
+          if (child.val().uid === uid) {
             child.ref.remove();
           }
         })
@@ -84,7 +91,7 @@ class SharedTimetable extends React.Component {
        .once('value', snapshot => {
         snapshot.forEach(child => {
           console.log(child.val())
-          if (child.val() === this.props.firebase.auth.currentUser.uid) {
+          if (child.val().uid === this.props.firebase.auth.currentUser.uid) {
             child.ref.remove();
           }
         })

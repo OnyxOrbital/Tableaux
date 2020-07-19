@@ -199,10 +199,21 @@ class OtherTimetable extends React.Component {
                       identity: 'TA'
                     });
                     this.writeToMyConsults(event);
+
+                    // write to notifications database for user whom shared their timetable with you
+                    this.props.firebase.database.ref('users')
+                    .child(this.state.uid)
+                    .child('notifications')
+                    .push({
+                      time: new Date().toString(),
+                      type: '/MyConsults',
+                      message: `New Booking from ${this.props.firebase.auth.currentUser.displayName}!`
+                    })
                   } else { //has clashing consult slot
                     window.alert("You cannot book a consult at this timing!")
                   }});
 
+             
               // redirects user to MyConsults page
               this.setState({
                 redirectTo: true,

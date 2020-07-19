@@ -238,44 +238,120 @@ class Table extends React.PureComponent {
     });
   }
 
+  // // helps update dipslayed data whenever mods are added in myModules
+  // componentWillReceiveProps(nextProps) {
+  //   // if data is updated (i.e mod added)
+  //   if (nextProps.data !== this.state.data || nextProps.displayedData !== this.state.displayedData) {
+  //     let newdisplayedData = nextProps.dd;
+  //     let newData = nextProps.data;
+  //     let modTitles = this.state.modTitles;
+  //     let modKeys = Object.keys(newData);
+  //     console.log('newdisplayeddata equal dd', newdisplayedData === this.state.displayedData)
+
+  //     console.log('dd :)',this.state.displayedData)
+      
+  //     modKeys.forEach(modCode => { //for each mod in new data
+  //       let isIndd = false;
+  //       newdisplayedData.forEach(module => {
+  //         if (module instanceof Array) {
+  //           console.log('mod',module)
+  //           let lessonTypekeys = Object.keys(module);
+  //           lessonTypekeys.forEach(lessonType => {
+  //             let classNokeys = Object.keys(module[lessonType]);
+  //             classNokeys.forEach(classNo => {
+  //               console.log('module[lessonType]',module[lessonType])
+  //               console.log('module[lessonType][classNo]',module[lessonType][classNo])
+  //               console.log('module[lessonType][classNo][0]',module[lessonType][classNo][0])
+  //               let slot = module[lessonType][classNo][0]
+  //               console.log('slot',slot)
+  //               if (slot.title === modCode) {
+  //                 isIndd = true;
+  //               }
+  //             })
+  //           })
+  //         }
+  //       })
+  //       if (!isIndd) {
+  //         console.log('newData[modCode]', newData[modCode])
+  //         console.log('this.process(newData[modCode])',this.process(newData[modCode]))
+  //         // newdisplayedData = [...newdisplayedData, ...this.process([newData[modCode]])]
+  //         newdisplayedData.push(this.process([newData[modCode]]));
+  //         modTitles.push(modCode)
+  //       }
+  //     })
+      
+  //     console.log("new dd", newdisplayedData)
+  //     if (newdisplayedData && newdisplayedData.length !== 0) {
+  //       this.setState({
+  //         data: newData,
+  //         displayedData: newdisplayedData[0],
+  //         modTitles: modTitles
+  //       });
+  //     }  
+  //   }
+  // }
+
   // helps update dipslayed data whenever mods are added in myModules
   componentWillReceiveProps(nextProps) {
     // if data is updated (i.e mod added)
-    if (nextProps.data !== this.state.data || nextProps.displayedData !== this.state.displayedData) {
+    if (nextProps.data !== this.state.data || nextProps.dd !== this.state.displayedData) {
       let newdisplayedData = nextProps.dd;
       let newData = nextProps.data;
       let modTitles = this.state.modTitles;
       let modKeys = Object.keys(newData);
-
+      let displayedData = this.state.displayedData;
+      let newdd = [];
+      console.log("new data", newData)
+      console.log("dd before looping", this.state.displayedData)
+      console.log('newdd before looping and adding', newdisplayedData)
       //loop through data, if there are mods in data that
       //is not in dd, push mod to dd (and modTitles)
-      modKeys.forEach(modCode => { //for each mod in new data
-        let isIndd = false;
-        newdisplayedData.forEach(module => {
-          let lessonTypekeys = Object.keys(module);
-          lessonTypekeys.forEach(lessonType => {
-            let classNokeys = Object.keys(module[lessonType]);
-            classNokeys.forEach(classNo => {
-              let slot = module[lessonType][classNo][0]
-              if (slot.title === modCode) {
-                isIndd = true;
-              }
-            })
+      // if (!newdisplayedData || newdisplayedData.length === 0) {
+      //   this.setState({ displayedData: [] });
+      // } else {
+        modKeys.forEach(modCode => { //for each mod in new data
+          let isIndd = false;
+          // newdisplayedData.forEach(module => {
+          //   let lessonTypekeys = Object.keys(module);
+          //   lessonTypekeys.forEach(lessonType => {
+          //     let classNokeys = Object.keys(module[lessonType]);
+          //     classNokeys.forEach(classNo => {
+          //       let slot = module[lessonType][classNo][0]
+          //       if (slot.title === modCode) {
+          //         isIndd = true;
+          //       }
+          //     })
+          //   })
+          // })
+    
+          displayedData.forEach(slot => {
+            if (slot.title === modCode) {
+              isIndd = true;
+            }
           })
+          // if (!isIndd) {
+          //   newdisplayedData.push(newData[modCode]);
+          //   modTitles.push(modCode)
+          // }
+          if (!isIndd) {
+            newdd.push(newData[modCode]);
+            modTitles.push(modCode)
+          }
         })
-        if (!isIndd) {
-          newdisplayedData.push(newData[modCode]);
-          modTitles.push(modCode)
-        }
-      })
+        
+        console.log('newdd', newdisplayedData)
+        newdd = this.process(newdd);
+        console.log('newdd after process', newdisplayedData)
+        displayedData = displayedData.concat(newdd);
+        console.log("final dd", displayedData)
+  
+        this.setState({
+          data: newData,
+          displayedData: displayedData,
+          modTitles: modTitles
+        });
+      // }
 
-      newdisplayedData = this.process(newdisplayedData);
-
-      this.setState({
-        data: newData,
-        displayedData: newdisplayedData,
-        modTitles: modTitles
-      });
     }
   }
 
@@ -422,6 +498,9 @@ class Table extends React.PureComponent {
         }
       }}/>;
     }
+
+    console.log("this.state.displayedData before rendering scheduler", this.state.displayedData)
+
     return (
       <div>
         <ThemeProvider theme={theme}>

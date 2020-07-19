@@ -1,7 +1,7 @@
 import React from 'react';
 import './TopPanel.css';
 import logo from '../../images/tableaux-logo.gif';
-import { Notifications } from './Notifications/Notifications';
+import Notifications from './Notifications/Notifications';
 import SearchBar from '../SearchBar/SearchBar';
 import SignInButton from '../SignIn/SignIn';
 import NavMenu from '../Navigation/NavMenu';

@@ -7,6 +7,9 @@ class MyConsults extends React.Component {
     this.state = {
       consults: []
     }
+    this.handleAccept = this.handleAccept.bind(this);
+    this.handleDecline = this.handleDecline.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
   }
 
   async componentDidMount() {
@@ -55,6 +58,40 @@ class MyConsults extends React.Component {
           }
         })
       });
+    
+    // write to notifications database for user whom you booked a consult with
+    this.props.firebase.database.ref('users')
+    .child(uid)
+    .child('notifications')
+    .push({
+      time: new Date().toString(),
+      type: '/MyConsults',
+      message: `Consultation with ${this.props.firebase.auth.currentUser.displayName} is cancelled by ${this.props.firebase.auth.currentUser.displayName} :(`
+    })
+  }
+
+  handleAccept(uid) {
+    // write to notifications database for user whom you booked a consult with
+    this.props.firebase.database.ref('users')
+    .child(uid)
+    .child('notifications')
+    .push({
+      time: new Date().toString(),
+      type: '/MyConsults',
+      message: `Consultation with ${this.props.firebase.auth.currentUser.displayName} is confirmed! :)`
+    })
+  }
+
+  handleDecline(uid) {
+    // write to notifications database for user whom you booked a consult with
+    this.props.firebase.database.ref('users')
+    .child(uid)
+    .child('notifications')
+    .push({
+      time: new Date().toString(),
+      type: '/MyConsults',
+      message: `Consultation with ${this.props.firebase.auth.currentUser.displayName} is declined :(`
+    })
   }
 
   renderTableData(consults) {
@@ -68,7 +105,7 @@ class MyConsults extends React.Component {
              <td className="status">{slot.status}</td>
              {slot.identity === "Student" ?
                 (<div>
-                  <td><button>Accept</button><button>Decline</button></td>
+                  <td><button onClick={() => this.handleAccept(slot.uid)}>Accept</button><button onClick={() => this.handleDecline(slot.uid)}>Decline</button></td>
                 </div>):
                 (<td><button onClick={() => this.handleCancel(slot.uid, slot.startDate, slot.endDate)}>Cancel</button></td>)
               }

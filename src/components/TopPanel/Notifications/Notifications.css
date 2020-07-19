@@ -21,17 +21,17 @@
 }
 
 .dropdownContent {
-    display: none;
-    position: absolute;
+    position: fixed;
+    top: 5rem;
     right: 0;
     background-color: rgb(33, 38, 54);
     min-width: 15rem;
-    z-index: 1;
+    z-index: 100;
 }
 
-.notifications:hover .dropdownContent {
+/* .notifications:hover .dropdownContent {
     display: block;
-}
+} */
 
 .notificationButton:hover {
     background-color: rgb(61, 71, 102);

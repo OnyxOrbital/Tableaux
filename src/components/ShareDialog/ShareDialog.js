@@ -23,9 +23,11 @@ class ShareDialog extends React.Component {
     this.handleCloseCancel = this.handleCloseCancel.bind(this);
     this.handleTA = this.handleTA.bind(this);
     this.handleStudent = this.handleStudent.bind(this);
-    // this.handleCloseConfirm = this.handleCloseConfirm.bind(this);
+    this.handleCloseConfirm = this.handleCloseConfirm.bind(this);
     this.addPeopleISharedMyTTWith = this.addPeopleISharedMyTTWith.bind(this);
     this.saveEvent = this.saveEvent.bind(this);
+    this.getUIDs = this.getUIDs.bind(this);
+    this.diffSharedAs = this.diffSharedAs.bind(this);
   }
 
   handleClickOpen() {
@@ -44,13 +46,13 @@ class ShareDialog extends React.Component {
     });
   }
 
-  // handleCloseConfirm() {
-  //   // this.setState({
-  //   //   setOpen: false,
-  //   //   openShareAsDialog: true
-  //   // });
-  //   this.addPeopleISharedMyTTWith();
-  // }
+  handleCloseConfirm() {
+    this.setState({
+      setOpen: false,
+    });
+
+    this.addPeopleISharedMyTTWith();
+  }
 
   saveEvent(event) {
     this.setState({ event: event });
@@ -68,46 +70,97 @@ class ShareDialog extends React.Component {
     });
   }
 
+  getUIDs(arr) {
+    console.log("getUids")
+    let uids = [];
+    arr.forEach(user => {
+      console.log(user)
+      uids.push(user[0]);
+    })
+
+    console.log("uids arr", uids)
+    return uids;
+  }
+
+  diffSharedAs(arr, uid, sharedAs) { 
+    console.log("diffSharedAs")
+    let result = false;
+    arr.forEach(user => {
+      if (user[0] === uid && user[1] !== sharedAs) {
+        result = true;
+      }
+    })
+
+    return result;
+  }
+
   // writes user chosen in share search bar into "peopleISharedMyTTWith" database
   async addPeopleISharedMyTTWith(){
+    console.log('called addpeople')
     let sharedAs = this.state.shareAs;
 
-    if (this.state.event) {
+    if (this.state.event && sharedAs) {
       let uid = null;
 
       //Query data for uid of user you want to share TT with
       this.props.firebase.database.ref('users')
         .orderByChild("username")
-        .equalTo(this.state.event).on("value", function(snapshot) {
+        .equalTo(this.state.event.value).on("value", function(snapshot) {
           uid = Object.keys(snapshot.val())[0];
-          console.log("new uid", uid)
+          // console.log("new uid", uid)
         })
 
 
       // if uid you chose is not your uid
       if (uid !== this.props.firebase.auth.currentUser.uid) {
-
-        console.log("i reached here")
+        console.log('uid', uid)
+        console.log('this.props.firebase.auth.currentUser.uid', this.props.firebase.auth.currentUser.uid)
         // check if uid you chose already exists in your database
+        // let ref = this.props.firebase.database.ref('users')
+        // .child(this.props.firebase.auth.currentUser.uid)
+        // .child('peopleISharedMyTTWith');
+        // let snapshot = await ref.once('value');
+        // let value = snapshot.val();
+
         let ref = this.props.firebase.database.ref('users')
-        .child(this.props.firebase.auth.currentUser.uid)
-        .child('peopleISharedMyTTWith');
+        .child(uid)
+        .child('peopleWhoSharedTheirTTWithMe');
         let snapshot = await ref.once('value');
         let value = snapshot.val();
-        // console.log('val', value)
-        // console.log('!value.hasOwnProperty(uid)',  !Object.values(value).includes(uid))
-        if (!value || !Object.values(value).includes(uid)) {
+        console.log("value xxx", value)
+
+        if (!value 
+            || !this.getUIDs(Object.values(value)).includes(this.props.firebase.auth.currentUser.uid) 
+            || this.diffSharedAs(Object.values(value), this.props.firebase.auth.currentUser.uid, sharedAs)) {
+              console.log("new sharedAs", sharedAs)
+        
           // write to database of user
           this.props.firebase.database.ref('users')
           .child(this.props.firebase.auth.currentUser.uid)
           .child('peopleISharedMyTTWith')
-          .push(uid)
+          .child(uid)
+          .set({
+            uid: uid,
+            sharedAs: sharedAs})
 
           // write to database to the user whom you shared your TT with
           this.props.firebase.database.ref('users')
           .child(uid)
           .child('peopleWhoSharedTheirTTWithMe')
-          .push([this.props.firebase.auth.currentUser.uid, sharedAs])
+          .child(this.props.firebase.auth.currentUser.uid)
+          .set({
+            uid: this.props.firebase.auth.currentUser.uid, 
+            sharedAs: sharedAs})
+
+          // write to notification database of user whom you shared your TT with
+          this.props.firebase.database.ref('users')
+          .child(uid)
+          .child('notifications')
+          .push({
+            time: new Date().toString(),
+            type: '/SharedTimetables',
+            message: `${this.props.firebase.auth.currentUser.displayName} shared their timetable with you as ${sharedAs}!`
+          })
         }
       }
     }
@@ -183,7 +236,7 @@ class ShareDialog extends React.Component {
             <button id="cancel" onClick={this.handleCloseCancel}>
               Cancel
             </button>
-            <button id="confirm" onClick={this.addPeopleISharedMyTTWith}>
+            <button id="confirm" onClick={this.handleCloseConfirm}>
               Confirm
             </button>
           </DialogActions>
