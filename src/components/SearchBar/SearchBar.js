@@ -24,6 +24,7 @@ class SearchBar extends React.Component {
       <Select id="searchBar" placeholder='Enter module code'
       options={this.state.searchResults.map(module => { return {value: module.moduleCode, label: module.moduleCode}})}
       onChange={this.props.action}
+      openMenuOnClick={false}
       theme={(theme) => ({
       ...theme,
       borderRadius: 5,

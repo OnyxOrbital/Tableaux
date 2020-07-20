@@ -10,6 +10,22 @@ class MyConsults extends React.Component {
     this.handleAccept = this.handleAccept.bind(this);
     this.handleDecline = this.handleDecline.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
+    this.onConsultsDataChange = this.onConsultsDataChange.bind(this);
+
+    this.ref = this.props.firebase.database.ref('users')
+    .child(this.props.firebase.auth.currentUser.uid)
+    .child('MyConsults');
+    this.ref.on('value', this.onConsultsDataChange)
+  }
+
+  onConsultsDataChange(snapshot) {
+    let newConsults = [];
+    if (snapshot.val()) {
+      newConsults.push(Object.values(snapshot.val()));
+    }
+    if (newConsults) {
+      this.setState({ consults: newConsults[0] });
+    }
   }
 
   async componentDidMount() {

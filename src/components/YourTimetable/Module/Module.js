@@ -34,12 +34,9 @@ class Module extends React.Component {
   
   render() {
     return(
-      <div className="Module">
-        <div className="Module-information">
-          <h3>{this.props.module}</h3>
-          <button onClick={this.removeModule}><i className="fa fa-trash-o" aria-hidden="true"></i></button>
-        </div>
-        {/* <button className="Module-action" onClick={this.removeModule}>-</button> */}
+      <div className="Module-information">
+        <h3>{this.props.module}</h3>
+        <button onClick={this.removeModule}><i className="fa fa-trash-o" aria-hidden="true"></i></button>
       </div>
     );
   }

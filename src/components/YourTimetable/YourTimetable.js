@@ -11,8 +11,6 @@ class YourTimetable extends React.Component {
     super(props);
     this.state = {
       modules: [],
-      modulesFromDB: [],
-      data: [],
       dd: [],
       lessons: [],
       isDataLoaded: false
@@ -26,7 +24,8 @@ class YourTimetable extends React.Component {
     this.readUsers = this.readUsers.bind(this);
   }
 
-  // checks if event.data.title is contained in array of modules
+
+  // checks if modCode is contained in array of modules (this.state.modules)
   containsModule(title, modArr) {
     for (let i = 0; i < modArr.length; i++) {
       if (modArr[i] === title) {
@@ -41,16 +40,15 @@ class YourTimetable extends React.Component {
   fetches more info (including lesson timing) from api
   appends the extended info into search results, calls process data*/
   async addModule(module) {
-    console.log('called addModule', this.state.dd)
     // checks for duplicate mod entry
     if (!this.containsModule(module.label, this.state.modules)) {
       let modules = this.state.modules;
-      modules.push(module);
+      modules.push(module.label);
       this.setState({ modules: modules });
 
       let newSearchResults = [];
       await Promise.all(modules.map(module => { //wait should this fetch for all modules or only the new mod added??
-        return fetch(`https://api.nusmods.com/v2/2020-2021/modules/${module.label}.json`)
+        return fetch(`https://api.nusmods.com/v2/2020-2021/modules/${module}.json`)
         .then(response => response.json())
         .then(searchResults => {
           newSearchResults.push(searchResults);
@@ -63,15 +61,15 @@ class YourTimetable extends React.Component {
   //converts searchresults into array of lesson timings,
   //stores in this.state.lessons
   processData(searchResults) {
-    console.log('called processData', this.state.dd)
-    let lessons = []; // array that stores all mods -> lessontypes -> classnos -> lesson obj
+    // let lessons = []; // array that stores all mods -> lessontypes -> classnos -> lesson obj
+    let lessons = this.state.lessons
     let timetables = []; //timetable[0] is modcode, timetable[1] is array of lesson objs
     searchResults.forEach(module => {
       let moduleCode = module.moduleCode;
       let semesterData = module.semesterData;
       timetables = timetables.concat(semesterData.map(data => { //timetables is array of timetable arrays
         if (data.semester === 1) {
-          return [moduleCode].concat([data.timetable]);
+          return [moduleCode].concat([data.timetable]); //['acc1002', slots -> [{...}, {...}, ...]]
         } else {
           return [];
         }
@@ -94,16 +92,17 @@ class YourTimetable extends React.Component {
           }
           arr.push(lesson);
         });
+        
         lessons[timetable[0]] = this.filterLessons(arr);
       }
     });
-    console.log('lessons', lessons)
     this.setState({ lessons: lessons });
   }
 
-  filterLessons(arr) { //takes array of lesson objects
-    console.log('called filterLessons', this.state.dd)
-    let lessonTypes = arr.reduce(function(obj, lesson) {
+  /* Transforms the array of lesson objects into 
+  lessonTypes = [Tutorial: [ V1: [{...}], V2: [{...}], ...], Lecture:[ V1: [{...}], V2: [{...}], ...]] */
+  filterLessons(arr) { //arr = [{slot}, {slot}, ...]
+      let lessonTypes = arr.reduce(function(obj, lesson) {
       if (!obj.hasOwnProperty(lesson.lessonType)){
         obj[lesson.lessonType] = [];
       }
@@ -121,7 +120,6 @@ class YourTimetable extends React.Component {
         return obj;
       }, []);
     })
-    console.log('lessonTypes', lessonTypes)
     return lessonTypes;
   }
 
@@ -145,25 +143,28 @@ class YourTimetable extends React.Component {
 
   // reads both displayed data and data
   async readData() {
-    console.log("called readData", this.state.dd)
+    console.log('called readData')
     let appointments = [];
     let data = [];
     let modulesFromDB = [];
     let snapshotIsEmpty = false;
-    if (this.props.firebase.auth.currentUser) {
-      let ref = this.props.firebase.user(this.props.firebase.auth.currentUser.uid).child('appointments');
+    if (this.props.firebase.auth.currentUser) { //reads data and displayed data from appointments
+      let ref = this.props.firebase.user(this.props.firebase.auth.currentUser.uid)
+        .child('appointments').child('appointmentsArr');
       let snapshot = await ref.once('value');
       let value = snapshot.val();
-      if (value) { //if snapshot is not empty
-        snapshotIsEmpty = true;  //snapshot is not empty
+      if (value) { 
+        snapshotIsEmpty = true;  
         appointments.push(Object.values(value));
       }
-
-      let ref2 = ref.child('modsData');
+      
+      let ref2 = this.props.firebase.user(this.props.firebase.auth.currentUser.uid)
+      .child('appointments').child('modsData');
       let snapshot2 = await ref2.once('value');
       let value2 = snapshot2.val();
       if (value2) { //if snapshot is not empty
         snapshotIsEmpty = true;  //snapshot is not empty
+        console.log('value2', value2)
         data.push(value2);
       }
 
@@ -171,10 +172,13 @@ class YourTimetable extends React.Component {
         this.setState({
           isDataLoaded: true
         })
-      } else if (appointments[0] && (appointments !== []) && data) { //if snapshot is not empty
+      } else if (appointments && appointments[0] && data) { //if snapshot is not empty
         let data2 = [];
 
         if (data[0]) {
+          /*Transform data from [0: {ACC1002: {Lecture: {..}, Tutorial: {..}}, {ACC1701: {Lecture:{..}..}}]
+          into [ACC1002: [Lecture: [v1 :{..},..], 
+          Tutorial: [v1:{..},..], ACC1701: [Lecture: [v1 :{..},..], Tutorial: [v1:{..},..]] */
           let modulekeys = Object.keys(data[0]); //arr of mod keys
           modulesFromDB = modulekeys;
           modulekeys.forEach(module => { //for each module array
@@ -195,12 +199,12 @@ class YourTimetable extends React.Component {
             });
           })
         }
+
         this.setState({
-          dd: Object.values(appointments[0][0]),
+          dd: appointments[0],
           isDataLoaded: true,
-          data: data2,
-          modules: [],
-          modulesFromDB: modulesFromDB
+          lessons: data2, //to overwrite big data arrays from unsaved mods
+          modules: modulesFromDB, //to overwrite modules from unsaved mods
         })
       }
     } else {
@@ -210,10 +214,9 @@ class YourTimetable extends React.Component {
   }
 
   readUsers() {
-    console.log('called readUsers')
     let users = [];
     if (this.props.firebase.auth.currentUser) {
-        // ref is the users hashcode
+      // ref is the users hashcode
       let ref = this.props.firebase.users();
       ref.on('value', function(snapshot) {
         if (snapshot.val()) { //if snapshot is not empty
@@ -227,34 +230,23 @@ class YourTimetable extends React.Component {
   }
 
   render(){
-    let data = this.state.data;
-    let lessons = this.state.lessons;
+    let dd = this.state.dd;
+    let lessons = this.state.lessons; //data of unsaved data from search bar and database
     let allData = [];
-    let dataKeys = Object.keys(data);
-    let lessonsKeys = Object.keys(lessons);
-    dataKeys.forEach(key => {
-      allData[key] = data[key];
-    })
+    let lessonsKeys = Object.keys(lessons); //keys of mods from search bar and database
     lessonsKeys.forEach(key => {
       allData[key] = lessons[key];
     })
 
-    let modules = this.state.modules;
-    let modulesFromDB = this.state.modulesFromDB;
+    let modules = this.state.modules; //mod code array of mods from search bar and database
     let allMods = [];
-    let modKeys1 = Object.values(modules);
-    let modKeys2 = Object.keys(modulesFromDB);
-    modKeys2.forEach(key => {
-      allMods = allMods.concat([modulesFromDB[key]]);
+    modules.forEach(modCode => {
+      allMods = allMods.concat([modCode]);
     })
-
-    modKeys1.forEach(key => {
-      if (!this.containsModule(key.value, this.state.modulesFromDB)) {
-        allMods = allMods.concat([key.value]);
-      }
-    })
-  
-    let dd = this.state.dd;
+    
+    console.log('props allmods', allMods)
+    console.log('props alldata', allData)
+    console.log('props dd', dd)
     return (
       <div className="yourTimetable">
         <h1>Your Timetable</h1>

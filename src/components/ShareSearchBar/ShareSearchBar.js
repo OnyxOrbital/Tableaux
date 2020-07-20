@@ -11,6 +11,7 @@ class ShareSearchBar extends React.Component {
         <Select id="searchBar" placeholder='Enter username'
         options={this.props.users.map(user => { return {value: user, label: user}})}
         onChange={this.props.action}
+        openMenuOnClick={false}
         theme={(theme) => ({
         ...theme,
         borderRadius: 5,

@@ -35,37 +35,12 @@ a:focus {
   color: #F1C944;
 }
 
-/* .icon {
-  height: 30px;
-  width: 30px;
-  margin-right: 5px;
-  margin-left: 0.5rem;
-} */
-
 i {
   margin-right: 7px;
   margin-left: 0.5rem;
 }
 
-
-/*Making top panel and navigation tab responsive*/
 @media (max-width: 800px) {
-  /* .navBar p {
-      display: none;
-  }
-
-  .navBar {
-    width: 100%;
-  }
-
-  li {
-    display: inline-block;
-    width: 20%;
-  }
-
-  a {
-    justify-content: center;
-  } */
   .navBar {
     display: none;
   }

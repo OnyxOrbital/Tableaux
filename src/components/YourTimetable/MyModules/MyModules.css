@@ -1,4 +1,5 @@
 .MyModules {
   display: flex;
-  overflow-wrap: normal;
+  flex-wrap: wrap;
+  width: 100%;
 }

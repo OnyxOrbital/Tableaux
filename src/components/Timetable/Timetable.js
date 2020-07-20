@@ -26,14 +26,12 @@ const theme = createMuiTheme({
       dark: '#171a24',
       main: 'rgb(33, 38, 54)',
       light: '#e2dce3',
-      contrastText: '#F1C944',
     }
   }
 });
 
 const style = theme => ({
   normalCellDark: {
-    color: theme.palette.contrastText,
     backgroundColor: fade(theme.palette.primary.dark, 1),
     '&:hover': {
       backgroundColor: fade(theme.palette.primary.dark, 0.8),
@@ -97,7 +95,7 @@ const LayoutBase = ({ classes, ...restProps }) => {
 
 //Styles space above timetable (toolbar)
 const ToolbarRoot = ({ classes, ...restProps }) => {
-  return <Toolbar.Root {...restProps} style={{backgroundColor: '#171a24'}} />
+  return <Toolbar.Root {...restProps} style={{display: 'block', backgroundColor: '#171a24'}} />
 };
 
 //Table class
@@ -107,12 +105,10 @@ class Table extends React.PureComponent {
     this.state = {
       data: [],
       displayedData: [],
-      addedAppointment: {},
-      appointmentChanges: {},
-      editingAppointmentId: undefined,
       redirectTo: null,
       consultData: null,
       isEditing: false,
+      classBeingEdited:[], //[modcode, lessontype, lesson slot object]
       modsColor: ['#95AAE0', '#af82b8', '#d47d7d', '#7bc6c7', '#b6b88d', '#e8c26f', '#a63f3f', '#8a8674'],
       modTitles: [],
       isDataLoaded: false,
@@ -164,7 +160,9 @@ class Table extends React.PureComponent {
         if (!current) {
           current = 'Event';
         }
-        if (this.state.isEditing) {
+        if (this.state.isEditing && 
+          current === this.state.classBeingEdited[0] && 
+          event.data.lessonType === this.state.classBeingEdited[1]) {
           if (current.toLowerCase() !== "consult" || current.toLowerCase() !== "consultation") {
             let displayedData = this.replaceSlot(current, event.data.lessonType, event.data);
             this.setState({
@@ -172,6 +170,13 @@ class Table extends React.PureComponent {
               isEditing: false
             });
           }
+        } else if (this.state.isEditing) {
+            let displayedData = this.replaceSlot(this.state.classBeingEdited[0], this.state.classBeingEdited[1], this.state.classBeingEdited[2]);
+            this.setState({
+              displayedData: displayedData,
+              isEditing: false,
+              classBeingEdited: []
+            });
         } else {
           if (current.toLowerCase() === "consult" || current.toLowerCase() === "consultation" || !this.containsModule(current, this.props.modules)) { // for slots that are not modules nor consults
             // the code has yet to be implemented
@@ -179,7 +184,8 @@ class Table extends React.PureComponent {
           let alternatives = this.showAlternatives(current, event.data.lessonType, event.data.classNo);
             this.setState({
               displayedData: this.state.displayedData.concat(alternatives),
-              isEditing: true
+              isEditing: true,
+              classBeingEdited: [event.data.title, event.data.lessonType, event.data]
             })
           }
       }
@@ -238,120 +244,38 @@ class Table extends React.PureComponent {
     });
   }
 
-  // // helps update dipslayed data whenever mods are added in myModules
-  // componentWillReceiveProps(nextProps) {
-  //   // if data is updated (i.e mod added)
-  //   if (nextProps.data !== this.state.data || nextProps.displayedData !== this.state.displayedData) {
-  //     let newdisplayedData = nextProps.dd;
-  //     let newData = nextProps.data;
-  //     let modTitles = this.state.modTitles;
-  //     let modKeys = Object.keys(newData);
-  //     console.log('newdisplayeddata equal dd', newdisplayedData === this.state.displayedData)
-
-  //     console.log('dd :)',this.state.displayedData)
-      
-  //     modKeys.forEach(modCode => { //for each mod in new data
-  //       let isIndd = false;
-  //       newdisplayedData.forEach(module => {
-  //         if (module instanceof Array) {
-  //           console.log('mod',module)
-  //           let lessonTypekeys = Object.keys(module);
-  //           lessonTypekeys.forEach(lessonType => {
-  //             let classNokeys = Object.keys(module[lessonType]);
-  //             classNokeys.forEach(classNo => {
-  //               console.log('module[lessonType]',module[lessonType])
-  //               console.log('module[lessonType][classNo]',module[lessonType][classNo])
-  //               console.log('module[lessonType][classNo][0]',module[lessonType][classNo][0])
-  //               let slot = module[lessonType][classNo][0]
-  //               console.log('slot',slot)
-  //               if (slot.title === modCode) {
-  //                 isIndd = true;
-  //               }
-  //             })
-  //           })
-  //         }
-  //       })
-  //       if (!isIndd) {
-  //         console.log('newData[modCode]', newData[modCode])
-  //         console.log('this.process(newData[modCode])',this.process(newData[modCode]))
-  //         // newdisplayedData = [...newdisplayedData, ...this.process([newData[modCode]])]
-  //         newdisplayedData.push(this.process([newData[modCode]]));
-  //         modTitles.push(modCode)
-  //       }
-  //     })
-      
-  //     console.log("new dd", newdisplayedData)
-  //     if (newdisplayedData && newdisplayedData.length !== 0) {
-  //       this.setState({
-  //         data: newData,
-  //         displayedData: newdisplayedData[0],
-  //         modTitles: modTitles
-  //       });
-  //     }  
-  //   }
-  // }
-
   // helps update dipslayed data whenever mods are added in myModules
   componentWillReceiveProps(nextProps) {
-    // if data is updated (i.e mod added)
+    // if data or displayeddata is updated (i.e mod added from search bar or from database)
     if (nextProps.data !== this.state.data || nextProps.dd !== this.state.displayedData) {
-      let newdisplayedData = nextProps.dd;
-      let newData = nextProps.data;
-      let modTitles = this.state.modTitles;
-      let modKeys = Object.keys(newData);
-      let displayedData = this.state.displayedData;
-      let newdd = [];
-      console.log("new data", newData)
-      console.log("dd before looping", this.state.displayedData)
-      console.log('newdd before looping and adding', newdisplayedData)
+      let displayedDataFromDB = nextProps.dd; //displayed data from database (after refresh)
+      let newData = nextProps.data; //big data array from both database and unsaved mods
+      let newDataKeys = Object.keys(newData);
+      let modTitles = this.state.modTitles; //used for coloring
+      let additionalModsToProcess = [];
+
       //loop through data, if there are mods in data that
       //is not in dd, push mod to dd (and modTitles)
-      // if (!newdisplayedData || newdisplayedData.length === 0) {
-      //   this.setState({ displayedData: [] });
-      // } else {
-        modKeys.forEach(modCode => { //for each mod in new data
+        newDataKeys.forEach(modCode => { //for each mod in new data
           let isIndd = false;
-          // newdisplayedData.forEach(module => {
-          //   let lessonTypekeys = Object.keys(module);
-          //   lessonTypekeys.forEach(lessonType => {
-          //     let classNokeys = Object.keys(module[lessonType]);
-          //     classNokeys.forEach(classNo => {
-          //       let slot = module[lessonType][classNo][0]
-          //       if (slot.title === modCode) {
-          //         isIndd = true;
-          //       }
-          //     })
-          //   })
-          // })
-    
-          displayedData.forEach(slot => {
+          displayedDataFromDB.forEach(slot => {
             if (slot.title === modCode) {
               isIndd = true;
             }
           })
-          // if (!isIndd) {
-          //   newdisplayedData.push(newData[modCode]);
-          //   modTitles.push(modCode)
-          // }
           if (!isIndd) {
-            newdd.push(newData[modCode]);
+            additionalModsToProcess.push(newData[modCode]);
             modTitles.push(modCode)
           }
         })
-        
-        console.log('newdd', newdisplayedData)
-        newdd = this.process(newdd);
-        console.log('newdd after process', newdisplayedData)
-        displayedData = displayedData.concat(newdd);
-        console.log("final dd", displayedData)
+        additionalModsToProcess = this.process(additionalModsToProcess);
+        displayedDataFromDB = displayedDataFromDB.concat(additionalModsToProcess);
   
         this.setState({
           data: newData,
-          displayedData: displayedData,
+          displayedData: displayedDataFromDB,
           modTitles: modTitles
         });
-      // }
-
     }
   }
 
@@ -390,14 +314,16 @@ class Table extends React.PureComponent {
 
   // replaces all alternatives with a slot that is chosen by user
   replaceSlot(modCode, lessonType, eventData) {
+    let classNo = eventData.classNo;
     let lessons = this.state.displayedData;
     let displayedData = [];
     let changed = false;
     for (let i = 0; i < lessons.length; i++) {
       // check if slot chosen matches the modcode and lessontype
-      if (!changed && lessons[i].title === modCode && lessons[i].lessonType === lessonType) {
-        displayedData.push(eventData);
-        changed = true;
+      if (!changed && lessons[i].title === modCode && 
+        lessons[i].lessonType === lessonType &&
+        lessons[i].classNo === classNo) {
+        displayedData.push(lessons[i]);
       } else if (lessons[i].title === modCode && lessons[i].lessonType === lessonType){
       } else {
         displayedData.push(lessons[i]);
@@ -416,6 +342,7 @@ class Table extends React.PureComponent {
 
       //looping through this.state.displayedData and adding apppointments into db
       displayedData.map(appointment => {
+        console.log('appt', appointment)
         if (!appointment.classNo) { //if its a consult slot/other appt slot
           if (appointment.rRule) { //if is a repeating event,
             this.props.firebase.user(this.props.firebase.auth.currentUser.uid)
@@ -498,9 +425,6 @@ class Table extends React.PureComponent {
         }
       }}/>;
     }
-
-    console.log("this.state.displayedData before rendering scheduler", this.state.displayedData)
-
     return (
       <div>
         <ThemeProvider theme={theme}>
@@ -510,6 +434,7 @@ class Table extends React.PureComponent {
               height={660}
             >
               <ViewState
+                // defaultCurrentDate={new Date('2020-08-15')}
                 defaultCurrentDate={new Date()}
               />
               <EditingState

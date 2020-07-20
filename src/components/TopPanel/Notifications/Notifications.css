@@ -57,13 +57,31 @@
     display: block;
 }
 
-.notification a:hover {
+.notification:hover, .notification a:hover {
     background-color: rgb(61, 71, 102);
     color: #F1C944;
 }
 
 .notification-line {
     margin: 0;
+}
+
+.time-and-close-div {
+    display: flex;
+    justify-content: space-between;
+}
+
+.close-button {
+    padding: 0;
+    margin: 0;
+    outline: none;
+    border: none;
+    background-color: inherit;
+}
+
+.close-button:hover {
+    background-color: inherit;
+    color: #F1C944;
 }
 
 /*Making notification button responsive*/

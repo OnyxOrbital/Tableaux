@@ -1,14 +1,12 @@
-.Module {
-    padding: 0.5rem;
-}
-
 .Module-information {
     display: flex;
+    padding: 0.5rem;
+    box-sizing: border-box;
 }
 
 .Module-information button {
     float: right;
-    margin: 1rem;
+    margin: 0.5rem 0 0.5rem 0.5rem;
     color: white;
     font-family: Monda, Arial;
     background-color:rgb(33, 38, 54);

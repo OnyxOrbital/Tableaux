@@ -6,9 +6,26 @@ import { withFirebase } from '../Firebase/index';
 class SharedTimetable extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      peopleWhoSharedTheirTTWithMeuid: []
+    }
     this.getSharedData = this.getSharedData.bind(this);
     this.readPeopleWhoSharedTheirTTWithMe = this.readPeopleWhoSharedTheirTTWithMe.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
+    this.onSharedTimetableChange = this.onSharedTimetableChange.bind(this);
+    this.ref = this.props.firebase.database.ref('users')
+    .child(this.props.firebase.auth.currentUser.uid)
+    .child('peopleWhoSharedTheirTTWithMe')
+    this.ref.on('value', this.onSharedTimetableChange)
+  }
+
+  onSharedTimetableChange(snapshot) {
+    let peopleWhoSharedTheirTTWithMeuid = [];
+    if (snapshot.val()) {
+      peopleWhoSharedTheirTTWithMeuid.push([Object.values(snapshot.val())[0]]);
+    }
+    peopleWhoSharedTheirTTWithMeuid = this.getSharedData(peopleWhoSharedTheirTTWithMeuid);
+    this.setState({ peopleWhoSharedTheirTTWithMeuid: peopleWhoSharedTheirTTWithMeuid});
   }
 
   readPeopleWhoSharedTheirTTWithMe() {
@@ -31,7 +48,7 @@ class SharedTimetable extends React.Component {
       
     }
 
-    return peopleWhoSharedTheirTTWithMeuid;
+    this.setState({ peopleWhoSharedTheirTTWithMeuid: peopleWhoSharedTheirTTWithMeuid});
   }
 
   // retrieve appointments from each uid if the array is not empty
@@ -120,12 +137,13 @@ class SharedTimetable extends React.Component {
     })
   }
 
- renderTableHeader() {
+  renderTableHeader() {
     return <th>Name</th>
-}
+  }
 
   render() {
-    let userList = this.readPeopleWhoSharedTheirTTWithMe();
+    let userList = this.state.peopleWhoSharedTheirTTWithMeuid;
+    console.log('user list ', userList)
     if (this.props.firebase.auth.currentUser) {
       if (userList && userList.length !== 0) {
         return (
