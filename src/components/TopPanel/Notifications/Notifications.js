@@ -76,15 +76,16 @@ class Notifications extends React.Component {
         { this.state.open ? 
           <div className="dropdownContent">{
             this.state.notifications.map(notif => {
-              return <Link to={notif.type} className="notification" onClick={this.closeNotification}>[{new Date(notif.time).toLocaleDateString()} {new Date(notif.time).toLocaleTimeString()}] {notif.message}</Link> 
+              return (
+                <div className="notification">
+                  <Link to={notif.type} onClick={this.closeNotification}>
+                  <p className="timestamp">[{new Date(notif.time).toLocaleDateString()} {new Date(notif.time).toLocaleTimeString()}]</p>
+                  <p>{notif.message}</p>
+                  <hr className="notification-line"/></Link>
+                </div>
+              );
             })}
           </div> : null }
-        {/* {this.state.open ? <div className="dropdownContent">
-          <Link to="/MyConsults" className="notification">New Booking from -name- !</Link>
-          <Link to="/MyConsults" className="notification">Consultation with -name- cancelled by -name- :(</Link>
-          <Link to="/MyConsults"  className="notification">Consultation with -name- confirmed by -name- !</Link>
-          <Link to="/SharedTimetables"  className="notification">-name- shared their timetable with you as -identity-!</Link>
-        </div> : null} */}
       </div>);
   }
 }
