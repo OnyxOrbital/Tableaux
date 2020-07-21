@@ -7,19 +7,24 @@ class SharedTimetable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      peopleWhoSharedTheirTTWithMeuid: []
+      peopleWhoSharedTheirTTWithMeuid: [],
+      myDisplayedData: []
     }
     this.getSharedData = this.getSharedData.bind(this);
-    this.readPeopleWhoSharedTheirTTWithMe = this.readPeopleWhoSharedTheirTTWithMe.bind(this);
+    // this.readPeopleWhoSharedTheirTTWithMe = this.readPeopleWhoSharedTheirTTWithMe.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
     this.onSharedTimetableChange = this.onSharedTimetableChange.bind(this);
-    this.ref = this.props.firebase.database.ref('users')
-    .child(this.props.firebase.auth.currentUser.uid)
-    .child('peopleWhoSharedTheirTTWithMe')
-    this.ref.on('value', this.onSharedTimetableChange)
+    
+    if (this.props.firebase.auth.currentUser) {
+      this.ref = this.props.firebase.database.ref('users')
+      .child(this.props.firebase.auth.currentUser.uid)
+      .child('peopleWhoSharedTheirTTWithMe')
+      this.ref.on('value', this.onSharedTimetableChange)
+    }
   }
 
   onSharedTimetableChange(snapshot) {
+    console.log("got to sharedTiemtableChange")
     let peopleWhoSharedTheirTTWithMeuid = [];
     if (snapshot.val()) {
       peopleWhoSharedTheirTTWithMeuid.push([Object.values(snapshot.val())[0]]);
@@ -28,8 +33,9 @@ class SharedTimetable extends React.Component {
     this.setState({ peopleWhoSharedTheirTTWithMeuid: peopleWhoSharedTheirTTWithMeuid});
   }
 
-  readPeopleWhoSharedTheirTTWithMe() {
+  componentDidMount() {
     let peopleWhoSharedTheirTTWithMeuid = [];
+    let myDisplayedData = [];
     if (this.props.firebase.auth.currentUser) {
       // retrieve array of uids
       this.props.firebase.database.ref('users')
@@ -37,7 +43,6 @@ class SharedTimetable extends React.Component {
         .child('peopleWhoSharedTheirTTWithMe')
         .on('value', function(snapshot) {
           console.log(snapshot.val())
-          
           if (snapshot.val()) {
             console.log(Object.values(snapshot.val())[0])
             peopleWhoSharedTheirTTWithMeuid.push([Object.values(snapshot.val())[0]]);
@@ -46,9 +51,23 @@ class SharedTimetable extends React.Component {
       console.log('peopleWhoSharedTheirTTWithMeuid', peopleWhoSharedTheirTTWithMeuid)
       peopleWhoSharedTheirTTWithMeuid = this.getSharedData(peopleWhoSharedTheirTTWithMeuid);
       
+      this.props.firebase.database.ref('users')
+        .child(this.props.firebase.auth.currentUser.uid)
+        .child('appointments')
+        .child('appointmentsArr')
+        .on('value', snapshot => {
+          if (snapshot.val()) {
+            console.log('snapshot stuff', Object.values(snapshot.val()))
+            myDisplayedData.push(Object.values(snapshot.val()));           
+          }
+        })
+      
     }
 
-    this.setState({ peopleWhoSharedTheirTTWithMeuid: peopleWhoSharedTheirTTWithMeuid});
+    this.setState({ 
+      peopleWhoSharedTheirTTWithMeuid: peopleWhoSharedTheirTTWithMeuid,
+      myDisplayedData: myDisplayedData 
+    });
   }
 
   // retrieve appointments from each uid if the array is not empty
@@ -126,8 +145,9 @@ class SharedTimetable extends React.Component {
                 displayedData: user[2],
                 username: user[0],
                 uid: user[1],
-                sharedAs: user[3]
-                }
+                sharedAs: user[3],
+                myDisplayedData: this.state.myDisplayedData
+              }
               }}>{user[0]}</Link>
               <button onClick={() => this.handleDelete(user[1])}>
                 <i className="fa fa-trash-o" aria-hidden="true"></i>

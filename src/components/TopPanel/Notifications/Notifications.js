@@ -16,17 +16,23 @@ class Notifications extends React.Component {
     this.deleteNotification = this.deleteNotification.bind(this);
     this.onNotificationsChange = this.onNotificationsChange.bind(this);
     
-    // this.ref = this.props.firebase.database.ref('users')
-    // .child(this.props.firebase.auth.currentUser.uid)
-    // .child('notifications');
-    // this.ref.on('value', this.onNotificationsChange)
+    if (this.props.firebase.auth.currentUser) {
+      this.ref = this.props.firebase.database.ref('users')
+      .child(this.props.firebase.auth.currentUser.uid)
+      .child('notifications');
+      this.ref.on('value', this.onNotificationsChange)
+    }
   }
 
   onNotificationsChange(snapshot) {
+    console.log('called on notif chnage')
     let notifications = [];
-    notifications.push(snapshot.val());
+    if (snapshot.val() !== null) {
+      notifications.push(snapshot.val());
+    }
     this.setState({ notifications: notifications });
   }
+
   // async componentDidMount() {
   //   console.log('called compdidmount')
   //   let notifications = [];
@@ -44,6 +50,7 @@ class Notifications extends React.Component {
   //   }
   //   this.setState({ notifications: notifications })
   // }
+
   deleteNotification(time) {
     this.props.firebase.database.ref('users')
     .child(this.props.firebase.auth.currentUser.uid)
@@ -56,6 +63,11 @@ class Notifications extends React.Component {
         }
       })
     });
+
+    let ref = this.props.firebase.database.ref('users')
+    .child(this.props.firebase.auth.currentUser.uid)
+    .child('notifications');
+    ref.on('value', this.onNotificationsChange);
   }
 
   closeNotification() {
@@ -79,6 +91,7 @@ class Notifications extends React.Component {
     }
     console.log('notis', notifications)
     if (notifications && notifications.length !== 0) {
+
       this.setState({ notifications: notifications[0] })
     }
     
@@ -93,6 +106,7 @@ class Notifications extends React.Component {
 
   render() {
     if (this.props.firebase.auth.currentUser) {
+      console.log("this.state.notifications", this.state.notifications)
       return (
         <div className="notifications">
           <button onClick={this.handleNotificationClick} className="notificationButton">

@@ -9,7 +9,6 @@ import {
   DateNavigator,
   Appointments,
   AppointmentForm,
-  ConfirmationDialog
 } from '@devexpress/dx-react-scheduler-material-ui';
 import { Redirect } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
@@ -103,52 +102,187 @@ class OtherTimetable extends React.Component {
     super(props);
     this.state = {
       displayedData: [],
+      myDisplayedData: [],
+      compare: false,
       username: null,
       uid: null,
       titles: [],
       redirectTo: null,
       consultData: null,
+      sharedAs: null,
       modsColor: ['#95AAE0', '#af82b8', '#d47d7d', '#7bc6c7', '#b6b88d', '#e8c26f', '#a63f3f', '#8a8674'],
     }
     this.indexOfModule = this.indexOfModule.bind(this);
     this.myAppointment = this.myAppointment.bind(this);
     this.containsModule = this.containsModule.bind(this);
+    this.handleCompareClick = this.handleCompareClick.bind(this);
   }
 
+  handleCompareClick() {
+    this.setState({ compare: !this.state.compare });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.location.props) {
+      console.log('props is not null')
+      let oldUsername = this.state.username;
+      let newUsername = nextProps.location.props.username;
+      if (oldUsername !== newUsername ) {
+        console.log("username change")
+        let displayedData = Object.values(nextProps.location.props)[0];
+        let uid = nextProps.location.props.uid;
+        let titles = [];
+        let sharedAs = nextProps.location.props.sharedAs;
+        let myDisplayedData = nextProps.location.props.myDisplayedData;
+
+        displayedData.forEach(appointment => {
+            // if mod is not in titles array
+            if (!titles.includes(appointment.title)) {
+              titles.push(appointment.title);
+            }
+        })
+
+        // if shared as TA, loop through each appointment in displayedData to filter out non-mods
+        if (sharedAs === "TA") {
+          let newdd = [];
+          displayedData.forEach(appointment => {
+            // if appointment is a consult slot
+            if (appointment.title.toLowerCase() === "consult" || appointment.title.toLowerCase() === "consultation") {
+              newdd.push(appointment);
+            }
+          })
+
+          displayedData = newdd;
+        }
+
+        this.setState({
+          displayedData: displayedData,
+          username: newUsername,
+          uid: uid,
+          titles: titles,
+          myDisplayedData: myDisplayedData,
+          sharedAs: sharedAs
+        })
+      }
+    }
+  }
+  
   componentDidMount() {
-    let username = this.props.location.props.username;
-    let displayedData = Object.values(this.props.location.props)[0];
-    let uid = this.props.location.props.uid;
-    let titles = [];
-    let sharedAs = this.props.location.props.sharedAs;
+    if (this.props.location.props) {
+      let username = this.props.location.props.username;
+      let displayedData = Object.values(this.props.location.props)[0];
+      let uid = this.props.location.props.uid;
+      let titles = [];
+      let sharedAs = this.props.location.props.sharedAs;
+      let myDisplayedData = this.props.location.props.myDisplayedData;
 
-    displayedData.forEach(appointment => {
-        // if mod is not in titles array
-        if (!titles.includes(appointment.title)) {
-          titles.push(appointment.title);
-        }
-    })
-
-    // if shared as TA, loop through each appointment in displayedData to filter out non-mods
-    if (sharedAs === "TA") {
-      let newdd = [];
       displayedData.forEach(appointment => {
-        // if appointment is a consult slot
-        if (appointment.title.toLowerCase() === "consult" || appointment.title.toLowerCase() === "consultation") {
-          newdd.push(appointment);
-        }
+          // if mod is not in titles array
+          if (!titles.includes(appointment.title)) {
+            titles.push(appointment.title);
+          }
       })
 
-      displayedData = newdd;
-    }
+      // if shared as TA, loop through each appointment in displayedData to filter out non-mods
+      if (sharedAs === "TA") {
+        let newdd = [];
+        displayedData.forEach(appointment => {
+          // if appointment is a consult slot
+          if (appointment.title.toLowerCase() === "consult" || appointment.title.toLowerCase() === "consultation") {
+            newdd.push(appointment);
+          }
+        })
+        displayedData = newdd;
+      }
 
-    this.setState({
-      displayedData: displayedData,
-      username: username,
-      uid: uid,
-      titles: titles
-    })
+      if (displayedData && displayedData.length !== 0) {
+        displayedData = displayedData.map(slot => {
+          if (slot.title.toLowerCase() === "consult" || slot.title.toLowerCase() === "consultation") {
+            if (slot.rRule) {
+              return { 
+                title: slot.title,
+                startDate: slot.startDate,
+                endDate: slot.endDate,
+                rRule: slot.rRule,
+                exDate: slot.exDate,
+                user: "user1"
+              }
+            } else {
+              return { 
+                title: slot.title,
+                startDate: slot.startDate,
+                endDate: slot.endDate,
+                user: "user1"
+              }
+            }
+          } else {
+            return { 
+              title: slot.title,
+              startDate: slot.startDate,
+              endDate: slot.endDate,
+              lessonType: slot.lessonType,
+              classNo: slot.classNo,
+              rRule: slot.rRule,
+              exDate: slot.exDate,
+              user: "user1"
+           }
+          }
+        })
+      }
+    
+      console.log("myDD before change", myDisplayedData)
+      if (myDisplayedData[0] && myDisplayedData[0].length !== 0) {
+        myDisplayedData = myDisplayedData[0].map(slot => {
+          console.log('slot', slot)
+          console.log("slot.title", slot.title)
+          if (slot.title.toLowerCase() === "consult" || slot.title.toLowerCase() === "consultation") {
+            if (slot.rRule) {
+              return { 
+                title: slot.title,
+                startDate: slot.startDate,
+                endDate: slot.endDate,
+                rRule: slot.rRule,
+                exDate: slot.exDate,
+                user: "user2"
+             }
+            } else {
+              return { 
+                title: slot.title,
+                startDate: slot.startDate,
+                endDate: slot.endDate,
+                user: "user2"
+             }
+            }
+          } else {
+            return { 
+              title: slot.title,
+              startDate: slot.startDate,
+              endDate: slot.endDate,
+              lessonType: slot.lessonType,
+              classNo: slot.classNo,
+              rRule: slot.rRule,
+              exDate: slot.exDate,
+              user: "user2"
+           }
+        }})
+    
+      }
+      
+      console.log("displayeddata asdawd", displayedData)
+      console.log("myDD ", myDisplayedData)
+
+      this.setState({
+        displayedData: displayedData,
+        username: username,
+        uid: uid,
+        titles: titles,
+        myDisplayedData: myDisplayedData,
+        sharedAs: sharedAs
+      }); 
+    }
   }
+
+
 
   // checks if event.data.title is contained in array of modules
   containsModule(title, arr) {
@@ -162,18 +296,27 @@ class OtherTimetable extends React.Component {
 
   myAppointment(props) {
     let background = '';
-    let titles = this.state.titles;
-    let colors = this.state.modsColor;
-    let current = props.data.title;
-    if (current.toLowerCase() === 'consult' || current.toLowerCase() === 'consultation') {
-      background = '#847d8a';
-    } else if (!this.containsModule(current, titles)) { // neither consult nor mod
-      background = '#9e7d5f';
-    } else if (this.indexOfModule(current, titles) < colors.length) {
-     background = colors[this.indexOfModule(current, titles)];
-    } else { // if no more colors to assign
-      background = colors[titles.length % colors.length];
-    }
+    if (this.state.compare) { // if compare function is activated
+      let current = props.data.user;
+      if (current === "user1") {
+        background = '#7bc6c7';
+      } else {
+        background = '#d47d7d';
+      }
+    } else {
+      let titles = this.state.titles;
+      let colors = this.state.modsColor;
+      let current = props.data.title;
+      if (current.toLowerCase() === 'consult' || current.toLowerCase() === 'consultation') {
+        background = '#847d8a';
+      } else if (!this.containsModule(current, titles)) { // neither consult nor mod
+        background = '#9e7d5f';
+      } else if (this.indexOfModule(current, titles) < colors.length) {
+       background = colors[this.indexOfModule(current, titles)];
+      } else { // if no more colors to assign
+        background = colors[titles.length % colors.length];
+      }
+    } 
 
     return <Appointments.Appointment {...props} style={{backgroundColor: background}}
       onClick={(event) => {
@@ -255,6 +398,15 @@ class OtherTimetable extends React.Component {
 
   render() {
     let displayedData = this.state.displayedData;
+    let myDisplayedData = this.state.myDisplayedData;
+
+    let finalDisplayedData = [];
+    if (myDisplayedData.length > 0) {
+      console.log("length of myDD", myDisplayedData.length)
+      console.log("length of DD", displayedData.length)
+      console.log('concat', displayedData.concat(myDisplayedData))
+      finalDisplayedData = displayedData.concat(myDisplayedData);
+    }
     if (this.state.redirectTo) {
       return <Redirect to={{
         pathname: '/MyConsults'
@@ -263,11 +415,13 @@ class OtherTimetable extends React.Component {
 
     return (
       <div>
-        <h1>{this.state.username}'s Timetable</h1>
+        <h1>{this.state.username}'s Timetable [{this.state.sharedAs}]</h1>
         <ThemeProvider theme={theme}>
           <Paper>
             <Scheduler
-              data={displayedData}
+              data={this.state.compare 
+                      ? finalDisplayedData
+                      : displayedData}
               height={660}
             >
               <ViewState
@@ -293,6 +447,9 @@ class OtherTimetable extends React.Component {
             </Scheduler>
           </Paper>
         </ThemeProvider>
+        { this.state.compare 
+          ? <button onClick={this.handleCompareClick}>Revert to default</button> 
+          : <button onClick={this.handleCompareClick}>Compare</button> }
       </div>);
   }
 }

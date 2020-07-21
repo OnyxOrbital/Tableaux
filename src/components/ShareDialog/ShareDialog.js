@@ -158,7 +158,7 @@ class ShareDialog extends React.Component {
           .child('notifications')
           .push({
             time: new Date().toString(),
-            type: '/SharedTimetables',
+            type: '/SharedTimetable',
             message: `${this.props.firebase.auth.currentUser.displayName} shared their timetable with you as ${sharedAs}!`
           })
         }

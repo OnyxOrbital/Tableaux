@@ -12,11 +12,14 @@ class MyConsults extends React.Component {
     this.handleCancel = this.handleCancel.bind(this);
     this.onConsultsDataChange = this.onConsultsDataChange.bind(this);
 
-    this.ref = this.props.firebase.database.ref('users')
-    .child(this.props.firebase.auth.currentUser.uid)
-    .child('MyConsults');
-    this.ref.on('value', this.onConsultsDataChange)
+    if (this.props.firebase.auth.currentUser) {
+      this.ref = this.props.firebase.database.ref('users')
+      .child(this.props.firebase.auth.currentUser.uid)
+      .child('MyConsults');
+      this.ref.on('value', this.onConsultsDataChange)
+    }
   }
+   
 
   onConsultsDataChange(snapshot) {
     let newConsults = [];
