@@ -89,7 +89,37 @@ class MyConsults extends React.Component {
     })
   }
 
-  handleAccept(uid) {
+  handleAccept(uid, startDate, endDate) {
+    this.props.firebase.database.ref('users')
+      .child(this.props.firebase.auth.currentUser.uid)
+      .child('MyConsults')
+      .once('value', snapshot => {
+        snapshot.forEach(child => {
+          console.log(child.val())
+          if (child.val().uid === uid 
+            && child.val().startDate === startDate
+            && child.val().endDate === endDate) {
+              console.log('found the child')
+              child.ref.child('status').set('Confirmed');
+          }
+        })
+      });
+
+    this.props.firebase.database.ref('users')
+      .child(uid)
+      .child('MyConsults')
+      .once('value', snapshot => {
+        snapshot.forEach(child => {
+          console.log(child.val())
+          if (child.val().uid === this.props.firebase.auth.currentUser.uid
+              && child.val().startDate === startDate
+              && child.val().endDate === endDate) {
+                console.log('found the child')
+                child.ref.child('status').set('Confirmed');
+          }
+        })
+      });
+
     // write to notifications database for user whom you booked a consult with
     this.props.firebase.database.ref('users')
     .child(uid)
@@ -101,7 +131,35 @@ class MyConsults extends React.Component {
     })
   }
 
-  handleDecline(uid) {
+  handleDecline(uid, startDate, endDate) {
+    this.props.firebase.database.ref('users')
+      .child(this.props.firebase.auth.currentUser.uid)
+      .child('MyConsults')
+      .once('value', snapshot => {
+        snapshot.forEach(child => {
+          console.log(child.val())
+          if (child.val().uid === uid 
+            && child.val().startDate === startDate
+            && child.val().endDate === endDate) {
+            child.ref.remove();
+          }
+        })
+      });
+
+    this.props.firebase.database.ref('users')
+      .child(uid)
+      .child('MyConsults')
+      .once('value', snapshot => {
+        snapshot.forEach(child => {
+          console.log(child.val())
+          if (child.val().uid === this.props.firebase.auth.currentUser.uid
+              && child.val().startDate === startDate
+              && child.val().endDate === endDate) {
+            child.ref.remove();
+          }
+        })
+      });
+
     // write to notifications database for user whom you booked a consult with
     this.props.firebase.database.ref('users')
     .child(uid)
@@ -110,7 +168,7 @@ class MyConsults extends React.Component {
       time: new Date().toString(),
       type: '/MyConsults',
       message: `Consultation with ${this.props.firebase.auth.currentUser.displayName} is declined :(`
-    })
+    });
   }
 
   renderTableData(consults) {
@@ -122,11 +180,13 @@ class MyConsults extends React.Component {
              <td>{new Date(slot.startDate).toDateString()} {new Date(slot.startDate).toLocaleTimeString()}</td>
              <td>{new Date(slot.endDate).toDateString()} {new Date(slot.endDate).toLocaleTimeString()}</td>
              <td className="status">{slot.status}</td>
-             {slot.identity === "Student" ?
-                (<div>
-                  <td><button onClick={() => this.handleAccept(slot.uid)}>Accept</button><button onClick={() => this.handleDecline(slot.uid)}>Decline</button></td>
-                </div>):
-                (<td><button onClick={() => this.handleCancel(slot.uid, slot.startDate, slot.endDate)}>Cancel</button></td>)
+             {slot.identity === "Student" 
+                ? slot.status === "Pending"
+                  ?  (<div>
+                        <td><button onClick={() => this.handleAccept(slot.uid, slot.startDate, slot.endDate)}>Accept</button><button onClick={() => this.handleDecline(slot.uid, slot.startDate, slot.endDate)}>Decline</button></td>
+                      </div>)
+                  : (<td><button onClick={() => this.handleCancel(slot.uid, slot.startDate, slot.endDate)}>Cancel</button></td>)
+                : (<td><button onClick={() => this.handleCancel(slot.uid, slot.startDate, slot.endDate)}>Cancel</button></td>)
               }
           </tr>
        )

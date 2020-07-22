@@ -95,7 +95,17 @@ const LayoutBase = ({ classes, ...restProps }) => {
 
 //Styles space above timetable (toolbar)
 const ToolbarRoot = ({ classes, ...restProps }) => {
-  return <Toolbar.Root {...restProps} style={{display: 'block', backgroundColor: '#171a24'}} />
+  return <Toolbar.Root {...restProps} style={{ backgroundColor: '#171a24'}} />
+};
+
+// style={{display: 'flex', flexDirection: 'row-reverse', backgroundColor: 'red'}}
+// const DateNavButtons = ({ classes, ...restProps }) => {
+//   return <div> <DateNavigator.NavigationButton  { ...restProps}/> </div>
+//   {/* <DateNavigator.NavigationButton {...restProps} type='forward' style={{display: 'inline-flex', backgroundColor: 'red'}} />; */}
+// };
+
+const DateNavRootComponent = ({ classes, ...restProps }) => {
+  return <DateNavigator.Root { ...restProps}  style={{ display: "flex" }} />
 };
 
 //Table class
@@ -180,7 +190,7 @@ class Table extends React.PureComponent {
         } else {
           if (current.toLowerCase() === "consult" || current.toLowerCase() === "consultation" || !this.containsModule(current, this.props.modules)) { // for slots that are not modules nor consults
             // the code has yet to be implemented
-            event.onDoubleClick();
+            // event.onDoubleClick();
           } else { // for mod slots, shows alternative slots
           let alternatives = this.showAlternatives(current, event.data.lessonType, event.data.classNo);
             this.setState({
@@ -210,7 +220,7 @@ class Table extends React.PureComponent {
     for (let i = 0; i < arr.length; i++) {
       let slot = arr[i];
       if (slot.title.toLowerCase() === "consult" || slot.title.toLowerCase() === "consultation") {
-        if (slot.startDate === consult.startDate && slot.endDate === consult.endDate) {
+        if (slot.startDate === consult.startDate.toJSON() && slot.endDate === consult.endDate.toJSON()) {
           inArr = true;
         }
       }
@@ -224,40 +234,57 @@ class Table extends React.PureComponent {
       let { displayedData } = state;
       if (added) {
         console.log("dd added", displayedData)
+        console.log("added", added)
         const startingAddedId = displayedData.length > 0 ? displayedData[displayedData.length - 1].id + 1 : 0;
         if (added.title.toLowerCase() === "consult" || added.title.toLowerCase() === "consultation") {
             if (!this.checkIfConsultSlotIsInArr(displayedData, added)) {
+              console.log('if block', this.checkIfConsultSlotIsInArr(displayedData, added))
               displayedData = [...displayedData, { id: startingAddedId, ...added }];
             } else {
               window.alert("Sorry, you cannot add a duplicate consultation slot.");
             }
+        // } else if (added.lessonType) {
+        //   window.alert("Sorry, you cannot edit a module.");
         } else {
           displayedData = [...displayedData, { id: startingAddedId, ...added }];
         }
       }
+      
       if (changed) {
-        console.log("changed[app.id]", changed)
-        console.log("displayed data changed", displayedData)
-        let dataToBeRemoved = false;
-        displayedData = displayedData.map(appointment => {
-          if (appointment.lessonType && !changed[appointment.id]) {
-            window.alert("Sorry, you cannot edit a module.");
-            dataToBeRemoved = true;
-            return  { ...appointment, ...changed[appointment.id] };
-          } else {
-            return changed[appointment.id] ? { ...appointment, ...changed[appointment.id] } : appointment;
-          }
-        });
+        displayedData = displayedData.map(appointment => (
+          changed[appointment.id] ? { ...appointment, ...changed[appointment.id] } : appointment));
+      }
+      // if (changed) {
+      //   console.log("changed", changed)
+      //   console.log("displayed data changed", displayedData)
+      //   let dataToBeRemoved = false;
+
+      //   displayedData = displayedData.map(appointment => {
+      //     console.log('appointment', appointment)
+      //     console.log("changed[appointment.id]", changed[appointment.id])
+      //     // changed[appointment.id] is defined when appointment.id is undefined
+      //     console.log("appointment.lessonType", appointment.lessonType)
+      //     console.log("appointment.id", Number.isNaN(appointment.id))
+      //     if (appointment.lessonType && !changed[appointment.id] && Number.isNaN(appointment.id)) {
+      //       window.alert("Sorry, you cannot edit a module.");
+      //       // dataToBeRemoved = true;
+      //       console.log("{ ...appointment, ...changed[appointment.id] }", { ...appointment, ...changed[appointment.id] })
+      //       return {startDate: null, endDate: null, title: null};
+      //     } else {
+      //       console.log("{ ...appointment, ...changed[appointment.id] }", { ...appointment, ...changed[appointment.id] })
+      //       return changed[appointment.id] ? { ...appointment, ...changed[appointment.id] } : appointment;
+      //     }
+      //   });
 
         // if the data changed is a mod, then we should remove that change
-        if (dataToBeRemoved) {
-          displayedData.splice(displayedData.length - 1);
-        }
-        console.log("displayed data after changed", displayedData)
-      }
+        // if (dataToBeRemoved) {
+        //   displayedData.splice(displayedData.length - 1);
+        // }
+      //   console.log("displayed data after changed", displayedData)
+      // }
       if (deleted !== undefined) {
         console.log("before dd deleted", displayedData)
-        displayedData = displayedData.filter(appointment => appointment.id !== deleted || appointment.lessonType);
+        displayedData = displayedData.filter(appointment => appointment.id !== deleted);
         console.log("after dd deleted", displayedData)
       }
       console.log("now dd", displayedData)
@@ -434,6 +461,7 @@ class Table extends React.PureComponent {
   }
 
   render() {
+    console.log('dd in render', this.state.displayedData)
     if (this.state.redirectTo) {
       return <Redirect to={{
         pathname: '/MyConsults',
@@ -455,8 +483,8 @@ class Table extends React.PureComponent {
               height={660}
             >
               <ViewState
-                // defaultCurrentDate={new Date('2020-08-15')}
-                defaultCurrentDate={new Date()}
+                defaultCurrentDate={new Date('2020-08-15')}
+                // defaultCurrentDate={new Date()}
               />
               <EditingState
                 onCommitChanges={this.commitChanges}
@@ -475,7 +503,9 @@ class Table extends React.PureComponent {
               <Toolbar
                 rootComponent={ToolbarRoot}
               />
-              <DateNavigator />
+              <DateNavigator 
+                rootComponent={DateNavRootComponent}
+              />
               <ConfirmationDialog />
               <Appointments appointmentComponent={this.myAppointment} />
               <AppointmentForm />

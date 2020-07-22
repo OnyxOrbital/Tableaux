@@ -94,7 +94,11 @@ const LayoutBase = ({ classes, ...restProps }) => {
 
 //Styles space above timetable (toolbar)
 const ToolbarRoot = ({ classes, ...restProps }) => {
-  return <Toolbar.Root {...restProps} style={{backgroundColor: '#171a24'}} />
+  return <Toolbar.Root {...restProps} style={{ backgroundColor: '#171a24'}} />
+};
+
+const DateNavRootComponent = ({ classes, ...restProps }) => {
+  return <DateNavigator.Root { ...restProps}  style={{ display: "flex" }} />
 };
 
 class OtherTimetable extends React.Component {
@@ -116,58 +120,79 @@ class OtherTimetable extends React.Component {
     this.myAppointment = this.myAppointment.bind(this);
     this.containsModule = this.containsModule.bind(this);
     this.handleCompareClick = this.handleCompareClick.bind(this);
+    this.readFromOtherTimetableDB = this.readFromOtherTimetableDB.bind(this);
+    this.authListener = this.props.firebase.auth.onAuthStateChanged(
+      (authUser) => {
+        if(authUser) {
+          this.readFromOtherTimetableDB()
+        }
+      })
   }
+
 
   handleCompareClick() {
     this.setState({ compare: !this.state.compare });
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.location.props) {
-      console.log('props is not null')
-      let oldUsername = this.state.username;
-      let newUsername = nextProps.location.props.username;
-      if (oldUsername !== newUsername ) {
-        console.log("username change")
-        let displayedData = Object.values(nextProps.location.props)[0];
-        let uid = nextProps.location.props.uid;
-        let titles = [];
-        let sharedAs = nextProps.location.props.sharedAs;
-        let myDisplayedData = nextProps.location.props.myDisplayedData;
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   console.log('called should comp update')
+  //   if (!nextProps.location.props) {
+  //     console.log("if block next props", nextProps)
+  //     return false;
+  //   } else {
+  //     console.log("else block next props", nextProps)
+  //     return true;
+  //   }
+  // }
 
-        displayedData.forEach(appointment => {
-            // if mod is not in titles array
-            if (!titles.includes(appointment.title)) {
-              titles.push(appointment.title);
-            }
-        })
+  // componentWillReceiveProps(nextProps) {
+  //   console.log('called comp will receive props')
+  //   if (nextProps.location.props) {
+  //     console.log('props is not null')
+  //     let oldUsername = this.state.username;
+  //     let newUsername = nextProps.location.props.username;
+  //     if (oldUsername !== newUsername ) {
+  //       console.log("username change")
+  //       let displayedData = Object.values(nextProps.location.props)[0];
+  //       let uid = nextProps.location.props.uid;
+  //       let titles = [];
+  //       let sharedAs = nextProps.location.props.sharedAs;
+  //       let myDisplayedData = nextProps.location.props.myDisplayedData;
 
-        // if shared as TA, loop through each appointment in displayedData to filter out non-mods
-        if (sharedAs === "TA") {
-          let newdd = [];
-          displayedData.forEach(appointment => {
-            // if appointment is a consult slot
-            if (appointment.title.toLowerCase() === "consult" || appointment.title.toLowerCase() === "consultation") {
-              newdd.push(appointment);
-            }
-          })
+  //       displayedData.forEach(appointment => {
+  //           // if mod is not in titles array
+  //           if (!titles.includes(appointment.title)) {
+  //             titles.push(appointment.title);
+  //           }
+  //       })
 
-          displayedData = newdd;
-        }
+  //       // if shared as TA, loop through each appointment in displayedData to filter out non-mods
+  //       if (sharedAs === "TA") {
+  //         let newdd = [];
+  //         displayedData.forEach(appointment => {
+  //           // if appointment is a consult slot
+  //           if (appointment.title.toLowerCase() === "consult" || appointment.title.toLowerCase() === "consultation") {
+  //             newdd.push(appointment);
+  //           }
+  //         })
 
-        this.setState({
-          displayedData: displayedData,
-          username: newUsername,
-          uid: uid,
-          titles: titles,
-          myDisplayedData: myDisplayedData,
-          sharedAs: sharedAs
-        })
-      }
-    }
-  }
+  //         displayedData = newdd;
+  //       }
+
+  //       this.setState({
+  //         displayedData: displayedData,
+  //         username: newUsername,
+  //         uid: uid,
+  //         titles: titles,
+  //         myDisplayedData: myDisplayedData,
+  //         sharedAs: sharedAs
+  //       })
+  //     }
+  //   }
+  // }
   
-  componentDidMount() {
+  async componentDidMount() {
+    console.log('called compdidmount')
     if (this.props.location.props) {
       let username = this.props.location.props.username;
       let displayedData = Object.values(this.props.location.props)[0];
@@ -270,7 +295,20 @@ class OtherTimetable extends React.Component {
       
       console.log("displayeddata asdawd", displayedData)
       console.log("myDD ", myDisplayedData)
-
+      
+      // write to OtherTimetable database to store state (so that when rerendering, data is not lost)
+      this.props.firebase.database.ref('users')
+      .child(this.props.firebase.auth.currentUser.uid)
+      .child("other-timetable")
+      .set({
+        displayedData: displayedData,
+        username: username,
+        uid: uid,
+        titles: titles,
+        myDisplayedData: myDisplayedData,
+        sharedAs: sharedAs
+      })
+      
       this.setState({
         displayedData: displayedData,
         username: username,
@@ -279,9 +317,51 @@ class OtherTimetable extends React.Component {
         myDisplayedData: myDisplayedData,
         sharedAs: sharedAs
       }); 
+    } else {
+      // console.log('else block')
+
+      // if (this.props.firebase.auth.currentUser) {
+      //   console.log('user')
+      //   // read from OtherTimetable database 
+      //   let ref = this.props.firebase.database.ref('users')
+      //     .child(this.props.firebase.auth.currentUser.uid)
+      //     .child("other-timetable")
+      //   let snapshot = await ref.once("value");
+      //   let value = snapshot.val();
+      //   if (value) {
+      //     console.log('val.dd', value.displayedData)
+      //     this.setState({
+      //       displayedData: value.displayedData,
+      //       username: value.username,
+      //       uid: value.uid,
+      //       titles: value.titles,
+      //       myDisplayedData: value.myDisplayedData,
+      //       sharedAs: value.sharedAs
+      //     })
+      //   }
     }
   }
 
+  async readFromOtherTimetableDB() {
+    console.log('user')
+    // read from OtherTimetable database 
+    let ref = this.props.firebase.database.ref('users')
+      .child(this.props.firebase.auth.currentUser.uid)
+      .child("other-timetable")
+    let snapshot = await ref.once("value");
+    let value = snapshot.val();
+    if (value) {
+      console.log('val.dd', value.displayedData)
+      this.setState({
+        displayedData: value.displayedData,
+        username: value.username,
+        uid: value.uid,
+        titles: value.titles,
+        myDisplayedData: value.myDisplayedData,
+        sharedAs: value.sharedAs
+      })
+    }
+  }
 
 
   // checks if event.data.title is contained in array of modules
@@ -441,7 +521,8 @@ class OtherTimetable extends React.Component {
               <Toolbar
                 rootComponent={ToolbarRoot}
               />
-              <DateNavigator />
+              <DateNavigator 
+                rootComponent={DateNavRootComponent}/>
               <Appointments appointmentComponent={this.myAppointment} />
               <AppointmentForm />
             </Scheduler>
