@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import { HashRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import { withAuthentication } from '../Session';
 
 import './App.css';
@@ -14,7 +14,6 @@ import MyConsults from '../MyConsults/MyConsults';
 import Profile from '../Profile/Profile';
 import ModuleInfo from '../Modules/ModuleInfo/ModuleInfo';
 import * as ROUTES from '../../constants/routes';
-import Timetable from '../Timetable/Timetable';
 import OtherTimetable from '../OtherTimetable/OtherTimetable';
 
 class App extends React.Component {
