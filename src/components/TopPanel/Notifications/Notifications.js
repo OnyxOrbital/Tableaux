@@ -15,7 +15,7 @@ class Notifications extends React.Component {
     this.closeNotification = this.closeNotification.bind(this);
     this.deleteNotification = this.deleteNotification.bind(this);
     this.onNotificationsChange = this.onNotificationsChange.bind(this);
-    
+
     if (this.props.firebase.auth.currentUser) {
       this.ref = this.props.firebase.database.ref('users')
       .child(this.props.firebase.auth.currentUser.uid)
@@ -94,7 +94,7 @@ class Notifications extends React.Component {
 
       this.setState({ notifications: notifications[0] })
     }
-    
+
     // if (this.state.open) {
     //   this.setState({ open: false });
     // } else {
@@ -113,7 +113,7 @@ class Notifications extends React.Component {
             <img src={notificationIcon} alt=''></img>
             <p>Notifications</p>
           </button>
-          { this.state.open ? 
+          { this.state.open ?
             <div className="dropdownContent">{
               this.state.notifications.map(notif => {
                 return (
@@ -131,9 +131,14 @@ class Notifications extends React.Component {
             </div> : null }
         </div>);
     } else {
-      return <p>You are not signed in :(</p>
+      return (
+        <button onClick={() => { window.alert("You are not signed in :(") }} className="notificationButton">
+          <img src={notificationIcon} alt=''></img>
+          <p>Notifications</p>
+        </button>
+      )
     }
-    
+
   }
 }
 

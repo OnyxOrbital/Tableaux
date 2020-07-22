@@ -21,3 +21,17 @@
   background-color: #F1C944;
   color: black;
 }
+
+.share-as-button {
+  padding: 0.5rem 1rem;
+  width: 9rem;
+}
+
+#cancel, #confirm {
+  padding: 0.5rem 1rem;
+  width: 6rem;
+}
+
+#confirm {
+  margin-right: 0.5rem;
+}

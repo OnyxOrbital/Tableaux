@@ -14,7 +14,7 @@ class SharedTimetable extends React.Component {
     // this.readPeopleWhoSharedTheirTTWithMe = this.readPeopleWhoSharedTheirTTWithMe.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
     this.onSharedTimetableChange = this.onSharedTimetableChange.bind(this);
-    
+
     if (this.props.firebase.auth.currentUser) {
       this.ref = this.props.firebase.database.ref('users')
       .child(this.props.firebase.auth.currentUser.uid)
@@ -50,7 +50,7 @@ class SharedTimetable extends React.Component {
         })
       console.log('peopleWhoSharedTheirTTWithMeuid', peopleWhoSharedTheirTTWithMeuid)
       peopleWhoSharedTheirTTWithMeuid = this.getSharedData(peopleWhoSharedTheirTTWithMeuid);
-      
+
       this.props.firebase.database.ref('users')
         .child(this.props.firebase.auth.currentUser.uid)
         .child('appointments')
@@ -58,15 +58,15 @@ class SharedTimetable extends React.Component {
         .on('value', snapshot => {
           if (snapshot.val()) {
             console.log('snapshot stuff', Object.values(snapshot.val()))
-            myDisplayedData.push(Object.values(snapshot.val()));           
+            myDisplayedData.push(Object.values(snapshot.val()));
           }
         })
-      
+
     }
 
-    this.setState({ 
+    this.setState({
       peopleWhoSharedTheirTTWithMeuid: peopleWhoSharedTheirTTWithMeuid,
-      myDisplayedData: myDisplayedData 
+      myDisplayedData: myDisplayedData
     });
   }
 
@@ -108,30 +108,34 @@ class SharedTimetable extends React.Component {
   }
 
   handleDelete(uid) {
-    console.log('uid', uid)
-    this.props.firebase.database.ref('users')
-      .child(this.props.firebase.auth.currentUser.uid)
-      .child('peopleWhoSharedTheirTTWithMe')
-      .once('value', snapshot => {
-        snapshot.forEach(child => {
-          console.log(child.val())
-          if (child.val().uid === uid) {
-            child.ref.remove();
-          }
-        })
-      });
+    // console.log('uid', uid)
+    let result = window.confirm("Are you sure you want to delete?");
+    if (result) {
+      this.props.firebase.database.ref('users')
+        .child(this.props.firebase.auth.currentUser.uid)
+        .child('peopleWhoSharedTheirTTWithMe')
+        .once('value', snapshot => {
+          snapshot.forEach(child => {
+            console.log(child.val())
+            if (child.val().uid === uid) {
+              child.ref.remove();
+            }
+          })
+        });
 
-    this.props.firebase.database.ref('users')
-      .child(uid)
-      .child('peopleISharedMyTTWith')
-       .once('value', snapshot => {
-        snapshot.forEach(child => {
-          console.log(child.val())
-          if (child.val().uid === this.props.firebase.auth.currentUser.uid) {
-            child.ref.remove();
-          }
-        })
-      });
+      this.props.firebase.database.ref('users')
+        .child(uid)
+        .child('peopleISharedMyTTWith')
+        .once('value', snapshot => {
+          snapshot.forEach(child => {
+            console.log(child.val())
+            if (child.val().uid === this.props.firebase.auth.currentUser.uid) {
+              child.ref.remove();
+            }
+          })
+        });
+    }
+
   }
 
   renderTableData(userList) {

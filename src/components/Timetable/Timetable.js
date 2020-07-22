@@ -160,8 +160,8 @@ class Table extends React.PureComponent {
         if (!current) {
           current = 'Event';
         }
-        if (this.state.isEditing && 
-          current === this.state.classBeingEdited[0] && 
+        if (this.state.isEditing &&
+          current === this.state.classBeingEdited[0] &&
           event.data.lessonType === this.state.classBeingEdited[1]) {
           if (current.toLowerCase() !== "consult" || current.toLowerCase() !== "consultation") {
             let displayedData = this.replaceSlot(current, event.data.lessonType, event.data);
@@ -180,6 +180,7 @@ class Table extends React.PureComponent {
         } else {
           if (current.toLowerCase() === "consult" || current.toLowerCase() === "consultation" || !this.containsModule(current, this.props.modules)) { // for slots that are not modules nor consults
             // the code has yet to be implemented
+            event.onDoubleClick();
           } else { // for mod slots, shows alternative slots
           let alternatives = this.showAlternatives(current, event.data.lessonType, event.data.classNo);
             this.setState({
@@ -222,6 +223,7 @@ class Table extends React.PureComponent {
     this.setState((state) => {
       let { displayedData } = state;
       if (added) {
+        console.log("dd added", displayedData)
         const startingAddedId = displayedData.length > 0 ? displayedData[displayedData.length - 1].id + 1 : 0;
         if (added.title.toLowerCase() === "consult" || added.title.toLowerCase() === "consultation") {
             if (!this.checkIfConsultSlotIsInArr(displayedData, added)) {
@@ -234,12 +236,31 @@ class Table extends React.PureComponent {
         }
       }
       if (changed) {
-        displayedData = displayedData.map(appointment => (
-          changed[appointment.id] ? { ...appointment, ...changed[appointment.id] } : appointment));
+        console.log("changed[app.id]", changed)
+        console.log("displayed data changed", displayedData)
+        let dataToBeRemoved = false;
+        displayedData = displayedData.map(appointment => {
+          if (appointment.lessonType && !changed[appointment.id]) {
+            window.alert("Sorry, you cannot edit a module.");
+            dataToBeRemoved = true;
+            return  { ...appointment, ...changed[appointment.id] };
+          } else {
+            return changed[appointment.id] ? { ...appointment, ...changed[appointment.id] } : appointment;
+          }
+        });
+
+        // if the data changed is a mod, then we should remove that change
+        if (dataToBeRemoved) {
+          displayedData.splice(displayedData.length - 1);
+        }
+        console.log("displayed data after changed", displayedData)
       }
       if (deleted !== undefined) {
-        displayedData = displayedData.filter(appointment => appointment.id !== deleted);
+        console.log("before dd deleted", displayedData)
+        displayedData = displayedData.filter(appointment => appointment.id !== deleted || appointment.lessonType);
+        console.log("after dd deleted", displayedData)
       }
+      console.log("now dd", displayedData)
       return { displayedData };
     });
   }
@@ -270,7 +291,7 @@ class Table extends React.PureComponent {
         })
         additionalModsToProcess = this.process(additionalModsToProcess);
         displayedDataFromDB = displayedDataFromDB.concat(additionalModsToProcess);
-  
+
         this.setState({
           data: newData,
           displayedData: displayedDataFromDB,
@@ -320,7 +341,7 @@ class Table extends React.PureComponent {
     let changed = false;
     for (let i = 0; i < lessons.length; i++) {
       // check if slot chosen matches the modcode and lessontype
-      if (!changed && lessons[i].title === modCode && 
+      if (!changed && lessons[i].title === modCode &&
         lessons[i].lessonType === lessonType &&
         lessons[i].classNo === classNo) {
         displayedData.push(lessons[i]);

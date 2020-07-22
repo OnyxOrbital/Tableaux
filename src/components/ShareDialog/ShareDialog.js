@@ -82,7 +82,7 @@ class ShareDialog extends React.Component {
     return uids;
   }
 
-  diffSharedAs(arr, uid, sharedAs) { 
+  diffSharedAs(arr, uid, sharedAs) {
     console.log("diffSharedAs")
     let result = false;
     arr.forEach(user => {
@@ -129,11 +129,11 @@ class ShareDialog extends React.Component {
         let value = snapshot.val();
         console.log("value xxx", value)
 
-        if (!value 
-            || !this.getUIDs(Object.values(value)).includes(this.props.firebase.auth.currentUser.uid) 
+        if (!value
+            || !this.getUIDs(Object.values(value)).includes(this.props.firebase.auth.currentUser.uid)
             || this.diffSharedAs(Object.values(value), this.props.firebase.auth.currentUser.uid, sharedAs)) {
               console.log("new sharedAs", sharedAs)
-        
+
           // write to database of user
           this.props.firebase.database.ref('users')
           .child(this.props.firebase.auth.currentUser.uid)
@@ -149,7 +149,7 @@ class ShareDialog extends React.Component {
           .child('peopleWhoSharedTheirTTWithMe')
           .child(this.props.firebase.auth.currentUser.uid)
           .set({
-            uid: this.props.firebase.auth.currentUser.uid, 
+            uid: this.props.firebase.auth.currentUser.uid,
             sharedAs: sharedAs})
 
           // write to notification database of user whom you shared your TT with
@@ -222,8 +222,12 @@ class ShareDialog extends React.Component {
             <ShareSearchBar users={this.props.users} action={this.saveEvent}/>
             <DialogContentText style={{color: '#e2dce3'}}>
               Select whether you would like to share as a TA or share as a student.
+              <div>
               Share as TA: only consult slots will be shared.
+              </div>
+              <div>
               Share as Student: all slots will be shared
+              </div>
             </DialogContentText>
             <button className="share-as-button" onClick={this.handleStudent} autoFocus>
               Share as Student
