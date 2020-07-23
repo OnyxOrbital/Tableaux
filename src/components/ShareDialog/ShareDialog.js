@@ -207,6 +207,7 @@ class ShareDialog extends React.Component {
   // }
 
   render() {
+    console.log('users in share dialog', this.props.users)
     return (
       <div>
         <button className="share-button" onClick={this.handleClickOpen}>

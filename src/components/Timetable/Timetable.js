@@ -9,7 +9,8 @@ import {
   DateNavigator,
   Appointments,
   AppointmentForm,
-  ConfirmationDialog
+  ConfirmationDialog,
+  AllDayPanel,
 } from '@devexpress/dx-react-scheduler-material-ui';
 import { Redirect } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
@@ -98,14 +99,20 @@ const ToolbarRoot = ({ classes, ...restProps }) => {
   return <Toolbar.Root {...restProps} style={{ backgroundColor: '#171a24'}} />
 };
 
-// style={{display: 'flex', flexDirection: 'row-reverse', backgroundColor: 'red'}}
 const DateNavButtons = ({ classes, ...restProps }) => {
   return <DateNavigator.NavigationButton  { ...restProps}  className="date-nav-buttons" style={{ color: 'white', margin: '0.25rem'}}/>
-  {/* <DateNavigator.NavigationButton {...restProps} type='forward' style={{display: 'inline-flex', backgroundColor: 'red'}} />; */}
 };
 
 const DateNavRootComponent = ({ classes, ...restProps }) => {
   return <DateNavigator.Root { ...restProps}  className="date-nav" navigationButtonComponent={DateNavButtons} />
+};
+
+const allDayCell = ({ classes, ...restProps }) => {
+  return <AllDayPanel.Cell { ...restProps} style={{ backgroundColor: '#171a24'}}/>
+};
+
+const allDayTitleCell = ({ classes, ...restProps }) => {
+  return <AllDayPanel.TitleCell { ...restProps} style={{ backgroundColor: '#171a24'}}/>
 };
 
 //Table class
@@ -511,6 +518,10 @@ class Table extends React.PureComponent {
               <ConfirmationDialog />
               <Appointments appointmentComponent={this.myAppointment} />
               <AppointmentForm />
+              <AllDayPanel 
+                cellComponent={allDayCell} 
+                titleCellComponent={allDayTitleCell}
+              />
             </Scheduler>
           </Paper>
         </ThemeProvider>

@@ -9,6 +9,7 @@ import {
   DateNavigator,
   Appointments,
   AppointmentForm,
+  AllDayPanel,
 } from '@devexpress/dx-react-scheduler-material-ui';
 import { Redirect } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
@@ -97,9 +98,22 @@ const ToolbarRoot = ({ classes, ...restProps }) => {
   return <Toolbar.Root {...restProps} style={{ backgroundColor: '#171a24'}} />
 };
 
-const DateNavRootComponent = ({ classes, ...restProps }) => {
-  return <DateNavigator.Root { ...restProps}  style={{ display: "flex" }} />
+const DateNavButtons = ({ classes, ...restProps }) => {
+  return <DateNavigator.NavigationButton  { ...restProps}  className="date-nav-buttons" style={{ color: 'white', margin: '0.25rem'}}/>
 };
+
+const DateNavRootComponent = ({ classes, ...restProps }) => {
+  return <DateNavigator.Root { ...restProps}  className="date-nav" navigationButtonComponent={DateNavButtons} />
+};
+
+const allDayCell = ({ classes, ...restProps }) => {
+  return <AllDayPanel.Cell { ...restProps} style={{ backgroundColor: '#171a24'}}/>
+};
+
+const allDayTitleCell = ({ classes, ...restProps }) => {
+  return <AllDayPanel.TitleCell { ...restProps} style={{ backgroundColor: '#171a24'}}/>
+};
+
 
 class OtherTimetable extends React.Component {
   constructor(props) {
@@ -525,6 +539,10 @@ class OtherTimetable extends React.Component {
                 rootComponent={DateNavRootComponent}/>
               <Appointments appointmentComponent={this.myAppointment} />
               <AppointmentForm />
+              <AllDayPanel 
+                cellComponent={allDayCell} 
+                titleCellComponent={allDayTitleCell}
+              />
             </Scheduler>
           </Paper>
         </ThemeProvider>
