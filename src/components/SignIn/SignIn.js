@@ -2,25 +2,38 @@ import React from 'react';
 import './SignIn.css';
 import { withFirebase } from '../Firebase';
 
-function SignInButton({firebase}) {
-  return (
-    <button className="signIn" type="button" onClick={(event) => {
-      firebase.doSignIn()
-      .then(socialAuthUser => {
-        // read from database to check if authuser already has data in database
-        if (!firebase.database.ref('users').child(socialAuthUser.user.uid)) {
-            // Create a user in your Firebase Realtime Database too
-           return firebase.user(socialAuthUser.user.uid)
-           .set({
-             username: socialAuthUser.user.displayName,
-             email: socialAuthUser.user.email,
-             roles: {},
-           }); 
-        }
-        event.preventDefault();
-      })}}>
-      <p>Sign In</p>
-    </button>);
+class SignIn extends React.Component {
+  constructor(props) {
+    super(props);
+    this.createUserInDatabase = this.createUserInDatabase.bind(this);
   }
 
-export default withFirebase(SignInButton);
+  createUserInDatabase(snapshot, user) {
+    if (snapshot.val() === null) {
+      return this.props.firebase.database.ref()
+        .child('users').child(user.user.uid)
+       .set({
+         username: user.user.displayName,
+         email: user.user.email,
+         roles: {},
+       }); 
+    }
+  }
+
+  render() {
+    return (
+      <button className="signIn" type="button" onClick={(event) => {
+        this.props.firebase.doSignIn()
+        .then(socialAuthUser => {
+          console.log('socialauthuser.uid', socialAuthUser.user.uid)
+          return this.props.firebase.database.ref().child('users')
+          .child(socialAuthUser.user.uid).once('value', snapshot => this.createUserInDatabase(snapshot, socialAuthUser));
+        });
+        event.preventDefault();
+        }}>
+        <p>Sign In</p>
+      </button>);
+  }    
+}
+
+export default withFirebase(SignIn);

@@ -222,12 +222,8 @@ class ShareDialog extends React.Component {
             <ShareSearchBar users={this.props.users} action={this.saveEvent}/>
             <DialogContentText style={{color: '#e2dce3'}}>
               Select whether you would like to share as a TA or share as a student.
-              <div>
               Share as TA: only consult slots will be shared.
-              </div>
-              <div>
               Share as Student: all slots will be shared
-              </div>
             </DialogContentText>
             <button className="share-as-button" onClick={this.handleStudent} autoFocus>
               Share as Student

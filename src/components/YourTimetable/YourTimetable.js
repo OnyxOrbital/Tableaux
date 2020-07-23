@@ -213,19 +213,22 @@ class YourTimetable extends React.Component {
 
   }
 
-  readUsers() {
+  async readUsers() {
+    console.log('called read users')
     let users = [];
     if (this.props.firebase.auth.currentUser) {
       // ref is the users hashcode
-      let ref = this.props.firebase.users();
-      ref.on('value', function(snapshot) {
-        if (snapshot.val()) { //if snapshot is not empty
-          snapshot.forEach(user => {
-            users.push(user.val().username);
-          })
-        }
-      })
+      let ref = this.props.firebase.database.ref().child('users');
+      let snapshot = await ref.once('value');
+      let value = snapshot.val();
+      if (value) { //if snapshot is not empty
+        console.log('value', value)
+        Object.values(value).forEach(user => {
+          users.push(user.username);
+        })
+      }
     }
+    console.log('users from read users', users)
     return users;
   }
 
