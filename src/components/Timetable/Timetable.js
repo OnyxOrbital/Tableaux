@@ -99,13 +99,13 @@ const ToolbarRoot = ({ classes, ...restProps }) => {
 };
 
 // style={{display: 'flex', flexDirection: 'row-reverse', backgroundColor: 'red'}}
-// const DateNavButtons = ({ classes, ...restProps }) => {
-//   return <div> <DateNavigator.NavigationButton  { ...restProps}/> </div>
-//   {/* <DateNavigator.NavigationButton {...restProps} type='forward' style={{display: 'inline-flex', backgroundColor: 'red'}} />; */}
-// };
+const DateNavButtons = ({ classes, ...restProps }) => {
+  return <DateNavigator.NavigationButton  { ...restProps}  className="date-nav-buttons" style={{ color: 'white', margin: '0.25rem'}}/>
+  {/* <DateNavigator.NavigationButton {...restProps} type='forward' style={{display: 'inline-flex', backgroundColor: 'red'}} />; */}
+};
 
 const DateNavRootComponent = ({ classes, ...restProps }) => {
-  return <DateNavigator.Root { ...restProps}  style={{ display: "flex" }} />
+  return <DateNavigator.Root { ...restProps}  className="date-nav" navigationButtonComponent={DateNavButtons} />
 };
 
 //Table class
@@ -220,7 +220,9 @@ class Table extends React.PureComponent {
     for (let i = 0; i < arr.length; i++) {
       let slot = arr[i];
       if (slot.title.toLowerCase() === "consult" || slot.title.toLowerCase() === "consultation") {
-        if (slot.startDate === consult.startDate.toJSON() && slot.endDate === consult.endDate.toJSON()) {
+        if ((slot.startDate === consult.startDate.toJSON() && slot.endDate === consult.endDate.toJSON())
+        || (slot.startDate.toString() === consult.startDate.toString() && slot.endDate.toString() === consult.endDate.toString())) {
+          console.log('inArr')
           inArr = true;
         }
       }

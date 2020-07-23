@@ -30,3 +30,7 @@
   cursor: pointer;
 }
 
+.date-nav {
+  display: flex;
+}
+
