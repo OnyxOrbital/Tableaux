@@ -6,7 +6,9 @@ import { withFirebase } from '../Firebase';
 
 class ShareSearchBar extends React.Component {
   render() {
+    console.log("sharesearchbar")
     if (this.props.users) {
+      console.log("this.props.users", this.props.users)
       return (
         <Select id="searchBar" placeholder='Enter username'
         options={this.props.users.map(user => { return {value: user, label: user}})}

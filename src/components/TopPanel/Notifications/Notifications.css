@@ -96,3 +96,8 @@
         background-color: rgb(33, 38, 54);
     }
 }
+
+#no-notif {
+  padding: 0rem 1rem;
+  text-align: center;
+}

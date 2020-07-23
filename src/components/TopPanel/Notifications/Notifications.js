@@ -115,19 +115,22 @@ class Notifications extends React.Component {
           </button>
           { this.state.open ?
             <div className="dropdownContent">{
-              this.state.notifications.map(notif => {
-                return (
-                  <div className="notification">
-                      <div className="time-and-close-div">
-                        <p className="timestamp">[{new Date(notif.time).toLocaleDateString()} {new Date(notif.time).toLocaleTimeString()}]</p>
-                        <button time={notif.time} className="close-button" onClick={() => this.deleteNotification(notif.time)}><i time={notif.time} className="fa fa-times" aria-hidden="true"></i></button>
-                      </div>
-                      <Link to={notif.type} onClick={this.closeNotification}>
-                    <p>{notif.message}</p>
-                    <hr className="notification-line"/></Link>
-                  </div>
-                );
-              })}
+              this.state.notifications.length > 0 ?
+                this.state.notifications.reverse().map(notif => {
+                  return (
+                    <div className="notification">
+                        <div className="time-and-close-div">
+                          <p className="timestamp">[{new Date(notif.time).toLocaleDateString()} {new Date(notif.time).toLocaleTimeString()}]</p>
+                          <button time={notif.time} className="close-button" onClick={() => this.deleteNotification(notif.time)}><i time={notif.time} className="fa fa-times" aria-hidden="true"></i></button>
+                        </div>
+                        <Link to={notif.type} onClick={this.closeNotification}>
+                      <p>{notif.message}</p>
+                      <hr className="notification-line"/></Link>
+                    </div>
+                  );
+                })
+              : <p id="no-notif">No Notifications</p>
+            }
             </div> : null }
         </div>);
     } else {
