@@ -141,6 +141,10 @@ class YourTimetable extends React.Component {
     }
   }
 
+  // componentDidMount() {
+  //   this.readData();
+  // }
+
   // reads both displayed data and data
   async readData() {
     console.log('called readData')
@@ -247,9 +251,6 @@ class YourTimetable extends React.Component {
       allMods = allMods.concat([modCode]);
     })
     
-    console.log('props allmods', allMods)
-    console.log('props alldata', allData)
-    console.log('props dd', dd)
     return (
       <div className="yourTimetable">
         <h1>Your Timetable</h1>

@@ -101,16 +101,17 @@ class ShareDialog extends React.Component {
 
     if (this.state.event && sharedAs) {
       let uid = null;
-
+      console.log('this.state.event.value', this.state.event.value)
       //Query data for uid of user you want to share TT with
-      this.props.firebase.database.ref('users')
-        .orderByChild("username")
-        .equalTo(this.state.event.value).on("value", function(snapshot) {
-          uid = Object.keys(snapshot.val())[0];
-          // console.log("new uid", uid)
-        })
-
-
+      let ref = this.props.firebase.database.ref('users');
+      let snapshot = await ref.orderByChild("username")
+        .equalTo(this.state.event.value).once("value")
+      let value = snapshot.val();
+      if (value) {
+        uid = Object.keys(snapshot.val())[0];
+        console.log("new uid", uid)
+      }
+      console.log("new uid outside", uid)
       // if uid you chose is not your uid
       if (uid !== this.props.firebase.auth.currentUser.uid) {
         console.log('uid', uid)

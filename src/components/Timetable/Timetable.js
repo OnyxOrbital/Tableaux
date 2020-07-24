@@ -115,6 +115,10 @@ const allDayTitleCell = ({ classes, ...restProps }) => {
   return <AllDayPanel.TitleCell { ...restProps} style={{ backgroundColor: '#171a24'}}/>
 };
 
+const ConfirmationButton = ({ classes, ...restProps }) => {
+  return <ConfirmationDialog.Button { ...restProps} style={{color: 'white'}}/>
+};
+
 //Table class
 class Table extends React.PureComponent {
   constructor(props) {
@@ -239,6 +243,7 @@ class Table extends React.PureComponent {
   }
 
   commitChanges({ added, changed, deleted }) {
+    console.log('this is deleted ', deleted)
     this.setState((state) => {
       let { displayedData } = state;
       if (added) {
@@ -260,9 +265,14 @@ class Table extends React.PureComponent {
       }
       
       if (changed) {
-        displayedData = displayedData.map(appointment => (
-          changed[appointment.id] ? { ...appointment, ...changed[appointment.id] } : appointment));
+        console.log('changed', changed)
+        displayedData = displayedData.map(appointment => {
+          console.log('appt id', appointment.id)
+          console.log("changed appointment", appointment)
+          console.log("changed[appointment.id]", changed[appointment.id])
+          return changed[appointment.id] ? { ...appointment, ...changed[appointment.id] } : appointment});
       }
+
       // if (changed) {
       //   console.log("changed", changed)
       //   console.log("displayed data changed", displayedData)
@@ -392,7 +402,8 @@ class Table extends React.PureComponent {
   saveAppointmentsToDatabase() {
     if (this.props.firebase.auth.currentUser) {
       //reseting the database first
-      this.props.firebase.user(this.props.firebase.auth.currentUser.uid)
+      this.props.firebase.database.ref('users')
+      .child(this.props.firebase.auth.currentUser.uid)
       .child('appointments').child('appointmentsArr')
       .set({});
       let displayedData = this.state.displayedData;
@@ -402,35 +413,79 @@ class Table extends React.PureComponent {
         console.log('appt', appointment)
         if (!appointment.classNo) { //if its a consult slot/other appt slot
           if (appointment.rRule) { //if is a repeating event,
-            this.props.firebase.user(this.props.firebase.auth.currentUser.uid)
-            .child('appointments').child('appointmentsArr')
-            .push({
-              startDate: JSON.stringify(appointment.startDate).replace(/^"(.*)"$/, '$1'),
-              endDate: JSON.stringify(appointment.endDate).replace(/^"(.*)"$/, '$1'),
-              title: appointment.title,
-              rRule: appointment.rRule
-            });
+            if (appointment.id) {
+              this.props.firebase.database.ref('users')
+              .child(this.props.firebase.auth.currentUser.uid)
+              .child('appointments').child('appointmentsArr')
+              .push({
+                startDate: JSON.stringify(appointment.startDate).replace(/^"(.*)"$/, '$1'),
+                endDate: JSON.stringify(appointment.endDate).replace(/^"(.*)"$/, '$1'),
+                title: appointment.title,
+                rRule: appointment.rRule,
+                id: appointment.id
+              });
+            } else {
+              this.props.firebase.database.ref('users')
+              .child(this.props.firebase.auth.currentUser.uid)
+              .child('appointments').child('appointmentsArr')
+              .push({
+                startDate: JSON.stringify(appointment.startDate).replace(/^"(.*)"$/, '$1'),
+                endDate: JSON.stringify(appointment.endDate).replace(/^"(.*)"$/, '$1'),
+                title: appointment.title,
+                rRule: appointment.rRule,
+              });
+            }
           } else { //if its not a repeating event
-            this.props.firebase.user(this.props.firebase.auth.currentUser.uid)
-            .child('appointments').child('appointmentsArr')
-            .push({
-              startDate: JSON.stringify(appointment.startDate).replace(/^"(.*)"$/, '$1'),
-              endDate: JSON.stringify(appointment.endDate).replace(/^"(.*)"$/, '$1'),
-              title: appointment.title,
-            });
+            if (appointment.id) {
+              this.props.firebase.database.ref('users')
+              .child(this.props.firebase.auth.currentUser.uid)
+              .child('appointments').child('appointmentsArr')
+              .push({
+                startDate: JSON.stringify(appointment.startDate).replace(/^"(.*)"$/, '$1'),
+                endDate: JSON.stringify(appointment.endDate).replace(/^"(.*)"$/, '$1'),
+                title: appointment.title,
+                id: appointment.id
+              });
+            } else {
+              this.props.firebase.database.ref('users')
+              .child(this.props.firebase.auth.currentUser.uid)
+              .child('appointments').child('appointmentsArr')
+              .push({
+                startDate: JSON.stringify(appointment.startDate).replace(/^"(.*)"$/, '$1'),
+                endDate: JSON.stringify(appointment.endDate).replace(/^"(.*)"$/, '$1'),
+                title: appointment.title,
+              });
+            }
           }
         } else { //if its a module slot
-          this.props.firebase.user(this.props.firebase.auth.currentUser.uid)
-          .child('appointments').child('appointmentsArr')
-          .push({
-            startDate: JSON.stringify(appointment.startDate).replace(/^"(.*)"$/, '$1'),
-            endDate: JSON.stringify(appointment.endDate).replace(/^"(.*)"$/, '$1'),
-            title: appointment.title,
-            lessonType: appointment.lessonType,
-            classNo: appointment.classNo,
-            rRule: appointment.rRule,
-            exDate: appointment.exDate
-          });
+          if (appointment.id) {
+            this.props.firebase.database.ref('users')
+            .child(this.props.firebase.auth.currentUser.uid)
+            .child('appointments').child('appointmentsArr')
+            .push({
+              startDate: JSON.stringify(appointment.startDate).replace(/^"(.*)"$/, '$1'),
+              endDate: JSON.stringify(appointment.endDate).replace(/^"(.*)"$/, '$1'),
+              title: appointment.title,
+              lessonType: appointment.lessonType,
+              classNo: appointment.classNo,
+              rRule: appointment.rRule,
+              exDate: appointment.exDate,
+              id: appointment.id
+            });
+          } else {
+            this.props.firebase.database.ref('users')
+            .child(this.props.firebase.auth.currentUser.uid)
+            .child('appointments').child('appointmentsArr')
+            .push({
+              startDate: JSON.stringify(appointment.startDate).replace(/^"(.*)"$/, '$1'),
+              endDate: JSON.stringify(appointment.endDate).replace(/^"(.*)"$/, '$1'),
+              title: appointment.title,
+              lessonType: appointment.lessonType,
+              classNo: appointment.classNo,
+              rRule: appointment.rRule,
+              exDate: appointment.exDate,
+            });
+          }
         }
       });
       this.saveModsData();
@@ -442,7 +497,8 @@ class Table extends React.PureComponent {
 
   saveModsData() {
     let data = this.state.data;
-    this.props.firebase.user(this.props.firebase.auth.currentUser.uid)
+    this.props.firebase.database.ref('users')
+      .child(this.props.firebase.auth.currentUser.uid)
       .child('appointments').child('modsData')
       .set({});
 
@@ -454,7 +510,8 @@ class Table extends React.PureComponent {
         classNokeys.forEach(classNo => {
           let arr = data[module][lessonType][classNo];
           for (let i = 0; i < arr.length; i++) {
-            this.props.firebase.user(this.props.firebase.auth.currentUser.uid)
+            this.props.firebase.database.ref('users')
+            .child(this.props.firebase.auth.currentUser.uid)
             .child('appointments').child('modsData').child(module).child(lessonType).child(classNo)
             .push({
               startDate: JSON.stringify(arr[i].startDate).replace(/^"(.*)"$/, '$1'),
@@ -515,7 +572,7 @@ class Table extends React.PureComponent {
               <DateNavigator 
                 rootComponent={DateNavRootComponent}
               />
-              <ConfirmationDialog />
+              <ConfirmationDialog buttonComponent={ConfirmationButton}/>
               <Appointments appointmentComponent={this.myAppointment} />
               <AppointmentForm />
               <AllDayPanel 

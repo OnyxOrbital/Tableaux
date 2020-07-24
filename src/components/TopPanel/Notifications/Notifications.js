@@ -111,7 +111,6 @@ class Notifications extends React.Component {
         <div className="notifications">
           <button onClick={this.handleNotificationClick} className="notificationButton">
             <img src={notificationIcon} alt=''></img>
-            <p>Notifications</p>
           </button>
           { this.state.open ?
             <div className="dropdownContent">{

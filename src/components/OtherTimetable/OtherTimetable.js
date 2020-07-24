@@ -310,18 +310,21 @@ class OtherTimetable extends React.Component {
       console.log("displayeddata asdawd", displayedData)
       console.log("myDD ", myDisplayedData)
       
-      // write to OtherTimetable database to store state (so that when rerendering, data is not lost)
-      this.props.firebase.database.ref('users')
-      .child(this.props.firebase.auth.currentUser.uid)
-      .child("other-timetable")
-      .set({
-        displayedData: displayedData,
-        username: username,
-        uid: uid,
-        titles: titles,
-        myDisplayedData: myDisplayedData,
-        sharedAs: sharedAs
-      })
+      if (this.props.firebase.auth.currentUser.uid) {
+        // write to OtherTimetable database to store state (so that when rerendering, data is not lost)
+        this.props.firebase.database.ref('users')
+        .child(this.props.firebase.auth.currentUser.uid)
+        .child("other-timetable")
+        .set({
+          displayedData: displayedData,
+          username: username,
+          uid: uid,
+          titles: titles,
+          myDisplayedData: myDisplayedData,
+          sharedAs: sharedAs
+        })
+      }
+     
       
       this.setState({
         displayedData: displayedData,
@@ -530,7 +533,6 @@ class OtherTimetable extends React.Component {
                 timeScaleLabelComponent={TimeScaleLabel}
                 dayScaleEmptyCellComponent={DayScaleEmptyCell}
                 layoutComponent={LayoutBase}
-                excludedDays={[0]}
               />
               <Toolbar
                 rootComponent={ToolbarRoot}

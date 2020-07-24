@@ -31,12 +31,9 @@ class TopPanel extends React.Component {
               <p>Tableaux</p>
             </div>
             <SearchBar action={this.handleChange}/>
-            <div>
+            <div className="username">
               {this.props.firebase.auth.currentUser 
-              ? (
-                <div>
-                  <p>{this.props.firebase.auth.currentUser.displayName}</p>
-                </div>)
+              ? <p style={{textAlign: 'center'}}>{this.props.firebase.auth.currentUser.displayName}</p>
               : <SignInButton />}
             </div>
             <Notifications />

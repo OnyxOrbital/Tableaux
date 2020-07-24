@@ -12,6 +12,10 @@
     display: flex;
 }
 
+.username {
+    min-width: 8rem;
+}
+
 #logoImg {
 	height: 70px;
 	width: 70px;
