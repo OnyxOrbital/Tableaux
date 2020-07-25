@@ -25,6 +25,7 @@ class YourTimetable extends React.Component {
     this.processData = this.processData.bind(this);
     this.readData = this.readData.bind(this);
     this.readUsers = this.readUsers.bind(this);
+    this.removeModule = this.removeModule.bind(this);
     this.onDisplayedDataChange = this.onDisplayedDataChange.bind(this);
     this.onModsDataChange = this.onModsDataChange.bind(this);
    
@@ -97,7 +98,7 @@ class YourTimetable extends React.Component {
       }
       this.setState({
         isDataLoaded: true,
-        lessons: data2, //to overwrite big data arrays from unsaved mods
+        lessons: data2, //to override big data arrays from unsaved mods
         modules: modulesFromDB, //to overwrite modules from unsaved mods
       })
     }
@@ -122,7 +123,8 @@ class YourTimetable extends React.Component {
     if (!this.containsModule(module.label, this.state.modules)) {
       let modules = this.state.modules;
       modules.push(module.label);
-      this.setState({ modules: modules });
+      this.setState({ 
+        modules: modules });
 
       let newSearchResults = [];
       await Promise.all(modules.map(module => { //wait should this fetch for all modules or only the new mod added??
@@ -319,6 +321,49 @@ class YourTimetable extends React.Component {
     // return users;
   }
 
+  removeModule(module) {
+    //remove mod from database
+    this.props.firebase.database.ref('users')
+      .child(this.props.firebase.auth.currentUser.uid)
+      .child('appointments')
+      .child('appointmentsArr')
+      .once('value', snapshot => {
+        snapshot.forEach(child => {
+          console.log(child.val().title)
+          if (child.val().title === module) {
+            child.ref.remove();
+          }
+        })
+      });
+      this.props.firebase.database.ref('users')
+      .child(this.props.firebase.auth.currentUser.uid)
+      .child('appointments')
+      .child('modsData')
+      .child(module)
+      .remove()
+
+    //remove mod from displayeddata
+    let lessons = this.state.lessons; 
+    let newLessons = [];
+    let modules = this.state.modules;
+    let lessonsKeys = Object.keys(lessons); //keys of mods from search bar and database
+    lessonsKeys.forEach(key => {
+      if (key !== module) {
+        newLessons[key] = lessons[key];
+      }
+    });
+    let allMods = [];
+    modules.forEach(modCode => {
+      if (modCode !== module) {
+        allMods = allMods.concat([modCode]);
+      }
+    });
+    this.setState({
+      lessons: newLessons,
+      modules: allMods,
+    })
+  }
+
   render(){
     let dd = this.state.dd;
     let lessons = this.state.lessons; //data of unsaved data from search bar and database
@@ -350,7 +395,15 @@ class YourTimetable extends React.Component {
             <hr></hr>
             <SearchBar action={this.addModule}/>
             <p className="your-modules-text">Your modules:</p>
-              <MyModules modules={allMods} />
+
+              {/* <MyModules modules={allMods} /> */}
+              {allMods.map(module => {
+                return (
+                <div className="Module-information">
+                  <h3>{module}</h3>
+                  <button onClick={() => this.removeModule(module)}><i className="fa fa-trash-o" aria-hidden="true"></i></button>
+                </div>);
+              })}
           </div>
         </div>
       );

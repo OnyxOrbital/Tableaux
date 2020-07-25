@@ -387,8 +387,8 @@ class Table extends React.PureComponent {
         additionalModsToProcess = this.process(additionalModsToProcess);
         
         displayedDataFromDB = displayedDataFromDB.concat(additionalModsToProcess);
-        console.log("displayeddatafromdb dawd", displayedDataFromDB)
-        console.log("dd before change", displayedData)
+        // console.log("displayeddatafromdb dawd", displayedDataFromDB)
+        // console.log("dd before change", displayedData)
         displayedData = displayedData.concat(displayedDataFromDB);
         displayedData.forEach(data => {
           if (!data.lessonType) { //consult or event slot
@@ -397,6 +397,7 @@ class Table extends React.PureComponent {
             }
           }
         });
+       
         console.log('final displayed data',displayedDataFromDB)
         this.setState({
           data: newData,
@@ -558,7 +559,6 @@ class Table extends React.PureComponent {
     } else {
       window.alert("Please sign in to use this function.");
     }
-
   }
 
   saveModsData() {
@@ -594,6 +594,7 @@ class Table extends React.PureComponent {
   }
 
   render() {
+    // this.saveAppointmentsToDatabase();
     console.log('dd in render', this.state.displayedData)
     if (this.state.redirectTo) {
       return <Redirect to={{
