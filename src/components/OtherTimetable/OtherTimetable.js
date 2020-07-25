@@ -244,27 +244,43 @@ class OtherTimetable extends React.Component {
                 endDate: slot.endDate,
                 rRule: slot.rRule,
                 exDate: slot.exDate,
-                user: "user1"
+                user: "user1",
+                id: slot.id
               }
             } else {
               return { 
                 title: slot.title,
                 startDate: slot.startDate,
                 endDate: slot.endDate,
-                user: "user1"
+                user: "user1",
+                id: slot.id,
               }
             }
           } else {
-            return { 
-              title: slot.title,
-              startDate: slot.startDate,
-              endDate: slot.endDate,
-              lessonType: slot.lessonType,
-              classNo: slot.classNo,
-              rRule: slot.rRule,
-              exDate: slot.exDate,
-              user: "user1"
-           }
+            if (slot.id) {
+              return { 
+                title: slot.title,
+                startDate: slot.startDate,
+                endDate: slot.endDate,
+                lessonType: slot.lessonType,
+                classNo: slot.classNo,
+                rRule: slot.rRule,
+                exDate: slot.exDate,
+                user: "user1",
+                id: slot.id,
+             }
+            } else {
+              return { 
+                title: slot.title,
+                startDate: slot.startDate,
+                endDate: slot.endDate,
+                lessonType: slot.lessonType,
+                classNo: slot.classNo,
+                rRule: slot.rRule,
+                exDate: slot.exDate,
+                user: "user1"
+              }
+            }
           }
         })
       }
@@ -498,10 +514,10 @@ class OtherTimetable extends React.Component {
     let myDisplayedData = this.state.myDisplayedData;
 
     let finalDisplayedData = [];
-    if (myDisplayedData.length > 0) {
-      console.log("length of myDD", myDisplayedData.length)
-      console.log("length of DD", displayedData.length)
-      console.log('concat', displayedData.concat(myDisplayedData))
+    if (myDisplayedData && myDisplayedData.length > 0 && displayedData) {
+      // console.log("length of myDD", myDisplayedData.length)
+      // console.log("length of DD", displayedData.length)
+      // console.log('concat', displayedData.concat(myDisplayedData))
       finalDisplayedData = displayedData.concat(myDisplayedData);
     }
     if (this.state.redirectTo) {

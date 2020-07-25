@@ -2,16 +2,17 @@ import React from 'react';
 import './SharedTimetable.css';
 import { Link } from 'react-router-dom';
 import { withFirebase } from '../Firebase/index';
+import ReactLoading from 'react-loading';
 
 class SharedTimetable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       peopleWhoSharedTheirTTWithMeuid: [],
-      myDisplayedData: []
+      myDisplayedData: [],
+      dataReady: false
     }
     this.getSharedData = this.getSharedData.bind(this);
-    // this.readPeopleWhoSharedTheirTTWithMe = this.readPeopleWhoSharedTheirTTWithMe.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
     this.onSharedTimetableChange = this.onSharedTimetableChange.bind(this);
 
@@ -24,7 +25,7 @@ class SharedTimetable extends React.Component {
   }
 
   onSharedTimetableChange(snapshot) {
-    console.log("got to sharedTiemtableChange")
+    // console.log("got to sharedTiemtableChange")
     let peopleWhoSharedTheirTTWithMeuid = [];
     if (snapshot.val()) {
       peopleWhoSharedTheirTTWithMeuid.push([Object.values(snapshot.val())[0]]);
@@ -43,13 +44,13 @@ class SharedTimetable extends React.Component {
         .child('peopleWhoSharedTheirTTWithMe');
       let snapshot = await ref.once('value');
       let value = snapshot.val();
-      console.log(value)
+      // console.log(value)
       if (value) {
-        console.log(Object.values(snapshot.val())[0])
-        peopleWhoSharedTheirTTWithMeuid.push([Object.values(value)[0]]);
+        // console.log("full people tt", Object.values(value))
+        peopleWhoSharedTheirTTWithMeuid.push(Object.values(value));
       }
-      console.log('peopleWhoSharedTheirTTWithMeuid', peopleWhoSharedTheirTTWithMeuid)
-      peopleWhoSharedTheirTTWithMeuid = await this.getSharedData(peopleWhoSharedTheirTTWithMeuid);
+      // console.log('peopleWhoSharedTheirTTWithMeuid', peopleWhoSharedTheirTTWithMeuid[0])
+      peopleWhoSharedTheirTTWithMeuid = await this.getSharedData(peopleWhoSharedTheirTTWithMeuid[0]);
 
       let ref2 = this.props.firebase.database.ref('users')
         .child(this.props.firebase.auth.currentUser.uid)
@@ -58,49 +59,52 @@ class SharedTimetable extends React.Component {
       let snapshot2 = await ref2.once('value');
       let value2 = snapshot2.val();
       if (value2) {
-        console.log('snapshot stuff', Object.values(value2))
+        // console.log('snapshot stuff', Object.values(value2))
         myDisplayedData.push(Object.values(value2));
       }
     }
-    console.log('peopleWhoSharedTheirTTWithMeuid after getshareddata', peopleWhoSharedTheirTTWithMeuid)
+    // console.log('peopleWhoSharedTheirTTWithMeuid after getshareddata', peopleWhoSharedTheirTTWithMeuid)
     this.setState({
       peopleWhoSharedTheirTTWithMeuid: peopleWhoSharedTheirTTWithMeuid,
-      myDisplayedData: myDisplayedData
+      myDisplayedData: myDisplayedData,
+      dataReady: true
     });
   }
 
   // retrieve appointments from each uid if the array is not empty
   async getSharedData(peopleWhoSharedTheirTTWithMeuid) {
-    console.log('peopleWhoSharedTheirTTWithMeuid', peopleWhoSharedTheirTTWithMeuid)
+    // console.log('peopleWhoSharedTheirTTWithMeuid', peopleWhoSharedTheirTTWithMeuid)
     let results = [];
     // check if array is not empty
     if (peopleWhoSharedTheirTTWithMeuid && peopleWhoSharedTheirTTWithMeuid !== []) {
       // loop through each uid in array to retrieve [username, appointmentsArr]
       peopleWhoSharedTheirTTWithMeuid.forEach(async user => {
-        console.log(user)
+        // console.log(user)
         let username = null;
         let appointmentsArr = [];
         // NOTE : user[0] might require mapping instead
-        console.log('user[0].uid', user[0].uid)
-        let ref = this.props.firebase.database.ref('users')
-                .child(user[0].uid)
-        let snapshot = await ref.once('value');
-        let value = snapshot.val();
-        console.log('value', value)
-        if (value) {
-          username = value.username;
-          if (value.appointments) {
-            console.log(value.appointments.appointmentsArr)
-            appointmentsArr.push(Object.values(value.appointments.appointmentsArr));
-            results.push([username, user[0].uid, appointmentsArr[0], user[0].sharedAs]);
-            console.log("results push", [username, user[0].uid, appointmentsArr[0], user[0].sharedAs])
-          } else {
-            results.push([username, user[0].uid, [], user[0].sharedAs]);
+        if (user.uid) {
+          // console.log('user.uid', user.uid)
+          let ref = this.props.firebase.database.ref('users')
+                  .child(user.uid)
+          let snapshot = await ref.once('value');
+          let value = snapshot.val();
+          // console.log('value', value)
+          if (value) {
+            username = value.username;
+            if (value.appointments) {
+              // console.log(value.appointments.appointmentsArr)
+              appointmentsArr.push(Object.values(value.appointments.appointmentsArr));
+              results.push([username, user.uid, appointmentsArr[0], user.sharedAs]);
+              // console.log("results push", [username, user[0].uid, appointmentsArr[0], user[0].sharedAs])
+            } else {
+              results.push([username, user.uid, [], user.sharedAs]);
+            }
           }
         }
       })
     }
-    console.log("results", results)
+    // console.log("results", results)
     return results;
   }
 
@@ -113,7 +117,7 @@ class SharedTimetable extends React.Component {
         .child('peopleWhoSharedTheirTTWithMe')
         .once('value', snapshot => {
           snapshot.forEach(child => {
-            console.log(child.val())
+            // console.log(child.val())
             if (child.val().uid === uid) {
               child.ref.remove();
             }
@@ -125,7 +129,7 @@ class SharedTimetable extends React.Component {
         .child('peopleISharedMyTTWith')
         .once('value', snapshot => {
           snapshot.forEach(child => {
-            console.log(child.val())
+            // console.log(child.val())
             if (child.val().uid === this.props.firebase.auth.currentUser.uid) {
               child.ref.remove();
             }
@@ -136,9 +140,9 @@ class SharedTimetable extends React.Component {
   }
 
   renderTableData(userList) {
-    console.log('userlist', userList)
+    // console.log('userlist', userList)
     return userList.map((user, key) => {
-      console.log('user', user)
+      // console.log('user', user)
       return (
         <tr id={key}>
           <td className="shared-td">
@@ -166,19 +170,34 @@ class SharedTimetable extends React.Component {
 
   render() {
     let userList = this.state.peopleWhoSharedTheirTTWithMeuid;
-    if (this.props.firebase.auth.currentUser) {
-      if (userList && userList.length !== 0) {
-        return (
-          <div className="sharedTimetables">
-              <h1>Shared Timetables</h1>
-            <table className="sharedList">
-              <tbody>
-                <tr >{this.renderTableHeader()}</tr>
-                {this.renderTableData(userList)}
-              </tbody>
-            </table>
-          </div>
-        );
+    // console.log("userlist", userList)
+    if (this.state.dataReady) {
+      if (this.props.firebase.auth.currentUser) {
+        if (userList && userList.length !== 0) {
+          return (
+            <div className="sharedTimetables">
+                <h1>Shared Timetables</h1>
+              <table className="sharedList">
+                <tbody>
+                  <tr >{this.renderTableHeader()}</tr>
+                  {this.renderTableData(userList)}
+                </tbody>
+              </table>
+            </div>
+          );
+        } else {
+          return (
+            <div className="sharedTimetables">
+                <h1>Shared Timetables</h1>
+              <table className="sharedList">
+                <tbody>
+                  <tr>{this.renderTableHeader()}</tr>
+                </tbody>
+              </table>
+              <p style={{textAlign: 'center', color: '#e8007c'}}>No shared timetables to show :(</p>
+            </div>
+          );
+        }
       } else {
         return (
           <div className="sharedTimetables">
@@ -186,26 +205,17 @@ class SharedTimetable extends React.Component {
             <table className="sharedList">
               <tbody>
                 <tr>{this.renderTableHeader()}</tr>
+                <br />
+                <p style={{textAlign: 'center', color: '#e8007c'}}>Please sign in to use this function.</p>
               </tbody>
             </table>
-            <p style={{textAlign: 'center', color: '#e8007c'}}>No shared timetables to show :(</p>
           </div>
         );
       }
     } else {
-      return (
-        <div className="sharedTimetables">
-            <h1>Shared Timetables</h1>
-          <table className="sharedList">
-            <tbody>
-              <tr>{this.renderTableHeader()}</tr>
-              <br />
-              <p style={{textAlign: 'center', color: '#e8007c'}}>Please sign in to use this function.</p>
-            </tbody>
-          </table>
-        </div>
-      );
+      return  <ReactLoading className="spinner" type='spin' color='white' height={'5%'} width={'5%'} />
     }
+    
   }
 }
 

@@ -228,10 +228,14 @@ class Table extends React.PureComponent {
 
   checkIfConsultSlotIsInArr(arr, consult) {
     let inArr = false;
+    console.log("consult start date", consult.startDate)
+    console.log("consult end date", consult.endDate)
     for (let i = 0; i < arr.length; i++) {
       let slot = arr[i];
+      console.log('slot.startDate', slot.startDate)
       if (slot.title.toLowerCase() === "consult" || slot.title.toLowerCase() === "consultation") {
-        if ((slot.startDate === consult.startDate.toJSON() && slot.endDate === consult.endDate.toJSON())
+        if ((slot.startDate === consult.startDate && slot.endDate === consult.endDate)
+        || (slot.startDate === consult.startDate.toJSON() && slot.endDate === consult.endDate.toJSON())
         || (slot.startDate.toString() === consult.startDate.toString() && slot.endDate.toString() === consult.endDate.toString())) {
           console.log('inArr')
           inArr = true;
@@ -249,7 +253,7 @@ class Table extends React.PureComponent {
       if (added) {
         console.log("dd added", displayedData)
         console.log("added", added)
-        const startingAddedId = displayedData.length > 0 ? displayedData[displayedData.length - 1].id + 1 : 0;
+        const startingAddedId = displayedData.length > 0 ? displayedData.length + 1  : 0;
         if (added.title.toLowerCase() === "consult" || added.title.toLowerCase() === "consultation") {
             if (!this.checkIfConsultSlotIsInArr(displayedData, added)) {
               console.log('if block', this.checkIfConsultSlotIsInArr(displayedData, added))
@@ -311,10 +315,55 @@ class Table extends React.PureComponent {
     });
   }
 
+  componentDidMount() {
+    let displayedData = this.state.displayedData;
+    let displayedDataFromDB = this.props.dd; //displayed data from database (after refresh)
+    let newData = this.props.data; //big data array from both database and unsaved mods
+    let newDataKeys = Object.keys(newData);
+    let modTitles = this.state.modTitles; //used for coloring
+    let additionalModsToProcess = [];
+
+    //loop through data, if there are mods in data that
+    //is not in dd, push mod to dd (and modTitles)
+      newDataKeys.forEach(modCode => { //for each mod in new data
+        let isIndd = false;
+        displayedDataFromDB.forEach(slot => {
+          if (slot.title === modCode) {
+            isIndd = true;
+          }
+        })
+        if (!isIndd) {
+          additionalModsToProcess.push(newData[modCode]);
+          modTitles.push(modCode)
+        }
+      })
+      additionalModsToProcess = this.process(additionalModsToProcess);
+      
+      displayedDataFromDB = displayedDataFromDB.concat(additionalModsToProcess);
+      console.log("displayeddatafromdb dawd", displayedDataFromDB)
+      console.log("dd before change", displayedData)
+      displayedData = displayedData.concat(displayedDataFromDB);
+      displayedData.forEach(data => {
+        if (!data.lessonType) { //consult or event slot
+          if (!this.checkIfConsultSlotIsInArr(displayedDataFromDB, data)) {
+            displayedDataFromDB.push(data);
+          }
+        }
+      });
+      console.log('final displayed data',displayedDataFromDB)
+      this.setState({
+        data: newData,
+        displayedData: displayedDataFromDB,
+        modTitles: modTitles
+      });
+  }
+
   // helps update dipslayed data whenever mods are added in myModules
   componentWillReceiveProps(nextProps) {
+    console.log('called compwillreceiveprops');
     // if data or displayeddata is updated (i.e mod added from search bar or from database)
     if (nextProps.data !== this.state.data || nextProps.dd !== this.state.displayedData) {
+      let displayedData = this.state.displayedData;
       let displayedDataFromDB = nextProps.dd; //displayed data from database (after refresh)
       let newData = nextProps.data; //big data array from both database and unsaved mods
       let newDataKeys = Object.keys(newData);
@@ -336,8 +385,19 @@ class Table extends React.PureComponent {
           }
         })
         additionalModsToProcess = this.process(additionalModsToProcess);
+        
         displayedDataFromDB = displayedDataFromDB.concat(additionalModsToProcess);
-
+        console.log("displayeddatafromdb dawd", displayedDataFromDB)
+        console.log("dd before change", displayedData)
+        displayedData = displayedData.concat(displayedDataFromDB);
+        displayedData.forEach(data => {
+          if (!data.lessonType) { //consult or event slot
+            if (!this.checkIfConsultSlotIsInArr(displayedDataFromDB, data)) {
+              displayedDataFromDB.push(data);
+            }
+          }
+        });
+        console.log('final displayed data',displayedDataFromDB)
         this.setState({
           data: newData,
           displayedData: displayedDataFromDB,
@@ -413,7 +473,8 @@ class Table extends React.PureComponent {
         console.log('appt', appointment)
         if (!appointment.classNo) { //if its a consult slot/other appt slot
           if (appointment.rRule) { //if is a repeating event,
-            if (appointment.id) {
+            if (typeof appointment.id === "number") {
+              console.log('is repeating, has id')
               this.props.firebase.database.ref('users')
               .child(this.props.firebase.auth.currentUser.uid)
               .child('appointments').child('appointmentsArr')
@@ -425,6 +486,7 @@ class Table extends React.PureComponent {
                 id: appointment.id
               });
             } else {
+              console.log('is repeating, no id')
               this.props.firebase.database.ref('users')
               .child(this.props.firebase.auth.currentUser.uid)
               .child('appointments').child('appointmentsArr')
@@ -436,7 +498,8 @@ class Table extends React.PureComponent {
               });
             }
           } else { //if its not a repeating event
-            if (appointment.id) {
+            if (typeof appointment.id === "number") {
+              console.log('not repeating, has id')
               this.props.firebase.database.ref('users')
               .child(this.props.firebase.auth.currentUser.uid)
               .child('appointments').child('appointmentsArr')
@@ -447,6 +510,7 @@ class Table extends React.PureComponent {
                 id: appointment.id
               });
             } else {
+              console.log('not repeating, no id', appointment.id)
               this.props.firebase.database.ref('users')
               .child(this.props.firebase.auth.currentUser.uid)
               .child('appointments').child('appointmentsArr')
@@ -458,7 +522,8 @@ class Table extends React.PureComponent {
             }
           }
         } else { //if its a module slot
-          if (appointment.id) {
+          if (typeof appointment.id === "number") {
+            console.log('is lesson, has id')
             this.props.firebase.database.ref('users')
             .child(this.props.firebase.auth.currentUser.uid)
             .child('appointments').child('appointmentsArr')
@@ -473,6 +538,7 @@ class Table extends React.PureComponent {
               id: appointment.id
             });
           } else {
+            console.log('is lesson, no id')
             this.props.firebase.database.ref('users')
             .child(this.props.firebase.auth.currentUser.uid)
             .child('appointments').child('appointmentsArr')
@@ -524,6 +590,7 @@ class Table extends React.PureComponent {
         })
       })
     })
+    window.alert("Data successfully saved");
   }
 
   render() {
@@ -541,12 +608,12 @@ class Table extends React.PureComponent {
       }}/>;
     }
     return (
-      <div>
+      <div className="table">
         <ThemeProvider theme={theme}>
           <Paper>
             <Scheduler
               data={this.state.displayedData}
-              height={660}
+              height={660}       
             >
               <ViewState
                 defaultCurrentDate={new Date('2020-08-15')}

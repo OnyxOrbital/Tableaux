@@ -23,13 +23,13 @@ class ProfileBase extends React.Component {
   }
 
   render() {
+    // <div className="details"><h3>Phone Number: </h3><p>{this.props.user.phoneNumber ? this.props.user.phoneNumber : '-'}</p></div>
     if (this.props.user) {
       return (
           <div>
             <h1>User Profile</h1>
             <div className="details"><h3>Name: </h3><p>{this.props.user.displayName}</p></div>
             <div className="details"><h3>Email: </h3><p>{this.props.user.email}</p></div>
-            <div className="details"><h3>Phone Number: </h3><p>{this.props.user.phoneNumber ? this.props.user.phoneNumber : '-'}</p></div>
             <SignOutButton />
           </div>
       );

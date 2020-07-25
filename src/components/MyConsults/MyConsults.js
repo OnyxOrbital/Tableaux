@@ -1,11 +1,14 @@
 import React from 'react';
 import './MyConsults.css';
 import { withFirebase } from '../Firebase/index';
+import ReactLoading from 'react-loading';
+
 class MyConsults extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      consults: []
+      consults: [],
+      loadedConsults: false,
     }
     this.handleAccept = this.handleAccept.bind(this);
     this.handleDecline = this.handleDecline.bind(this);
@@ -43,7 +46,10 @@ class MyConsults extends React.Component {
         newConsults.push(Object.values(snapshot.val()));
       }
       if (newConsults) {
-        this.setState({ consults: newConsults[0] });
+        this.setState({ 
+          consults: newConsults[0],
+          loadedConsults: true
+        });
       }
     }  
   }
@@ -206,28 +212,32 @@ class MyConsults extends React.Component {
 }
   render(){
     if (this.props.firebase.auth.currentUser) {
-      return (
-        <div>
-          <h1>My Consults</h1>
-          <div className="consultsList">
-            {this.state.consults && this.state.consults.length > 0 ? (
-              <table className="consults-table">
-                <tbody>
-                  {this.renderTableHeader()}
-                  {this.renderTableData(this.state.consults)}
-                </tbody>
-              </table>) 
-            : (<div>
-              <table className="consults-table">
-                <tbody>
-                  {this.renderTableHeader()}
-                </tbody>
-              </table>
-              <p style={{textAlign: 'center', color: '#e8007c'}}>No consults to show :(</p>
-            </div>) }
+      if (this.state.loadedConsults) {
+        return (
+          <div>
+            <h1>My Consults</h1>
+            <div className="consultsList">
+              {this.state.consults && this.state.consults.length > 0 ? (
+                <table className="consults-table">
+                  <tbody>
+                    {this.renderTableHeader()}
+                    {this.renderTableData(this.state.consults)}
+                  </tbody>
+                </table>) 
+              : (<div>
+                <table className="consults-table">
+                  <tbody>
+                    {this.renderTableHeader()}
+                  </tbody>
+                </table>
+                <p style={{textAlign: 'center', color: '#e8007c'}}>No consults to show :(</p>
+              </div>) }
+            </div>
           </div>
-        </div>
-      );
+        );
+      } else {
+        return <ReactLoading className="spinner" type='spin' color='white' height={'5%'} width={'5%'} />;
+      }
     } else {
       return (
         <div>

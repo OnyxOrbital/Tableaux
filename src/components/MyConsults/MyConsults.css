@@ -14,10 +14,6 @@
     border-bottom: 1px solid #e8007c;
 }
 
-::-webkit-scrollbar {
-    display: none;
- }
-
  .status {
    color: #F1C944;
  }
@@ -38,3 +34,7 @@
    background-color: #F1C944;
    color: #171a24;
  }
+
+.consultsList::-webkit-scrollbar {
+  display: none;
+}

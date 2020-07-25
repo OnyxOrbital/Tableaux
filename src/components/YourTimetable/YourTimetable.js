@@ -5,6 +5,7 @@ import MyModules from '../YourTimetable/MyModules/MyModules';
 import Table from '../Timetable/Timetable';
 import { withFirebase } from '../Firebase/index';
 import ShareDialog from '../ShareDialog/ShareDialog';
+import ReactLoading from 'react-loading';
 
 class YourTimetable extends React.Component {
   constructor(props) {
@@ -13,7 +14,9 @@ class YourTimetable extends React.Component {
       modules: [],
       dd: [],
       lessons: [],
-      isDataLoaded: false
+      isDataLoaded: false,
+      loadUsers: false,
+      users: [],
     }
     this.containsModule = this.containsModule.bind(this);
     this.filterLessons = this.filterLessons.bind(this);
@@ -22,8 +25,83 @@ class YourTimetable extends React.Component {
     this.processData = this.processData.bind(this);
     this.readData = this.readData.bind(this);
     this.readUsers = this.readUsers.bind(this);
+    this.onDisplayedDataChange = this.onDisplayedDataChange.bind(this);
+    this.onModsDataChange = this.onModsDataChange.bind(this);
+   
+    this.authListener = this.props.firebase.auth.onAuthStateChanged(
+      (authUser) => {
+        if(authUser) {
+          this.readUsers();
+          this.ref = this.props.firebase.database.ref('users')
+          .child(this.props.firebase.auth.currentUser.uid)
+          .child('appointments').child('appointmentsArr');
+          this.ref.on('value', this.onDisplayedDataChange)
+          
+          this.ref2 = this.props.firebase.database.ref('users')
+          .child(this.props.firebase.auth.currentUser.uid)
+          .child('appointments').child('modsData');
+          this.ref2.on('value', this.onModsDataChange)
+        }
+      })
   }
 
+  onDisplayedDataChange(snapshot) {
+    console.log('called onDisplayedDataChange')
+    let appointments = [];
+    let value = snapshot.val();
+    if (value) { 
+      appointments.push(Object.values(value));
+    }
+    if (appointments && appointments[0]) { 
+      console.log('appointments[0', appointments[0])
+      this.setState({
+        dd: appointments[0],
+        isDataLoaded: true
+      });
+    }
+  }
+
+  onModsDataChange(snapshot) {
+    console.log('called onModsDataChange')
+    let data = [];
+    let modulesFromDB = [];
+    let value = snapshot.val();
+    if (value) { //if snapshot is not empty
+      data.push(value);
+      let data2 = [];
+      if (data[0]) {
+        console.log("data", data)
+        console.log('data[0]', data[0])
+        /*Transform data from [0: {ACC1002: {Lecture: {..}, Tutorial: {..}}, {ACC1701: {Lecture:{..}..}}]
+        into [ACC1002: [Lecture: [v1 :{..},..], 
+        Tutorial: [v1:{..},..], ACC1701: [Lecture: [v1 :{..},..], Tutorial: [v1:{..},..]] */
+        let modulekeys = Object.keys(data[0]); //arr of mod keys
+        modulesFromDB = modulekeys;
+        modulekeys.forEach(module => { //for each module array
+          let lessonTypekeys = Object.keys(data[0][module]);
+            lessonTypekeys.forEach(lessonType => { //for each lesson type
+            let classNokeys = Object.keys(data[0][module][lessonType]);
+            classNokeys.forEach(classNo => {
+              let arr = Object.values(data[0][module][lessonType][classNo]);
+              if (!data2.hasOwnProperty(module)) {
+                data2[module] = [];
+                data2[module][lessonType] = [];
+              } else if (!data2[module].hasOwnProperty(lessonType)) {
+                data2[module][lessonType] = [];
+              }
+              data2[module][lessonType][classNo] = [];
+              data2[module][lessonType][classNo] = data2[module][lessonType][classNo].concat(Object.values(arr));
+            });
+          });
+        })
+      }
+      this.setState({
+        isDataLoaded: true,
+        lessons: data2, //to overwrite big data arrays from unsaved mods
+        modules: modulesFromDB, //to overwrite modules from unsaved mods
+      })
+    }
+  }
 
   // checks if modCode is contained in array of modules (this.state.modules)
   containsModule(title, modArr) {
@@ -233,7 +311,12 @@ class YourTimetable extends React.Component {
       }
     }
     console.log('users from read users', users)
-    return users;
+    console.log("done loading")
+    this.setState({
+      users: users,
+      loadedUsers: true,
+    })
+    // return users;
   }
 
   render(){
@@ -249,24 +332,31 @@ class YourTimetable extends React.Component {
     let allMods = [];
     modules.forEach(modCode => {
       allMods = allMods.concat([modCode]);
-    })
+    });
     
-    return (
-      <div className="yourTimetable">
-        <h1>Your Timetable</h1>
-        <Table className="table" data={allData} dd={dd} modules={allMods} />
-        <div className="buttons-div">
-          <ShareDialog className="share-button" users={this.readUsers()} />
-          <button onClick={this.readData} className="refresh-button"><i className="fa fa-refresh"></i>Refresh Data</button>
+    if (this.state.loadedUsers) {
+      console.log("reached loaded user")
+      console.log("dd passed as props", dd)
+      console.log("allData passed as props", allData)
+      return (
+        <div className="yourTimetable">
+          <h1>Your Timetable</h1>
+          <Table className="table" data={allData} dd={dd} modules={allMods} />
+          <div className="buttons-div">
+          <ShareDialog className="share-button" users={this.state.users} />
+            <button onClick={() => {this.readData(); window.alert("Data successfully loaded");}} className="refresh-button"><i className="fa fa-refresh"></i>Refresh Data</button>
+          </div>
+          <div>
+            <hr></hr>
+            <SearchBar action={this.addModule}/>
+            <p className="your-modules-text">Your modules:</p>
+              <MyModules modules={allMods} />
+          </div>
         </div>
-        <div>
-          <hr></hr>
-          <SearchBar action={this.addModule}/>
-          <p className="your-modules-text">Your modules:</p>
-            <MyModules modules={allMods} />
-        </div>
-      </div>
-    );
+      );
+    } else {
+      return <ReactLoading className="spinner" type='spin' color='white' height={'5%'} width={'5%'} />;
+    }
   }
 }
 

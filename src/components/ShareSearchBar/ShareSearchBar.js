@@ -14,7 +14,7 @@ class ShareSearchBar extends React.Component {
 
  async componentDidMount() {
     if (this.props.users) {
-      let users = await this.props.users.then(result => result);
+      let users = await this.props.users;
       console.log("this.props.users", this.props.users)
       console.log('users in sharesearchbar', users)
       this.setState({ users: users});

@@ -30,10 +30,6 @@
     z-index: 100;
 }
 
-/* .notifications:hover .dropdownContent {
-    display: block;
-} */
-
 .notificationButton:hover {
     background-color: rgb(61, 71, 102);
     color: #F1C944;
