@@ -234,7 +234,7 @@ class Table extends React.PureComponent {
       let slot = arr[i];
       console.log('slot.startDate', slot.startDate)
       console.log('slot.endDate', slot.endDate)
-      if (slot.title.toLowerCase() === "consult" || slot.title.toLowerCase() === "consultation") {
+      if (slot.title.toLowerCase() === "consult" || slot.title.toLowerCase() === "consultation" || !slot.lessonType) {
         if ((slot.startDate === consult.startDate && slot.endDate === consult.endDate)
         || (slot.startDate.toString() === consult.startDate.toString() && slot.endDate.toString() === consult.endDate.toString())
         || (typeof consult.startDate === 'object' && slot.startDate === consult.startDate.toJSON() && slot.endDate === consult.endDate.toJSON())) {
