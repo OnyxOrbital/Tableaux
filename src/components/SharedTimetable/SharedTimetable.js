@@ -215,7 +215,7 @@ class SharedTimetable extends React.Component {
     } else {
       return  <ReactLoading className="spinner" type='spin' color='white' height={'5%'} width={'5%'} />
     }
-    
+
   }
 }
 

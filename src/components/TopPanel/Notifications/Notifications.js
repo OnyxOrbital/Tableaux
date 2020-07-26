@@ -13,6 +13,7 @@ class Notifications extends React.Component {
     }
     this.handleNotificationClick = this.handleNotificationClick.bind(this);
     this.closeNotification = this.closeNotification.bind(this);
+    this.openNotification = this.openNotification.bind(this);
     this.deleteNotification = this.deleteNotification.bind(this);
     this.onNotificationsChange = this.onNotificationsChange.bind(this);
 
@@ -52,6 +53,7 @@ class Notifications extends React.Component {
   // }
 
   deleteNotification(time) {
+    // removes notification from db
     this.props.firebase.database.ref('users')
     .child(this.props.firebase.auth.currentUser.uid)
     .child('notifications')
@@ -68,6 +70,13 @@ class Notifications extends React.Component {
     .child(this.props.firebase.auth.currentUser.uid)
     .child('notifications');
     ref.on('value', this.onNotificationsChange);
+
+    // close notif
+    this.setState({ open: false })
+  }
+
+  openNotification() {
+    this.setState({ open: true });
   }
 
   closeNotification() {
@@ -77,6 +86,8 @@ class Notifications extends React.Component {
   async handleNotificationClick() {
     console.log('clicked')
     let notifications = [];
+
+    // reads from database of notifications
     if (this.props.firebase.auth.currentUser) {
       let ref = this.props.firebase.database.ref('users')
         .child(this.props.firebase.auth.currentUser.uid)
@@ -90,16 +101,11 @@ class Notifications extends React.Component {
       }
     }
     console.log('notis', notifications)
-    if (notifications && notifications.length !== 0) {
 
+    // sets notification state
+    if (notifications && notifications.length !== 0) {
       this.setState({ notifications: notifications[0] })
     }
-
-    // if (this.state.open) {
-    //   this.setState({ open: false });
-    // } else {
-    //   this.setState({ open: true });
-    // }
 
     this.setState({ open: !this.state.open });
   }
@@ -107,6 +113,9 @@ class Notifications extends React.Component {
   render() {
     if (this.props.firebase.auth.currentUser) {
       console.log("this.state.notifications", this.state.notifications)
+      console.log("reverse notif", this.state.notifications.reverse()[0])
+      let notif = this.state.notifications.reverse()[0];
+      // console.log("notif map", notif.time)
       return (
         <div className="notifications">
           <button onClick={this.handleNotificationClick} className="notificationButton">
@@ -120,7 +129,7 @@ class Notifications extends React.Component {
                     <div className="notification">
                         <div className="time-and-close-div">
                           <p className="timestamp">[{new Date(notif.time).toLocaleDateString()} {new Date(notif.time).toLocaleTimeString()}]</p>
-                          <button time={notif.time} className="close-button" onClick={() => this.deleteNotification(notif.time)}><i time={notif.time} className="fa fa-times" aria-hidden="true"></i></button>
+                          <button time={notif.time} className="close-button" onClick={() => {this.deleteNotification(notif.time); this.openNotification();}}><i time={notif.time} className="fa fa-times" aria-hidden="true"></i></button>
                         </div>
                         <Link to={notif.type} onClick={this.closeNotification}>
                       <p>{notif.message}</p>

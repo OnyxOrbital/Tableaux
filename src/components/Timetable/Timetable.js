@@ -267,7 +267,7 @@ class Table extends React.PureComponent {
           displayedData = [...displayedData, { id: startingAddedId, ...added }];
         }
       }
-      
+
       if (changed) {
         console.log('changed', changed)
         displayedData = displayedData.map(appointment => {
@@ -338,7 +338,7 @@ class Table extends React.PureComponent {
         }
       })
       additionalModsToProcess = this.process(additionalModsToProcess);
-      
+
       displayedDataFromDB = displayedDataFromDB.concat(additionalModsToProcess);
       console.log("displayeddatafromdb dawd", displayedDataFromDB)
       console.log("dd before change", displayedData)
@@ -385,11 +385,11 @@ class Table extends React.PureComponent {
           }
         })
         additionalModsToProcess = this.process(additionalModsToProcess);
-        
+        console.log("addmodstoprocess", additionalModsToProcess)
         displayedDataFromDB = displayedDataFromDB.concat(additionalModsToProcess);
-        // console.log("displayeddatafromdb dawd", displayedDataFromDB)
-        // console.log("dd before change", displayedData)
-        displayedData = displayedData.concat(displayedDataFromDB);
+        console.log("displayeddatafromdb dawd", displayedDataFromDB)
+        console.log("dd before change", displayedData)
+        // displayedData = displayedData.concat(displayedDataFromDB);
         displayedData.forEach(data => {
           if (!data.lessonType) { //consult or event slot
             if (!this.checkIfConsultSlotIsInArr(displayedDataFromDB, data)) {
@@ -397,7 +397,7 @@ class Table extends React.PureComponent {
             }
           }
         });
-       
+
         console.log('final displayed data',displayedDataFromDB)
         this.setState({
           data: newData,
@@ -614,7 +614,7 @@ class Table extends React.PureComponent {
           <Paper>
             <Scheduler
               data={this.state.displayedData}
-              height={660}       
+              height={660}
             >
               <ViewState
                 defaultCurrentDate={new Date('2020-08-15')}
@@ -637,14 +637,14 @@ class Table extends React.PureComponent {
               <Toolbar
                 rootComponent={ToolbarRoot}
               />
-              <DateNavigator 
+              <DateNavigator
                 rootComponent={DateNavRootComponent}
               />
               <ConfirmationDialog buttonComponent={ConfirmationButton}/>
               <Appointments appointmentComponent={this.myAppointment} />
               <AppointmentForm />
-              <AllDayPanel 
-                cellComponent={allDayCell} 
+              <AllDayPanel
+                cellComponent={allDayCell}
                 titleCellComponent={allDayTitleCell}
               />
             </Scheduler>
