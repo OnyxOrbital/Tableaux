@@ -29,9 +29,13 @@ class Notifications extends React.Component {
     console.log('called on notif chnage')
     let notifications = [];
     if (snapshot.val() !== null) {
-      notifications.push(snapshot.val());
+      notifications.push(Object.values(snapshot.val()));
     }
-    this.setState({ notifications: notifications });
+
+    // if (notifications && notifications.length !== 0) {
+      console.log('notifications[0]',  notifications[0]);
+      this.setState({ notifications: notifications[0] });
+    // }
   }
 
   // async componentDidMount() {
@@ -112,9 +116,9 @@ class Notifications extends React.Component {
 
   render() {
     if (this.props.firebase.auth.currentUser) {
-      console.log("this.state.notifications", this.state.notifications)
-      console.log("reverse notif", this.state.notifications.reverse()[0])
-      let notif = this.state.notifications.reverse()[0];
+      // console.log("this.state.notifications", this.state.notifications)
+      // console.log("reverse notif", this.state.notifications.reverse()[0])
+      // let notif = this.state.notifications.reverse()[0];
       // console.log("notif map", notif.time)
       return (
         <div className="notifications">
@@ -123,19 +127,25 @@ class Notifications extends React.Component {
           </button>
           { this.state.open ?
             <div className="dropdownContent">{
-              this.state.notifications.length > 0 ?
+              this.state.notifications && this.state.notifications.length > 0  ?
                 this.state.notifications.reverse().map(notif => {
-                  return (
-                    <div className="notification">
-                        <div className="time-and-close-div">
-                          <p className="timestamp">[{new Date(notif.time).toLocaleDateString()} {new Date(notif.time).toLocaleTimeString()}]</p>
-                          <button time={notif.time} className="close-button" onClick={() => {this.deleteNotification(notif.time); this.openNotification();}}><i time={notif.time} className="fa fa-times" aria-hidden="true"></i></button>
-                        </div>
-                        <Link to={notif.type} onClick={this.closeNotification}>
-                      <p>{notif.message}</p>
-                      <hr className="notification-line"/></Link>
-                    </div>
-                  );
+                  if (notif) {
+                    console.log("notif", notif)
+                    console.log('notif.time', notif.time)
+                    return (
+                      <div className="notification">
+                          <div className="time-and-close-div">
+                            <p className="timestamp">[{new Date(notif.time).toLocaleDateString()} {new Date(notif.time).toLocaleTimeString()}]</p>
+                            <button time={notif.time} className="close-button" onClick={() => {this.deleteNotification(notif.time); this.openNotification();}}><i time={notif.time} className="fa fa-times" aria-hidden="true"></i></button>
+                          </div>
+                          <Link to={notif.type} onClick={this.closeNotification}>
+                        <p>{notif.message}</p>
+                        <hr className="notification-line"/></Link>
+                      </div>
+                    );
+                  } else {
+                    return <p>hi</p>
+                  }
                 })
               : <p id="no-notif">No Notifications</p>
             }

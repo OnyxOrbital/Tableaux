@@ -33,4 +33,7 @@
     .logo p, #semesterdate, #logoImg {
         display: none;
     }
+    .username {
+        min-width: 0;
+    }
 }

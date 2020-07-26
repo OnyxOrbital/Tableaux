@@ -59,6 +59,11 @@ class YourTimetable extends React.Component {
         dd: appointments[0],
         isDataLoaded: true
       });
+    } else {
+      this.setState({
+        dd: [],
+        isDataLoaded: true
+      });
     }
   }
 
@@ -290,6 +295,7 @@ class YourTimetable extends React.Component {
           lessons: data2, //to overwrite big data arrays from unsaved mods
           modules: modulesFromDB, //to overwrite modules from unsaved mods
         })
+        window.alert("Data successfully loaded");
       }
     } else {
       window.alert("Please sign in to use this function.")
@@ -379,17 +385,46 @@ class YourTimetable extends React.Component {
       allMods = allMods.concat([modCode]);
     });
     
-    if (this.state.loadedUsers) {
-      console.log("reached loaded user")
-      console.log("dd passed as props", dd)
-      console.log("allData passed as props", allData)
+    if (this.props.firebase.auth.currentUser) {
+      if (this.state.loadedUsers) {
+        console.log("reached loaded user")
+        console.log("dd passed as props", dd)
+        console.log("allData passed as props", allData)
+        return (
+          <div className="yourTimetable">
+            <h1>Your Timetable</h1>
+            <Table className="table" data={allData} dd={dd} modules={allMods} />
+            <div className="buttons-div">
+            <ShareDialog className="share-button" users={this.state.users} />
+              <button onClick={() => {this.readData()}} className="refresh-button"><i className="fa fa-refresh"></i>Refresh Data</button>
+            </div>
+            <div>
+              <hr></hr>
+              <SearchBar action={this.addModule}/>
+              <p className="your-modules-text">Your modules:</p>
+  
+                {/* <MyModules modules={allMods} /> */}
+                <div className="MyModules">{allMods.map(module => {
+                  return (
+                  <div className="Module-information">
+                    <h3>{module}</h3>
+                    <button onClick={() => this.removeModule(module)}><i className="fa fa-trash-o" aria-hidden="true"></i></button>
+                  </div>);
+                })}</div>
+            </div>
+          </div>
+        );
+      } else {
+        return <ReactLoading className="spinner" type='spin' color='white' height={'5%'} width={'5%'} />;
+      }
+    } else {
       return (
         <div className="yourTimetable">
           <h1>Your Timetable</h1>
           <Table className="table" data={allData} dd={dd} modules={allMods} />
           <div className="buttons-div">
           <ShareDialog className="share-button" users={this.state.users} />
-            <button onClick={() => {this.readData(); window.alert("Data successfully loaded");}} className="refresh-button"><i className="fa fa-refresh"></i>Refresh Data</button>
+            <button onClick={this.readData} className="refresh-button"><i className="fa fa-refresh"></i>Refresh Data</button>
           </div>
           <div>
             <hr></hr>
@@ -397,19 +432,18 @@ class YourTimetable extends React.Component {
             <p className="your-modules-text">Your modules:</p>
 
               {/* <MyModules modules={allMods} /> */}
-              {allMods.map(module => {
+              <div className="MyModules">{allMods.map(module => {
                 return (
                 <div className="Module-information">
                   <h3>{module}</h3>
                   <button onClick={() => this.removeModule(module)}><i className="fa fa-trash-o" aria-hidden="true"></i></button>
                 </div>);
-              })}
+              })}</div>
           </div>
         </div>
       );
-    } else {
-      return <ReactLoading className="spinner" type='spin' color='white' height={'5%'} width={'5%'} />;
     }
+   
   }
 }
 
