@@ -204,26 +204,35 @@ class OtherTimetable extends React.Component {
   //     }
   //   }
   // }
-  
+
   async componentDidMount() {
     console.log('called compdidmount')
     if (this.props.location.props) {
+      console.log('if block other tt', this.props.location.props)
       let username = this.props.location.props.username;
-      let displayedData = Object.values(this.props.location.props)[0];
+      console.log("dd comp did mount", this.props.location.props.displayedData)
+      // console.log("dd comp did mount", Object.values(this.props.location.props.displayedData))
+      let displayedData = [];
+      if (this.props.location.props.displayedData.length > 0) {
+        displayedData = Object.values(this.props.location.props)[0];
+      }
+      console.log('dd hereee', displayedData)
       let uid = this.props.location.props.uid;
       let titles = [];
       let sharedAs = this.props.location.props.sharedAs;
       let myDisplayedData = this.props.location.props.myDisplayedData;
 
-      displayedData.forEach(appointment => {
+      if (displayedData.length > 0) {
+        displayedData.forEach(appointment => {
           // if mod is not in titles array
           if (!titles.includes(appointment.title)) {
             titles.push(appointment.title);
           }
       })
+      }
 
       // if shared as TA, loop through each appointment in displayedData to filter out non-mods
-      if (sharedAs === "TA") {
+      if (sharedAs === "TA" && displayedData.length > 0) {
         let newdd = [];
         displayedData.forEach(appointment => {
           // if appointment is a consult slot
@@ -234,11 +243,11 @@ class OtherTimetable extends React.Component {
         displayedData = newdd;
       }
 
-      if (displayedData && displayedData.length !== 0) {
+      if (displayedData && displayedData.length > 0) {
         displayedData = displayedData.map(slot => {
-          if (slot.title.toLowerCase() === "consult" || slot.title.toLowerCase() === "consultation") {
+          if (slot.title.toLowerCase() === "consult" || slot.title.toLowerCase() === "consultation" || !slot.lessonType) {
             if (slot.rRule) {
-              return { 
+              return {
                 title: slot.title,
                 startDate: slot.startDate,
                 endDate: slot.endDate,
@@ -248,7 +257,7 @@ class OtherTimetable extends React.Component {
                 id: slot.id
               }
             } else {
-              return { 
+              return {
                 title: slot.title,
                 startDate: slot.startDate,
                 endDate: slot.endDate,
@@ -257,8 +266,8 @@ class OtherTimetable extends React.Component {
               }
             }
           } else {
-            if (slot.id) {
-              return { 
+            if (slot.id) { // if slot has an id
+              return {
                 title: slot.title,
                 startDate: slot.startDate,
                 endDate: slot.endDate,
@@ -270,7 +279,7 @@ class OtherTimetable extends React.Component {
                 id: slot.id,
              }
             } else {
-              return { 
+              return {
                 title: slot.title,
                 startDate: slot.startDate,
                 endDate: slot.endDate,
@@ -284,15 +293,15 @@ class OtherTimetable extends React.Component {
           }
         })
       }
-    
+
       console.log("myDD before change", myDisplayedData)
       if (myDisplayedData[0] && myDisplayedData[0].length !== 0) {
         myDisplayedData = myDisplayedData[0].map(slot => {
           console.log('slot', slot)
           console.log("slot.title", slot.title)
-          if (slot.title.toLowerCase() === "consult" || slot.title.toLowerCase() === "consultation") {
+          if (slot.title.toLowerCase() === "consult" || slot.title.toLowerCase() === "consultation" || !slot.lessonType) {
             if (slot.rRule) {
-              return { 
+              return {
                 title: slot.title,
                 startDate: slot.startDate,
                 endDate: slot.endDate,
@@ -301,7 +310,7 @@ class OtherTimetable extends React.Component {
                 user: "user2"
              }
             } else {
-              return { 
+              return {
                 title: slot.title,
                 startDate: slot.startDate,
                 endDate: slot.endDate,
@@ -309,7 +318,7 @@ class OtherTimetable extends React.Component {
              }
             }
           } else {
-            return { 
+            return {
               title: slot.title,
               startDate: slot.startDate,
               endDate: slot.endDate,
@@ -320,13 +329,13 @@ class OtherTimetable extends React.Component {
               user: "user2"
            }
         }})
-    
+
       }
-      
+
       console.log("displayeddata asdawd", displayedData)
       console.log("myDD ", myDisplayedData)
-      
-      if (this.props.firebase.auth.currentUser.uid) {
+
+      if (this.props.firebase.auth.currentUser) {
         // write to OtherTimetable database to store state (so that when rerendering, data is not lost)
         this.props.firebase.database.ref('users')
         .child(this.props.firebase.auth.currentUser.uid)
@@ -340,7 +349,9 @@ class OtherTimetable extends React.Component {
           sharedAs: sharedAs
         })
       }
-     
+
+      console.log("set state mydd", myDisplayedData)
+      console.log("set state dd", displayedData)
       
       this.setState({
         displayedData: displayedData,
@@ -349,13 +360,13 @@ class OtherTimetable extends React.Component {
         titles: titles,
         myDisplayedData: myDisplayedData,
         sharedAs: sharedAs
-      }); 
+      });
     } else {
       // console.log('else block')
 
       // if (this.props.firebase.auth.currentUser) {
       //   console.log('user')
-      //   // read from OtherTimetable database 
+      //   // read from OtherTimetable database
       //   let ref = this.props.firebase.database.ref('users')
       //     .child(this.props.firebase.auth.currentUser.uid)
       //     .child("other-timetable")
@@ -377,7 +388,7 @@ class OtherTimetable extends React.Component {
 
   async readFromOtherTimetableDB() {
     console.log('user')
-    // read from OtherTimetable database 
+    // read from OtherTimetable database
     let ref = this.props.firebase.database.ref('users')
       .child(this.props.firebase.auth.currentUser.uid)
       .child("other-timetable")
@@ -429,7 +440,7 @@ class OtherTimetable extends React.Component {
       } else { // if no more colors to assign
         background = colors[titles.length % colors.length];
       }
-    } 
+    }
 
     return <Appointments.Appointment {...props} style={{backgroundColor: background}}
       onClick={(event) => {
@@ -469,7 +480,7 @@ class OtherTimetable extends React.Component {
                     window.alert("You cannot book a consult at this timing!")
                   }});
 
-             
+
               // redirects user to MyConsults page
               this.setState({
                 redirectTo: true,
@@ -532,7 +543,7 @@ class OtherTimetable extends React.Component {
         <ThemeProvider theme={theme}>
           <Paper>
             <Scheduler
-              data={this.state.compare 
+              data={this.state.compare
                       ? finalDisplayedData
                       : displayedData}
               height={660}
@@ -553,19 +564,19 @@ class OtherTimetable extends React.Component {
               <Toolbar
                 rootComponent={ToolbarRoot}
               />
-              <DateNavigator 
+              <DateNavigator
                 rootComponent={DateNavRootComponent}/>
               <Appointments appointmentComponent={this.myAppointment} />
               <AppointmentForm />
-              <AllDayPanel 
-                cellComponent={allDayCell} 
+              <AllDayPanel
+                cellComponent={allDayCell}
                 titleCellComponent={allDayTitleCell}
               />
             </Scheduler>
           </Paper>
         </ThemeProvider>
-        { this.state.compare 
-          ? <button onClick={this.handleCompareClick}>Revert to default</button> 
+        { this.state.compare
+          ? <button onClick={this.handleCompareClick}>Revert to default</button>
           : <button onClick={this.handleCompareClick}>Compare</button> }
       </div>);
   }
