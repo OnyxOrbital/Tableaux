@@ -21,7 +21,7 @@
   border: 0.5px solid #aaa2ab;
   border-radius: 3px;
   text-decoration: none;
-  padding: 0 1rem;
+  padding: 0.8rem 1.5rem;
 }
 
 .save-button:hover {
@@ -33,4 +33,3 @@
 .date-nav {
   display: flex;
 }
-

@@ -12,9 +12,9 @@
     border: 0.5px solid #aaa2ab;
     border-radius: 3px;
     text-decoration: none;
-    padding: 0 1rem;
+    padding: 0.8rem 1.5rem;
 }
-  
+
 .refresh-button:hover {
     background-color: #F1C944;
     color: #171a24;
@@ -23,7 +23,9 @@
 
 .share-button {
     display: block;
+    padding: 0.8rem 1.5rem;
 }
+
 
 .buttons-div {
     display: flex;
@@ -58,7 +60,7 @@
     text-decoration: none;
     padding: 0 1rem;
 }
-  
+
 .Module-information button:hover {
     background-color: #F1C944;
     color: #171a24;
@@ -71,3 +73,6 @@
     width: 100%;
   }
 
+  .header {
+    display: flex;
+  }

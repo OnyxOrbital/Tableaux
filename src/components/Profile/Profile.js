@@ -4,6 +4,7 @@ import SignOutButton from '../SignOut/SignOut';
 import SignInButton from '../SignIn/SignIn';
 import { AuthUserContext } from '../Session';
 import { withFirebase } from '../Firebase';
+import Pdf from './Tableaux-User-Guide.pdf';
 
 const Profile = () => (
   <AuthUserContext.Consumer>
@@ -30,14 +31,20 @@ class ProfileBase extends React.Component {
             <h1>User Profile</h1>
             <div className="details"><h3>Name: </h3><p>{this.props.user.displayName}</p></div>
             <div className="details"><h3>Email: </h3><p>{this.props.user.email}</p></div>
-            <SignOutButton />
+            <div className="buttons">
+              <a href = {Pdf} target = "_blank" id="user-guide1">View User Guide</a>
+              <SignOutButton />
+            </div>
           </div>
       );
     } else {
       return (
       <div>
         <p>Please sign in to view your profile page.</p>
-        <SignInButton />
+        <div className="buttons">
+          <a href = {Pdf} target = "_blank" id="user-guide2">View User Guide</a>
+          <SignInButton />
+        </div>
       </div>);
     }
   }

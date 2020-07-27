@@ -1,4 +1,4 @@
-.share-button {
+.info-button {
   float: right;
   margin: 1rem;
   color: white;
@@ -6,13 +6,22 @@
   background-color:rgb(33, 38, 54);
   outline: none;
   border: 0.5px solid #aaa2ab;
-  border-radius: 3px;
+  border-radius: 50%;
   text-decoration: none;
-  padding: 0 1rem;
+  padding: 0.1rem 0.1rem;
 }
 
-.share-button:hover {
+.info-button:hover {
   background-color: #F1C944;
   color: #171a24;
   cursor: pointer;
+}
+
+#cancel{
+  padding: 0.5rem 1rem;
+  width: 6rem;
+}
+
+strong {
+  color: #F1C944;
 }

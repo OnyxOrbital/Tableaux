@@ -5,6 +5,7 @@ import MyModules from '../YourTimetable/MyModules/MyModules';
 import Table from '../Timetable/Timetable';
 import { withFirebase } from '../Firebase/index';
 import ShareDialog from '../ShareDialog/ShareDialog';
+import MoreInfoDialog from '../MoreInfoDialog/MoreInfoDialog';
 import ReactLoading from 'react-loading';
 
 class YourTimetable extends React.Component {
@@ -28,7 +29,7 @@ class YourTimetable extends React.Component {
     this.removeModule = this.removeModule.bind(this);
     this.onDisplayedDataChange = this.onDisplayedDataChange.bind(this);
     this.onModsDataChange = this.onModsDataChange.bind(this);
-   
+
     this.authListener = this.props.firebase.auth.onAuthStateChanged(
       (authUser) => {
         if(authUser) {
@@ -37,7 +38,7 @@ class YourTimetable extends React.Component {
           .child(this.props.firebase.auth.currentUser.uid)
           .child('appointments').child('appointmentsArr');
           this.ref.on('value', this.onDisplayedDataChange)
-          
+
           this.ref2 = this.props.firebase.database.ref('users')
           .child(this.props.firebase.auth.currentUser.uid)
           .child('appointments').child('modsData');
@@ -50,10 +51,10 @@ class YourTimetable extends React.Component {
     console.log('called onDisplayedDataChange')
     let appointments = [];
     let value = snapshot.val();
-    if (value) { 
+    if (value) {
       appointments.push(Object.values(value));
     }
-    if (appointments && appointments[0]) { 
+    if (appointments && appointments[0]) {
       console.log('appointments[0', appointments[0])
       this.setState({
         dd: appointments[0],
@@ -79,7 +80,7 @@ class YourTimetable extends React.Component {
         console.log("data", data)
         console.log('data[0]', data[0])
         /*Transform data from [0: {ACC1002: {Lecture: {..}, Tutorial: {..}}, {ACC1701: {Lecture:{..}..}}]
-        into [ACC1002: [Lecture: [v1 :{..},..], 
+        into [ACC1002: [Lecture: [v1 :{..},..],
         Tutorial: [v1:{..},..], ACC1701: [Lecture: [v1 :{..},..], Tutorial: [v1:{..},..]] */
         let modulekeys = Object.keys(data[0]); //arr of mod keys
         modulesFromDB = modulekeys;
@@ -128,7 +129,7 @@ class YourTimetable extends React.Component {
     if (!this.containsModule(module.label, this.state.modules)) {
       let modules = this.state.modules;
       modules.push(module.label);
-      this.setState({ 
+      this.setState({
         modules: modules });
 
       let newSearchResults = [];
@@ -177,14 +178,14 @@ class YourTimetable extends React.Component {
           }
           arr.push(lesson);
         });
-        
+
         lessons[timetable[0]] = this.filterLessons(arr);
       }
     });
     this.setState({ lessons: lessons });
   }
 
-  /* Transforms the array of lesson objects into 
+  /* Transforms the array of lesson objects into
   lessonTypes = [Tutorial: [ V1: [{...}], V2: [{...}], ...], Lecture:[ V1: [{...}], V2: [{...}], ...]] */
   filterLessons(arr) { //arr = [{slot}, {slot}, ...]
       let lessonTypes = arr.reduce(function(obj, lesson) {
@@ -242,11 +243,11 @@ class YourTimetable extends React.Component {
         .child('appointments').child('appointmentsArr');
       let snapshot = await ref.once('value');
       let value = snapshot.val();
-      if (value) { 
-        snapshotIsEmpty = true;  
+      if (value) {
+        snapshotIsEmpty = true;
         appointments.push(Object.values(value));
       }
-      
+
       let ref2 = this.props.firebase.user(this.props.firebase.auth.currentUser.uid)
       .child('appointments').child('modsData');
       let snapshot2 = await ref2.once('value');
@@ -266,7 +267,7 @@ class YourTimetable extends React.Component {
 
         if (data[0]) {
           /*Transform data from [0: {ACC1002: {Lecture: {..}, Tutorial: {..}}, {ACC1701: {Lecture:{..}..}}]
-          into [ACC1002: [Lecture: [v1 :{..},..], 
+          into [ACC1002: [Lecture: [v1 :{..},..],
           Tutorial: [v1:{..},..], ACC1701: [Lecture: [v1 :{..},..], Tutorial: [v1:{..},..]] */
           let modulekeys = Object.keys(data[0]); //arr of mod keys
           modulesFromDB = modulekeys;
@@ -349,7 +350,7 @@ class YourTimetable extends React.Component {
       .remove()
 
     //remove mod from displayeddata
-    let lessons = this.state.lessons; 
+    let lessons = this.state.lessons;
     let newLessons = [];
     let modules = this.state.modules;
     let lessonsKeys = Object.keys(lessons); //keys of mods from search bar and database
@@ -384,7 +385,7 @@ class YourTimetable extends React.Component {
     modules.forEach(modCode => {
       allMods = allMods.concat([modCode]);
     });
-    
+
     if (this.props.firebase.auth.currentUser) {
       if (this.state.loadedUsers) {
         console.log("reached loaded user")
@@ -392,7 +393,10 @@ class YourTimetable extends React.Component {
         console.log("allData passed as props", allData)
         return (
           <div className="yourTimetable">
-            <h1>Your Timetable</h1>
+            <div className="header">
+              <h1>Your Timetable</h1>
+              <MoreInfoDialog />
+            </div>
             <Table className="table" data={allData} dd={dd} modules={allMods} />
             <div className="buttons-div">
             <ShareDialog className="share-button" users={this.state.users} />
@@ -402,7 +406,7 @@ class YourTimetable extends React.Component {
               <hr></hr>
               <SearchBar action={this.addModule}/>
               <p className="your-modules-text">Your modules:</p>
-  
+
                 {/* <MyModules modules={allMods} /> */}
                 <div className="MyModules">{allMods.map(module => {
                   return (
@@ -420,10 +424,13 @@ class YourTimetable extends React.Component {
     } else {
       return (
         <div className="yourTimetable">
-          <h1>Your Timetable</h1>
+          <div className="header">
+            <h1>Your Timetable</h1>
+            <MoreInfoDialog />
+          </div>
           <Table className="table" data={allData} dd={dd} modules={allMods} />
           <div className="buttons-div">
-          <ShareDialog className="share-button" users={this.state.users} />
+            <ShareDialog className="share-button" users={this.state.users} />
             <button onClick={this.readData} className="refresh-button"><i className="fa fa-refresh"></i>Refresh Data</button>
           </div>
           <div>
@@ -443,7 +450,7 @@ class YourTimetable extends React.Component {
         </div>
       );
     }
-   
+
   }
 }
 

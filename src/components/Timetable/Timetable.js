@@ -157,6 +157,7 @@ class Table extends React.PureComponent {
   }
 
   myAppointment(props) {
+    console.log("empty title", props.data.title)
     let background = '';
     let titles = this.props.modules;
     let colors = this.state.modsColor;
@@ -252,20 +253,25 @@ class Table extends React.PureComponent {
     this.setState((state) => {
       let { displayedData } = state;
       if (added) {
-        console.log("dd added", displayedData)
-        console.log("added", added)
-        const startingAddedId = displayedData.length > 0 ? displayedData.length + 1  : 0;
-        if (added.title.toLowerCase() === "consult" || added.title.toLowerCase() === "consultation") {
-            if (!this.checkIfConsultSlotIsInArr(displayedData, added)) {
-              console.log('if block', this.checkIfConsultSlotIsInArr(displayedData, added))
-              displayedData = [...displayedData, { id: startingAddedId, ...added }];
-            } else {
-              window.alert("Sorry, you cannot add a duplicate consultation slot.");
-            }
-        // } else if (added.lessonType) {
-        //   window.alert("Sorry, you cannot edit a module.");
+        // checks if slot saved has an empty title
+        if (added.title) {
+          console.log("dd added", displayedData)
+          console.log("added", added)
+          const startingAddedId = displayedData.length > 0 ? displayedData.length + 1  : 0;
+          if (added.title.toLowerCase() === "consult" || added.title.toLowerCase() === "consultation") {
+              if (!this.checkIfConsultSlotIsInArr(displayedData, added)) {
+                console.log('if block', this.checkIfConsultSlotIsInArr(displayedData, added))
+                displayedData = [...displayedData, { id: startingAddedId, ...added }];
+              } else {
+                window.alert("Sorry, you cannot add a duplicate consultation slot.");
+              }
+          // } else if (added.lessonType) {
+          //   window.alert("Sorry, you cannot edit a module.");
+          } else {
+            displayedData = [...displayedData, { id: startingAddedId, ...added }];
+          }
         } else {
-          displayedData = [...displayedData, { id: startingAddedId, ...added }];
+          window.alert("Unable to add slot as title is empty :(");
         }
       }
 

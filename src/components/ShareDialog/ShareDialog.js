@@ -8,7 +8,6 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
 import ShareSearchBar from '../ShareSearchBar/ShareSearchBar';
-import ShareAsDialog from '../ShareAsDialog/ShareAsDialog';
 
 class ShareDialog extends React.Component {
   constructor(props) {
@@ -211,7 +210,7 @@ class ShareDialog extends React.Component {
     console.log('users in share dialog', this.props.users)
     return (
       <div>
-        <button className="share-button" onClick={this.handleClickOpen}>
+        <button id="share" className="share-button" onClick={this.handleClickOpen}>
           <i className="fa fa-share-alt"></i>
           Share
         </button>
